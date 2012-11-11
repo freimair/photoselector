@@ -22,7 +22,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 public class Main {
 	static Workspace workspace = new Workspace(
@@ -87,8 +90,34 @@ public class Main {
 			}
 		});
 
-		// final List list = new List(shell, SWT.BORDER | SWT.MULTI |
-		// SWT.V_SCROLL);
+		Composite filterComposite = new Composite(shell, SWT.BORDER);
+		filterComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		Label filterListLabel = new Label(filterComposite, SWT.NONE);
+		filterListLabel.setText("Filters");
+		final Table list = new Table(filterComposite, SWT.CHECK | SWT.BORDER
+				| SWT.V_SCROLL);
+		list.setLayoutData(new RowData(100, 150));
+		TableItem item = new TableItem(list, SWT.NONE);
+		item.setText("Filter 1");
+		item = new TableItem(list, SWT.NONE);
+		item.setText("Filter 2");
+
+		Button addFilterButton = new Button(filterComposite, SWT.PUSH);
+		addFilterButton.setText("add Filter");
+		addFilterButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TableItem item = new TableItem(list, SWT.NONE);
+				item.setText("another Filter");
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		final ScrolledComposite drawerScrollComposite = new ScrolledComposite(
 				shell, SWT.V_SCROLL);
@@ -121,13 +150,8 @@ public class Main {
 				}
 
 				new ImageTile(tableComposite, display, (String) event.data);
-				// label.setText((String) event.data);
-				// System.out.println(event.data);
 			}
 		});
-
-		// new ImageTile(composite, display, "../playground/1.jpg");
-		// new ImageTile(composite, display, "../playground/2.jpg");
 
 		shell.addMouseListener(new MouseListener() {
 

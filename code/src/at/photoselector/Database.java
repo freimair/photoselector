@@ -46,7 +46,7 @@ public class Database {
 				}
 				stmt.execute("CREATE TABLE photos ("
 						+ "pid int NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-						+ "path varchar(350) NOT NULL)");
+						+ "path varchar(350) NOT NULL UNIQUE)");
 				// stmt.execute("CREATE TABLE filters ("
 				// + "fid int NOT NULL AUTO_INCREMENT PRIMARY_KEY"
 				// + "name varchar(200) NOT NULL)");
