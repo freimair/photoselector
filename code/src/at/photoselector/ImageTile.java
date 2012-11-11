@@ -45,7 +45,7 @@ public class ImageTile {
 		imageContainer.addListener(SWT.Paint, new Listener() {
 
 			@Override
-			public synchronized void handleEvent(Event e) {
+			public void handleEvent(Event e) {
 				GC gc = e.gc;
 				gc.drawImage(scaled, 0, 0);
 				gc.dispose();

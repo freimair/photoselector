@@ -3,10 +3,18 @@ package at.photoselector;
 import java.sql.SQLException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -17,7 +25,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class Main {
-	static Workspace workspace;
+	static Workspace workspace = new Workspace(
+			"/home/me/Projekte/pictureselector/playground/w1");
 	private static Shell shell;
 
 	/**
@@ -78,13 +87,44 @@ public class Main {
 			}
 		});
 
-		//
-		// final List list = new List (shell, SWT.BORDER | SWT.MULTI |
+		// final List list = new List(shell, SWT.BORDER | SWT.MULTI |
 		// SWT.V_SCROLL);
 
-		final Composite composite = new Composite(shell, SWT.NONE);
-		composite.setLayoutData(new RowData(1000, 500));
-		composite.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+		final ScrolledComposite drawerScrollComposite = new ScrolledComposite(
+				shell, SWT.V_SCROLL);
+		drawerScrollComposite.setLayoutData(new RowData(100, 150));
+
+		final Composite drawerComposite = new Composite(drawerScrollComposite,
+				SWT.NONE);
+		drawerComposite.setBackground(display
+				.getSystemColor(SWT.COLOR_DARK_GRAY));
+		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+		layout.wrap = true;
+		drawerComposite.setLayout(layout);
+
+		drawerScrollComposite.setContent(drawerComposite);
+		drawerScrollComposite.setExpandHorizontal(true);
+		drawerScrollComposite.setExpandVertical(true);
+
+		final Composite tableComposite = new Composite(shell, SWT.NONE);
+		tableComposite.setLayoutData(new RowData(1000, 500));
+		tableComposite.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+
+		DropTarget target = new DropTarget(tableComposite, DND.DROP_MOVE
+				| DND.DROP_COPY | DND.DROP_LINK);
+		target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+		target.addDropListener(new DropTargetAdapter() {
+			public void drop(DropTargetEvent event) {
+				if (event.data == null) {
+					event.detail = DND.DROP_NONE;
+					return;
+				}
+
+				new ImageTile(tableComposite, display, (String) event.data);
+				// label.setText((String) event.data);
+				// System.out.println(event.data);
+			}
+		});
 
 		// new ImageTile(composite, display, "../playground/1.jpg");
 		// new ImageTile(composite, display, "../playground/2.jpg");
@@ -100,7 +140,7 @@ public class Main {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				// TODO Auto-generated method stub
-				fillTable(composite, display);
+				fillTable(tableComposite, drawerComposite, display);
 
 			}
 
@@ -122,11 +162,18 @@ public class Main {
 		display.dispose();
 	}
 
-	public static void fillTable(Composite composite, Display display) {
+	public static void fillTable(Composite tableComposite,
+			Composite drawerComposite, Display display) {
 		try {
-			for (String current : workspace.getPhotos())
-				new ImageTile(composite, display, current);
-			composite.redraw();
+			for (String current : workspace.getPhotos()) {
+				// new ImageTile(tableComposite, display, current);
+				new DrawerItem(drawerComposite, display, current);
+			}
+			Rectangle r = drawerComposite.getParent().getClientArea();
+			((ScrolledComposite) drawerComposite.getParent())
+					.setMinSize(drawerComposite.computeSize(r.width,
+							SWT.DEFAULT));
+			drawerComposite.redraw();
 			shell.redraw();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
