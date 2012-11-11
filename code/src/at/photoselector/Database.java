@@ -50,6 +50,8 @@ public class Database {
 				stmt.execute("CREATE TABLE filters ("
 						+ "fid int NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 						+ "name varchar(200) NOT NULL)");
+				stmt.execute("CREATE TABLE filters_photos ("
+						+ "fid int NOT NULL," + "pid int NOT NULL)");
 				stmt.close();
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
@@ -104,6 +106,25 @@ public class Database {
 			return result;
 		} catch (SQLException e) {
 			throw e;
+		} finally {
+			if (null != stmt)
+				stmt.close();
+		}
+	}
+
+	public int getInteger(String sql) throws SQLException {
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			if (DEBUG)
+				System.out.println(sql + " LIMIT 1");
+			ResultSet rs = stmt.executeQuery(sql + " LIMIT 1");
+			rs.next();
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
 		} finally {
 			if (null != stmt)
 				stmt.close();

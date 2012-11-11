@@ -35,7 +35,17 @@ public class Workspace {
 	}
 
 	public void blacklist(String path) {
-
+		try {
+			int pid = db.getInteger("SELECT pid FROM photos WHERE path = '"
+					+ path + "'");
+			int fid = db.getInteger("SELECT fid FROM filters WHERE name = '"
+					+ currentFilter + "'");
+			db.execute("INSERT INTO filters_photos (fid, pid) VALUES (" + fid
+					+ ", " + pid + ")");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void setCurrentFilter(String text) {

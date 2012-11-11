@@ -49,6 +49,7 @@ public class ImageTile {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Main.workspace.blacklist(path);
+				imageContainer.dispose();
 			}
 
 			@Override

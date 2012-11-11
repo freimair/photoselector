@@ -102,6 +102,10 @@ public class Main {
 			TableItem item = new TableItem(list, SWT.NONE);
 			item.setText(current);
 		}
+		if (0 < list.getItemCount()) {
+			list.setSelection(0);
+			Main.workspace.setCurrentFilter(list.getSelection()[0].getText());
+		}
 
 		list.addSelectionListener(new SelectionListener() {
 
@@ -127,6 +131,9 @@ public class Main {
 				String name = "Filter_" + new Random().nextInt(100);
 				item.setText(name);
 				workspace.addFilter(name);
+				list.setSelection(item);
+				Main.workspace.setCurrentFilter(list.getSelection()[0]
+						.getText());
 			}
 
 			@Override
