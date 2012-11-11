@@ -5,6 +5,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseWheelListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -22,9 +24,11 @@ public class ImageTile {
 	final Composite imageContainer;
 	Image image;
 	Image scaled;
+	private String path;
 
 	public ImageTile(final Composite container, Display display,
 			String imagePath) {
+		path = imagePath;
 		image = new Image(display, imagePath);
 		scaled = image;
 
@@ -40,6 +44,19 @@ public class ImageTile {
 		buttonAccept.setText("Accept");
 		Button buttonDecline = new Button(imageContainer, SWT.PUSH);
 		buttonDecline.setText("Decline");
+		buttonDecline.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Main.workspace.blacklist(path);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		// draw the image
 		imageContainer.addListener(SWT.Paint, new Listener() {

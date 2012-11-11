@@ -1,6 +1,7 @@
 package at.photoselector;
 
 import java.sql.SQLException;
+import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -97,10 +98,24 @@ public class Main {
 		final Table list = new Table(filterComposite, SWT.CHECK | SWT.BORDER
 				| SWT.V_SCROLL);
 		list.setLayoutData(new RowData(100, 150));
-		TableItem item = new TableItem(list, SWT.NONE);
-		item.setText("Filter 1");
-		item = new TableItem(list, SWT.NONE);
-		item.setText("Filter 2");
+		for (String current : workspace.getFilters()) {
+			TableItem item = new TableItem(list, SWT.NONE);
+			item.setText(current);
+		}
+
+		list.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Main.workspace.setCurrentFilter(((TableItem) e.item).getText());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 
 		Button addFilterButton = new Button(filterComposite, SWT.PUSH);
 		addFilterButton.setText("add Filter");
@@ -109,7 +124,9 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem item = new TableItem(list, SWT.NONE);
-				item.setText("another Filter");
+				String name = "Filter_" + new Random().nextInt(100);
+				item.setText(name);
+				workspace.addFilter(name);
 			}
 
 			@Override
