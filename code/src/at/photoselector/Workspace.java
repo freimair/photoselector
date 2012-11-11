@@ -30,8 +30,16 @@ public class Workspace {
 			}
 	}
 
-	public List<String> getPhotos() throws SQLException {
-		return db.getStringList("SELECT path FROM photos");
+	public List<String> getPhotos(List<String> list) throws SQLException {
+		String sql = "SELECT PATH FROM PHOTOS";
+		if (0 < list.size()) {
+			sql += " WHERE PID NOT IN (SELECT PID FROM FILTERS_PHOTOS JOIN FILTERS ON FILTERS_PHOTOS.FID=FILTERS.FID WHERE";
+			for (String current : list)
+				sql += " FILTERS.NAME = '" + current + "' OR";
+			sql = sql.substring(0, sql.length() - 3) + ")";
+		}
+
+		return db.getStringList(sql);
 	}
 
 	public void blacklist(String path) {
