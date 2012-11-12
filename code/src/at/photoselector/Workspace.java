@@ -42,22 +42,29 @@ public class Workspace {
 		return db.getStringList(sql);
 	}
 
-	public void blacklist(String path) {
+	public void blacklist(String path, String filter) {
 		try {
 			int pid = db.getInteger("SELECT pid FROM photos WHERE path = '"
 					+ path + "'");
 			int fid = db.getInteger("SELECT fid FROM filters WHERE name = '"
-					+ currentFilter + "'");
+					+ filter + "'");
 			db.execute("INSERT INTO filters_photos (fid, pid) VALUES (" + fid
 					+ ", " + pid + ")");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			// TODO AuSWT.CHECK | to-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void setCurrentFilter(String text) {
-		currentFilter = text;
+	public void blacklist(String path) {
+		try {
+			blacklist(
+					path,
+					db.getString("SELECT name FROM filters WHERE fid = (SELECT MAX(fid) FROM TABLE)"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void addFilter(String name) {

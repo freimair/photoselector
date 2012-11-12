@@ -98,32 +98,31 @@ public class Main {
 		filterComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Label filterListLabel = new Label(filterComposite, SWT.NONE);
 		filterListLabel.setText("Filters");
-		final Table list = new Table(filterComposite, SWT.CHECK | SWT.BORDER
-				| SWT.V_SCROLL);
+		final Table list = new Table(filterComposite, SWT.BORDER | SWT.V_SCROLL);
 		list.setLayoutData(new RowData(100, 150));
+
+		TableItem item = new TableItem(list, SWT.NONE);
+		String name = "base";
+		item.setText(name);
+
 		for (String current : workspace.getFilters()) {
-			TableItem item = new TableItem(list, SWT.NONE);
+			item = new TableItem(list, SWT.NONE);
 			item.setText(current);
 		}
 
-		if (0 < list.getItemCount()) {
-			list.setSelection(0);
-			Main.workspace.setCurrentFilter(list.getSelection()[0].getText());
-		}
+		list.setSelection(list.getItemCount() - 1);
 
 		Button addFilterButton = new Button(filterComposite, SWT.PUSH);
-		addFilterButton.setText("add Filter");
+		addFilterButton.setText("add Stage");
 		addFilterButton.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem item = new TableItem(list, SWT.NONE);
-				String name = "Filter_" + new Random().nextInt(100);
+				String name = "Stage_" + new Random().nextInt(100);
 				item.setText(name);
 				workspace.addFilter(name);
 				list.setSelection(item);
-				Main.workspace.setCurrentFilter(list.getSelection()[0]
-						.getText());
 			}
 
 			@Override
@@ -135,7 +134,7 @@ public class Main {
 
 		final ScrolledComposite drawerScrollComposite = new ScrolledComposite(
 				shell, SWT.V_SCROLL);
-		drawerScrollComposite.setLayoutData(new RowData(100, 150));
+		drawerScrollComposite.setLayoutData(new RowData(330, 500));
 
 		final Composite drawerComposite = new Composite(drawerScrollComposite,
 				SWT.NONE);
@@ -150,7 +149,7 @@ public class Main {
 		drawerScrollComposite.setExpandVertical(true);
 
 		final Composite tableComposite = new Composite(shell, SWT.NONE);
-		tableComposite.setLayoutData(new RowData(1000, 500));
+		tableComposite.setLayoutData(new RowData(500, 500));
 		tableComposite.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
 
 		DropTarget target = new DropTarget(tableComposite, DND.DROP_MOVE
@@ -171,7 +170,6 @@ public class Main {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.workspace.setCurrentFilter(((TableItem) e.item).getText());
 				fillTable(tableComposite, drawerComposite, list, display);
 			}
 
@@ -197,10 +195,10 @@ public class Main {
 
 	public static List<String> getActiveFilters(Table list) {
 		List<String> result = new ArrayList<String>();
-		for (TableItem current : list.getItems()) {
-			if (current.getChecked())
-				result.add(current.getText());
-		}
+
+		for (int i = 0; i <= list.getSelectionIndex(); i++)
+			result.add(list.getItem(i).getText());
+
 		return result;
 	}
 
