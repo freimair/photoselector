@@ -41,7 +41,9 @@ public class Main {
 		final Display display = new Display();
 		shell = new Shell(display);
 		shell.setLayout(new RowLayout());
-		Button switchWorkspaceButton = new Button(shell, SWT.PUSH);
+		Composite controlComposite = new Composite(shell, SWT.NONE);
+		controlComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		Button switchWorkspaceButton = new Button(controlComposite, SWT.PUSH);
 		switchWorkspaceButton.setText("Switch Workspace");
 		switchWorkspaceButton.addSelectionListener(new SelectionListener() {
 
@@ -58,7 +60,7 @@ public class Main {
 			}
 		});
 
-		Button addPhotosButton = new Button(shell, SWT.PUSH);
+		Button addPhotosButton = new Button(controlComposite, SWT.PUSH);
 		addPhotosButton.setText("Add photos");
 		addPhotosButton.addSelectionListener(new SelectionListener() {
 
@@ -74,9 +76,9 @@ public class Main {
 
 			}
 		});
-		Button settingsButton = new Button(shell, SWT.PUSH);
+		Button settingsButton = new Button(controlComposite, SWT.PUSH);
 		settingsButton.setText("Settings");
-		Button exitButton = new Button(shell, SWT.PUSH);
+		Button exitButton = new Button(controlComposite, SWT.PUSH);
 		exitButton.setText("Exit");
 		exitButton.addSelectionListener(new SelectionListener() {
 
