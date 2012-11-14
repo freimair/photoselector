@@ -3,7 +3,6 @@ package at.photoselector;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -25,6 +24,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -34,6 +34,7 @@ public class Main {
 	// "/home/me/Projekte/pictureselector/playground/w1");
 			"/home/fr/Desktop/pictureselector/playground/w2");
 	private static Shell shell;
+	public static ProgressBar bar;
 
 	/**
 	 * @param args
@@ -85,7 +86,7 @@ public class Main {
 		Composite filterComposite = new Composite(shell, SWT.BORDER);
 		filterComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Label filterListLabel = new Label(filterComposite, SWT.NONE);
-		filterListLabel.setText("Filters");
+		filterListLabel.setText("Stages");
 		final Table list = new Table(filterComposite, SWT.BORDER | SWT.V_SCROLL);
 		list.setLayoutData(new RowData(100, 150));
 
@@ -100,41 +101,44 @@ public class Main {
 
 		list.setSelection(list.getItemCount() - 1);
 
-		Button addFilterButton = new Button(filterComposite, SWT.PUSH);
-		addFilterButton.setText("add Stage");
-		addFilterButton.addSelectionListener(new SelectionListener() {
+		bar = new ProgressBar(filterComposite, SWT.SMOOTH);
+		try {
+			bar.setMaximum(workspace.getPhotos(
+					Workspace.UNPROCESSED | Workspace.ACCEPTED
+							| Workspace.DECLINED).size());
+			bar.setSelection(workspace.getPhotos(
+					workspace.ACCEPTED | workspace.DECLINED).size());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TableItem item = new TableItem(list, SWT.NONE);
-				String name = "Stage_" + new Random().nextInt(100);
-				item.setText(name);
-				workspace.addFilter(name);
-				list.setSelection(item);
-			}
+		final Composite drawerComposite = new Composite(shell, SWT.NONE);
+		drawerComposite.setLayout(new RowLayout(SWT.VERTICAL));
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+		final Button showAcceptedButton = new Button(drawerComposite,
+				SWT.TOGGLE);
+		showAcceptedButton.setText("accepted");
 
-			}
-		});
+		final Button showDeclinedButton = new Button(drawerComposite,
+				SWT.TOGGLE);
+		showDeclinedButton.setText("declined");
 
-		final ScrolledComposite drawerScrollComposite = new ScrolledComposite(
-				shell, SWT.V_SCROLL);
-		drawerScrollComposite.setLayoutData(new RowData(330, 500));
+		final ScrolledComposite photoListComposite = new ScrolledComposite(
+				drawerComposite, SWT.V_SCROLL);
+		photoListComposite.setLayoutData(new RowData(330, 500));
 
-		final Composite drawerComposite = new Composite(drawerScrollComposite,
-				SWT.NONE);
-		drawerComposite.setBackground(display
+		final Composite photoListContentComposite = new Composite(
+				photoListComposite, SWT.NONE);
+		photoListContentComposite.setBackground(display
 				.getSystemColor(SWT.COLOR_DARK_GRAY));
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.wrap = true;
-		drawerComposite.setLayout(layout);
+		photoListContentComposite.setLayout(layout);
 
-		drawerScrollComposite.setContent(drawerComposite);
-		drawerScrollComposite.setExpandHorizontal(true);
-		drawerScrollComposite.setExpandVertical(true);
+		photoListComposite.setContent(photoListContentComposite);
+		photoListComposite.setExpandHorizontal(true);
+		photoListComposite.setExpandVertical(true);
 
 		final Composite tableComposite = new Composite(shell, SWT.NONE);
 		tableComposite.setLayoutData(new RowData(500, 500));
@@ -159,7 +163,8 @@ public class Main {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fillTable(tableComposite, drawerComposite, list, display);
+				fillTable(tableComposite, photoListContentComposite, list,
+						display, showAcceptedButton, showDeclinedButton);
 			}
 
 			@Override
@@ -175,7 +180,8 @@ public class Main {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
 				workspace.addPhoto(dialog.open());
-				fillTable(tableComposite, drawerComposite, list, display);
+				fillTable(tableComposite, photoListContentComposite, list,
+						display, showAcceptedButton, showDeclinedButton);
 			}
 
 			@Override
@@ -185,7 +191,38 @@ public class Main {
 			}
 		});
 
-		fillTable(tableComposite, drawerComposite, list, display);
+		showAcceptedButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fillTable(tableComposite, photoListContentComposite, list,
+						display, showAcceptedButton, showDeclinedButton);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		showDeclinedButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fillTable(tableComposite, photoListContentComposite, list,
+						display, showAcceptedButton, showDeclinedButton);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		fillTable(tableComposite, photoListContentComposite, list, display,
+				showAcceptedButton, showDeclinedButton);
 
 		shell.pack();
 		shell.open();
@@ -208,11 +245,17 @@ public class Main {
 	}
 
 	public static void fillTable(Composite tableComposite,
-			Composite drawerComposite, Table list, Display display) {
+			Composite drawerComposite, Table list, Display display,
+			Button showAcceptedButton, Button showDeclinedButton) {
 		try {
 			for (Control current : drawerComposite.getChildren())
 				current.dispose();
-			for (String current : workspace.getPhotos(getActiveFilters(list))) {
+			int filter = Workspace.UNPROCESSED;
+			if (showAcceptedButton.getSelection())
+				filter |= Workspace.ACCEPTED;
+			if (showDeclinedButton.getSelection())
+				filter |= Workspace.DECLINED;
+			for (String current : workspace.getPhotos(filter)) {
 				// new ImageTile(tableComposite, display, current);
 				new DrawerItem(drawerComposite, display, current);
 			}

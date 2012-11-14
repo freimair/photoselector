@@ -43,8 +43,25 @@ public class ImageTile {
 		Point pt = container.toControl(x, y);
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
+
 		Button buttonAccept = new Button(imageContainer, SWT.PUSH);
 		buttonAccept.setText("Accept");
+		buttonAccept.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Main.workspace.accept(path);
+				Main.bar.setSelection(Main.bar.getSelection() + 1);
+				imageContainer.dispose();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 		Button buttonDecline = new Button(imageContainer, SWT.PUSH);
 		buttonDecline.setText("Decline");
 		buttonDecline.addSelectionListener(new SelectionListener() {
@@ -52,6 +69,7 @@ public class ImageTile {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Main.workspace.blacklist(path);
+				Main.bar.setSelection(Main.bar.getSelection() + 1);
 				imageContainer.dispose();
 			}
 

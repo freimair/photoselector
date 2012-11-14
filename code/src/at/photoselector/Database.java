@@ -46,13 +46,11 @@ public class Database {
 				}
 				stmt.execute("CREATE TABLE photos ("
 						+ "pid int NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-						+ "status int NOT NULL,"
+						+ "status int NOT NULL," + "stage int,"
 						+ "path varchar(350) NOT NULL UNIQUE)");
 				stmt.execute("CREATE TABLE filters ("
 						+ "fid int NOT NULL AUTO_INCREMENT PRIMARY KEY,"
 						+ "name varchar(200) NOT NULL)");
-				stmt.execute("CREATE TABLE filters_photos ("
-						+ "fid int NOT NULL," + "pid int NOT NULL)");
 				stmt.close();
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
