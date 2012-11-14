@@ -27,7 +27,7 @@ public class ImageTile {
 	private String path;
 
 	public ImageTile(final Composite container, Display display,
-			String imagePath) {
+			String imagePath, int x, int y) {
 		path = imagePath;
 		image = new Image(display, imagePath);
 		scaled = image;
@@ -40,6 +40,9 @@ public class ImageTile {
 
 		// add controls
 		imageContainer.setLayout(new RowLayout());
+		Point pt = container.toControl(x, y);
+		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
+				pt.y - imageContainer.getBounds().height / 2);
 		Button buttonAccept = new Button(imageContainer, SWT.PUSH);
 		buttonAccept.setText("Accept");
 		Button buttonDecline = new Button(imageContainer, SWT.PUSH);

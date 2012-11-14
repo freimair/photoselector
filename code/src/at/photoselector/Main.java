@@ -150,7 +150,8 @@ public class Main {
 					return;
 				}
 
-				new ImageTile(tableComposite, display, (String) event.data);
+				new ImageTile(tableComposite, display, (String) event.data,
+						event.x, event.y);
 			}
 		});
 
