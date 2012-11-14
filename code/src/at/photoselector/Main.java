@@ -128,7 +128,7 @@ public class Main {
 		final Composite photoListContentComposite = new Composite(
 				photoListComposite, SWT.NONE);
 		photoListContentComposite.setBackground(display
-				.getSystemColor(SWT.COLOR_DARK_GRAY));
+				.getSystemColor(SWT.COLOR_GRAY));
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.wrap = true;
 		photoListContentComposite.setLayout(layout);
@@ -160,8 +160,8 @@ public class Main {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fillTable(tableComposite, photoListContentComposite, list,
-						display, showAcceptedButton, showDeclinedButton);
+				fillTable(photoListContentComposite, list, display,
+						showAcceptedButton, showDeclinedButton);
 			}
 
 			@Override
@@ -177,8 +177,8 @@ public class Main {
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
 				workspace.addPhoto(dialog.open());
-				fillTable(tableComposite, photoListContentComposite, list,
-						display, showAcceptedButton, showDeclinedButton);
+				fillTable(photoListContentComposite, list, display,
+						showAcceptedButton, showDeclinedButton);
 				try {
 					bar.setMaximum(workspace.getPhotos(
 							Workspace.UNPROCESSED | Workspace.ACCEPTED
@@ -202,8 +202,8 @@ public class Main {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fillTable(tableComposite, photoListContentComposite, list,
-						display, showAcceptedButton, showDeclinedButton);
+				fillTable(photoListContentComposite, list, display,
+						showAcceptedButton, showDeclinedButton);
 			}
 
 			@Override
@@ -217,8 +217,8 @@ public class Main {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				fillTable(tableComposite, photoListContentComposite, list,
-						display, showAcceptedButton, showDeclinedButton);
+				fillTable(photoListContentComposite, list, display,
+						showAcceptedButton, showDeclinedButton);
 			}
 
 			@Override
@@ -228,8 +228,8 @@ public class Main {
 			}
 		});
 
-		fillTable(tableComposite, photoListContentComposite, list, display,
-				showAcceptedButton, showDeclinedButton);
+		fillTable(photoListContentComposite, list, display, showAcceptedButton,
+				showDeclinedButton);
 
 		shell.pack();
 		shell.open();
@@ -242,9 +242,9 @@ public class Main {
 		display.dispose();
 	}
 
-	public static void fillTable(Composite tableComposite,
-			Composite drawerComposite, Table list, Display display,
-			Button showAcceptedButton, Button showDeclinedButton) {
+	public static void fillTable(Composite drawerComposite, Table list,
+			Display display, Button showAcceptedButton,
+			Button showDeclinedButton) {
 		try {
 			for (Control current : drawerComposite.getChildren())
 				current.dispose();

@@ -6,6 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -48,7 +49,7 @@ public class ImageTile {
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
 
-		Button buttonAccept = new Button(imageContainer, SWT.PUSH);
+		final Button buttonAccept = new Button(imageContainer, SWT.PUSH);
 		buttonAccept.setText("Accept");
 		buttonAccept.addSelectionListener(new SelectionListener() {
 
@@ -66,7 +67,7 @@ public class ImageTile {
 			}
 		});
 
-		Button buttonDecline = new Button(imageContainer, SWT.PUSH);
+		final Button buttonDecline = new Button(imageContainer, SWT.PUSH);
 		buttonDecline.setText("Decline");
 		buttonDecline.addSelectionListener(new SelectionListener() {
 
@@ -81,6 +82,28 @@ public class ImageTile {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 
+			}
+		});
+
+		imageContainer.addMouseTrackListener(new MouseTrackListener() {
+
+			@Override
+			public void mouseHover(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExit(MouseEvent e) {
+				buttonAccept.setVisible(false);
+				buttonDecline.setVisible(false);
+
+			}
+
+			@Override
+			public void mouseEnter(MouseEvent e) {
+				buttonAccept.setVisible(true);
+				buttonDecline.setVisible(true);
 			}
 		});
 
@@ -169,6 +192,7 @@ public class ImageTile {
 				}
 			}
 		});
+		imageContainer.layout();
 	}
 
 	@Override
