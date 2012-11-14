@@ -7,6 +7,10 @@ import java.util.List;
 
 public class Workspace {
 
+	public final int UNPROCESSED = 0;
+	public final int ACCEPTED = 1;
+	public final int DECLINED = 2;
+
 	private Database db;
 	private String currentFilter;
 
@@ -22,8 +26,9 @@ public class Workspace {
 		}
 		if (location.getName().matches(".*jpe?g$"))
 			try {
-				db.execute("INSERT INTO photos (path) VALUES ('"
-						+ location.getAbsolutePath() + "')");
+				db.execute("INSERT INTO photos (path, status) VALUES ('"
+						+ location.getAbsolutePath() + "', " + UNPROCESSED
+						+ ")");
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

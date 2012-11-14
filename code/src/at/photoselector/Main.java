@@ -31,7 +31,8 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class Main {
 	static Workspace workspace = new Workspace(
-			"/home/me/Projekte/pictureselector/playground/w1");
+	// "/home/me/Projekte/pictureselector/playground/w1");
+			"/home/fr/Desktop/pictureselector/playground/w2");
 	private static Shell shell;
 
 	/**
@@ -62,20 +63,7 @@ public class Main {
 
 		Button addPhotosButton = new Button(controlComposite, SWT.PUSH);
 		addPhotosButton.setText("Add photos");
-		addPhotosButton.addSelectionListener(new SelectionListener() {
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
-				workspace.addPhoto(dialog.open());
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-		});
 		Button settingsButton = new Button(controlComposite, SWT.PUSH);
 		settingsButton.setText("Settings");
 		Button exitButton = new Button(controlComposite, SWT.PUSH);
@@ -102,7 +90,7 @@ public class Main {
 		list.setLayoutData(new RowData(100, 150));
 
 		TableItem item = new TableItem(list, SWT.NONE);
-		String name = "base";
+		String name = "all";
 		item.setText(name);
 
 		for (String current : workspace.getFilters()) {
@@ -170,6 +158,22 @@ public class Main {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				fillTable(tableComposite, drawerComposite, list, display);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		addPhotosButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
+				workspace.addPhoto(dialog.open());
 				fillTable(tableComposite, drawerComposite, list, display);
 			}
 
