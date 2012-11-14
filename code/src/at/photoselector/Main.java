@@ -1,8 +1,6 @@
 package at.photoselector;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -35,6 +33,7 @@ public class Main {
 			"/home/fr/Desktop/pictureselector/playground/w2");
 	private static Shell shell;
 	public static ProgressBar bar;
+	public static Table list;
 
 	/**
 	 * @param args
@@ -87,7 +86,7 @@ public class Main {
 		filterComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		Label filterListLabel = new Label(filterComposite, SWT.NONE);
 		filterListLabel.setText("Stages");
-		final Table list = new Table(filterComposite, SWT.BORDER | SWT.V_SCROLL);
+		list = new Table(filterComposite, SWT.BORDER | SWT.V_SCROLL);
 		list.setLayoutData(new RowData(100, 150));
 
 		TableItem item = new TableItem(list, SWT.NONE);
@@ -99,15 +98,13 @@ public class Main {
 			item.setText(current);
 		}
 
-		list.setSelection(list.getItemCount() - 1);
-
 		bar = new ProgressBar(filterComposite, SWT.SMOOTH);
 		try {
 			bar.setMaximum(workspace.getPhotos(
 					Workspace.UNPROCESSED | Workspace.ACCEPTED
 							| Workspace.DECLINED).size());
 			bar.setSelection(workspace.getPhotos(
-					workspace.ACCEPTED | workspace.DECLINED).size());
+					Workspace.ACCEPTED | Workspace.DECLINED).size());
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -182,6 +179,16 @@ public class Main {
 				workspace.addPhoto(dialog.open());
 				fillTable(tableComposite, photoListContentComposite, list,
 						display, showAcceptedButton, showDeclinedButton);
+				try {
+					bar.setMaximum(workspace.getPhotos(
+							Workspace.UNPROCESSED | Workspace.ACCEPTED
+									| Workspace.DECLINED).size());
+					bar.setSelection(workspace.getPhotos(
+							Workspace.ACCEPTED | Workspace.DECLINED).size());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 
 			@Override
@@ -233,15 +240,6 @@ public class Main {
 
 		Database.closeConnection();
 		display.dispose();
-	}
-
-	public static List<String> getActiveFilters(Table list) {
-		List<String> result = new ArrayList<String>();
-
-		for (int i = 0; i <= list.getSelectionIndex(); i++)
-			result.add(list.getItem(i).getText());
-
-		return result;
 	}
 
 	public static void fillTable(Composite tableComposite,

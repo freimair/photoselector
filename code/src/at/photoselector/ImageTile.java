@@ -1,5 +1,7 @@
 package at.photoselector;
 
+import java.sql.SQLException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -14,9 +16,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.TableItem;
 
 public class ImageTile {
 
@@ -51,7 +55,7 @@ public class ImageTile {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Main.workspace.accept(path);
-				Main.bar.setSelection(Main.bar.getSelection() + 1);
+				processed();
 				imageContainer.dispose();
 			}
 
@@ -68,8 +72,8 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.workspace.blacklist(path);
-				Main.bar.setSelection(Main.bar.getSelection() + 1);
+				Main.workspace.decline(path);
+				processed();
 				imageContainer.dispose();
 			}
 
@@ -172,5 +176,40 @@ public class ImageTile {
 		super.finalize();
 		image.dispose();
 		scaled.dispose();
+	}
+
+	private void processed() {
+		Main.bar.setSelection(Main.bar.getSelection() + 1);
+		if (Main.bar.getSelection() >= Main.bar.getMaximum()) {
+			Main.workspace.stageCompleted();
+
+			// update stage list
+			for (Control current : Main.list.getChildren())
+				current.dispose();
+			Main.list.clearAll();
+			TableItem item = new TableItem(Main.list, SWT.NONE);
+			String name = "all";
+			item.setText(name);
+			for (String current : Main.workspace.getFilters()) {
+				item = new TableItem(Main.list, SWT.NONE);
+				item.setText(current);
+			}
+
+			// update progress bar
+			try {
+				Main.bar.setMaximum(Main.workspace.getPhotos(
+						Workspace.UNPROCESSED | Workspace.ACCEPTED
+								| Workspace.DECLINED).size());
+				Main.bar.setSelection(Main.workspace.getPhotos(
+						Workspace.ACCEPTED | Workspace.DECLINED).size());
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			// update drawer
+			// Main.fillTable(tableComposite, drawerComposite, list, display,
+			// showAcceptedButton, showDeclinedButton);
+		}
 	}
 }

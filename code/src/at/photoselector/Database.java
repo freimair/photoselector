@@ -111,6 +111,26 @@ public class Database {
 		}
 	}
 
+	public List<Integer> getIntegerList(String sql) throws SQLException {
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			if (DEBUG)
+				System.out.println(sql);
+			ResultSet rs = stmt.executeQuery(sql);
+			List<Integer> result = new ArrayList<Integer>();
+			while (rs.next()) {
+				result.add(rs.getInt(1));
+			}
+			return result;
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			if (null != stmt)
+				stmt.close();
+		}
+	}
+
 	public int getInteger(String sql) throws SQLException {
 		Statement stmt = null;
 		try {

@@ -4,15 +4,15 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Workspace {
 
-	public final static int UNPROCESSED = 0;
-	public final static int ACCEPTED = 1;
-	public final static int DECLINED = 2;
+	public final static int UNPROCESSED = 1;
+	public final static int ACCEPTED = 2;
+	public final static int DECLINED = 4;
 
 	private Database db;
-	private String currentFilter;
 
 	public Workspace(String path) {
 		db = new Database(path);
@@ -36,27 +36,18 @@ public class Workspace {
 	}
 
 	public List<String> getPhotos(int filter) throws SQLException {
-		String sql = "SELECT path FROM photos WHERE stage IS NULL AND status = "
-				+ UNPROCESSED;
+		String sql = "SELECT path FROM photos WHERE stage IS NULL";
+		String tmp = "";
+		if ((UNPROCESSED & filter) > 0)
+			tmp += "status = " + UNPROCESSED + " OR ";
 		if ((ACCEPTED & filter) > 0)
-			sql += " OR status = " + ACCEPTED;
+			tmp += "status = " + ACCEPTED + " OR ";
 		if ((DECLINED & filter) > 0)
-			sql += " OR status = " + DECLINED;
-		return db.getStringList(sql);
-	}
+			tmp += "status = " + DECLINED + " OR ";
+		if (0 < tmp.length())
+			sql += " AND (" + tmp.substring(0, tmp.length() - 4) + ")";
 
-	public void blacklist(String path, String filter) {
-		// try {
-		// int pid = db.getInteger("SELECT pid FROM photos WHERE path = '"
-		// + path + "'");
-		// int fid = db.getInteger("SELECT fid FROM filters WHERE name = '"
-		// + filter + "'");
-		// db.execute("INSERT INTO filters_photos (fid, pid) VALUES (" + fid
-		// + ", " + pid + ")");
-		// } catch (SQLException e) {
-		// // TODO AuSWT.CHECK | to-generated catch block
-		// e.printStackTrace();
-		// }
+		return db.getStringList(sql);
 	}
 
 	public void accept(String path) {
@@ -69,7 +60,7 @@ public class Workspace {
 		}
 	}
 
-	public void blacklist(String path) {
+	public void decline(String path) {
 		try {
 			db.execute("UPDATE photos SET status=" + DECLINED + " WHERE path='"
 					+ path + "'");
@@ -77,19 +68,21 @@ public class Workspace {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// try {
-		// blacklist(
-		// path,
-		// db.getString("SELECT name FROM filters WHERE fid = (SELECT MAX(fid) FROM filters)"));
-		// } catch (SQLException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 	}
 
-	public void addFilter(String name) {
+	public void stageCompleted() {
 		try {
-			db.execute("INSERT INTO filters (name) VALUES ('" + name + "')");
+			String newFilterName = String.valueOf((new Random()).nextInt(100));
+
+			db.execute("INSERT INTO filters (name) VALUES ('" + newFilterName
+					+ "')");
+			int fid = db.getInteger("SELECT fid FROM filters WHERE name = '"
+					+ newFilterName + "'");
+
+			db.execute("UPDATE photos SET stage=" + fid + " WHERE status="
+					+ DECLINED);
+			db.execute("UPDATE photos SET status=" + UNPROCESSED
+					+ " WHERE status=" + ACCEPTED);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
