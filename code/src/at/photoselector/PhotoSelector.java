@@ -6,7 +6,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 
 public class PhotoSelector {
-	private static Shell shell;
 	public static ProgressBar bar;
 	public static Table list;
 	private ControlsDialog controlsDialog;
@@ -28,80 +27,6 @@ public class PhotoSelector {
 		controlsDialog = new ControlsDialog(new Shell(display), stagesDialog);
 		display.syncExec(controlsDialog);
 
-		// list.addSelectionListener(new SelectionListener() {
-		//
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// fillTable(photoListContentComposite, list, display,
-		// showAcceptedButton, showDeclinedButton);
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-		//
-		// addPhotosButton.addSelectionListener(new SelectionListener() {
-		//
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// DirectoryDialog dialog = new DirectoryDialog(shell, SWT.OPEN);
-		// workspace.addPhoto(dialog.open());
-		// fillTable(photoListContentComposite, list, display,
-		// showAcceptedButton, showDeclinedButton);
-
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-		//
-		// showAcceptedButton.addSelectionListener(new SelectionListener() {
-		//
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// fillTable(photoListContentComposite, list, display,
-		// showAcceptedButton, showDeclinedButton);
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-		//
-		// showDeclinedButton.addSelectionListener(new SelectionListener() {
-		//
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// fillTable(photoListContentComposite, list, display,
-		// showAcceptedButton, showDeclinedButton);
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent e) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
-		//
-		// fillTable(photoListContentComposite, list, display,
-		// showAcceptedButton,
-		// showDeclinedButton);
-
-		// shell.pack();
-		// shell.open();
-		// while (!shell.isDisposed()) {
-		// if (!display.readAndDispatch())
-		// display.sleep();
-		// }
-
 		Database.closeConnection();
 		display.dispose();
 	}
@@ -112,31 +37,4 @@ public class PhotoSelector {
 	public static void main(String[] args) {
 		new PhotoSelector();
 	}
-
-	// public static void fillTable(Composite drawerComposite, Table list,
-	// Display display, ToolItem showAcceptedButton,
-	// ToolItem showDeclinedButton) {
-	// try {
-	// for (Control current : drawerComposite.getChildren())
-	// current.dispose();
-	// int filter = Workspace.UNPROCESSED;
-	// if (showAcceptedButton.getSelection())
-	// filter |= Workspace.ACCEPTED;
-	// if (showDeclinedButton.getSelection())
-	// filter |= Workspace.DECLINED;
-	// for (String current : workspace.getPhotos(filter)) {
-	// // new ImageTile(tableComposite, display, current);
-	// new DrawerItem(drawerComposite, display, current);
-	// }
-	// Rectangle r = drawerComposite.getParent().getClientArea();
-	// ((ScrolledComposite) drawerComposite.getParent())
-	// .setMinSize(drawerComposite.computeSize(r.width,
-	// SWT.DEFAULT));
-	// drawerComposite.redraw();
-	// shell.redraw();
-	// } catch (SQLException e1) {
-	// // TODO Auto-generated catch block
-	// e1.printStackTrace();
-	// }
-	// }
 }

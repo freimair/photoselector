@@ -42,7 +42,7 @@ public class ControlsDialog extends MyApplicationWindow {
 				try {
 					Workspace.open(dialog.open());
 
-					updateAnything();
+					update();
 				} catch (NullPointerException e) {
 					// dialog got cancelled
 				}
@@ -59,7 +59,7 @@ public class ControlsDialog extends MyApplicationWindow {
 						SWT.OPEN);
 				Workspace.addPhoto(dialog.open());
 
-				updateAnything();
+				update();
 			}
 		});
 
@@ -82,13 +82,9 @@ public class ControlsDialog extends MyApplicationWindow {
 
 			}
 		});
-		return controlComposite;
-	}
 
-	private void updateAnything() {
-		stagesDialog.update();
-		// fillTable(photoListContentComposite, list, display,
-		// showAcceptedButton, showDeclinedButton);
+
+		return controlComposite;
 	}
 
 	@Override
@@ -99,8 +95,7 @@ public class ControlsDialog extends MyApplicationWindow {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-
+		stagesDialog.update();
 	}
 
 }
