@@ -51,16 +51,7 @@ public class PhotoSelector {
 		// workspace.addPhoto(dialog.open());
 		// fillTable(photoListContentComposite, list, display,
 		// showAcceptedButton, showDeclinedButton);
-		// try {
-		// bar.setMaximum(workspace.getPhotos(
-		// Workspace.UNPROCESSED | Workspace.ACCEPTED
-		// | Workspace.DECLINED).size());
-		// bar.setSelection(workspace.getPhotos(
-		// Workspace.ACCEPTED | Workspace.DECLINED).size());
-		// } catch (SQLException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
+
 		// }
 		//
 		// @Override
