@@ -95,4 +95,10 @@ public class ControlsDialog extends MyApplicationWindow {
 		return super.close();
 	}
 
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -50,4 +50,10 @@ public class TableDialog extends MyApplicationWindow {
 		});
 		return tableComposite;
 	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+
+	}
 }

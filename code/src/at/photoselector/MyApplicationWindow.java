@@ -3,7 +3,8 @@ package at.photoselector;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Shell;
 
-public class MyApplicationWindow extends ApplicationWindow implements Runnable {
+public abstract class MyApplicationWindow extends ApplicationWindow implements
+		Runnable {
 
 	public MyApplicationWindow(Shell parentShell) {
 		super(parentShell);
@@ -28,4 +29,6 @@ public class MyApplicationWindow extends ApplicationWindow implements Runnable {
 		// Open the main window
 		open();
 	}
+
+	public abstract void update();
 }

@@ -58,6 +58,12 @@ public class DrawerDialog extends MyApplicationWindow {
 		
 		return drawerComposite;
 	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+
+	}
 	
 
 }

@@ -2,7 +2,7 @@ package at.photoselector;
 
 import org.eclipse.swt.widgets.Shell;
 
-public class UncloseableApplicationWindow extends MyApplicationWindow {
+public abstract class UncloseableApplicationWindow extends MyApplicationWindow {
 	public UncloseableApplicationWindow(Shell parentShell) {
 		super(parentShell);
 	}
