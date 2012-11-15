@@ -1,6 +1,7 @@
 package at.photoselector;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.RowLayout;
@@ -30,20 +31,18 @@ public class ControlsDialog extends MyApplicationWindow {
 	protected Control createContents(final Composite parent) {
 		Composite controlComposite = new Composite(parent, SWT.NONE);
 		controlComposite.setLayout(new RowLayout(SWT.VERTICAL));
+
 		Button switchWorkspaceButton = new Button(controlComposite, SWT.PUSH);
 		switchWorkspaceButton.setText("Switch Workspace");
-		switchWorkspaceButton.addSelectionListener(new SelectionListener() {
-
+		switchWorkspaceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent event) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				// workspace = new Workspace(dialog.open());
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
+				try {
+					Workspace.open(dialog.open());
+				} catch (NullPointerException e) {
+					// dialog got cancelled
+				}
 			}
 		});
 

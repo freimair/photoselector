@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Random;
 
 public class Workspace {
+
+	//################################ STATICS ################################
+
 	public final static int UNPROCESSED = 1;
 	public final static int ACCEPTED = 2;
 	public final static int DECLINED = 4;
@@ -15,13 +18,6 @@ public class Workspace {
 
 	public static void open(String path) {
 		instance = new Workspace(path);
-	}
-
-
-	private Database db;
-
-	private Workspace(String path) {
-		db = new Database(path);
 	}
 
 	public static void addPhoto(String path) {
@@ -111,4 +107,19 @@ public class Workspace {
 		}
 	}
 
+	// ################################ NON-STATICS ################################
+
+	private Database db;
+
+	/**
+	 * Instantiates a new workspace. I. a. create a connection to the new
+	 * database after closing the old one.
+	 * 
+	 * @param path
+	 *            the absolut path to the database file
+	 */
+	private Workspace(String path) {
+		Database.closeConnection();
+		db = new Database(path);
+	}
 }
