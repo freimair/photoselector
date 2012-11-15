@@ -25,6 +25,9 @@ public abstract class MyApplicationWindow extends ApplicationWindow implements
 		} else if (this instanceof DrawerDialog) {
 			shell.setLocation(130, 0);
 			shell.setSize(300, 460);
+		} else if (this instanceof TableDialog) {
+			shell.setLocation(435, 0);
+			shell.setSize(460, 460);
 		}
 	}
 

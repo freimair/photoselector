@@ -16,12 +16,14 @@ public class ControlsDialog extends MyApplicationWindow {
 
 	private StagesDialog stagesDialog;
 	private DrawerDialog drawerDialog;
+	private TableDialog tableDialog;
 
 	public ControlsDialog(Shell parentShell, StagesDialog stagesDialog,
-			DrawerDialog drawerDialog) {
+			DrawerDialog drawerDialog, TableDialog tableDialog) {
 		super(parentShell);
 		this.stagesDialog = stagesDialog;
 		this.drawerDialog = drawerDialog;
+		this.tableDialog = tableDialog;
 	}
 
 	@Override
@@ -95,6 +97,7 @@ public class ControlsDialog extends MyApplicationWindow {
 	public boolean close() {
 		stagesDialog.closeApplication();
 		drawerDialog.closeApplication();
+		tableDialog.closeApplication();
 		return super.close();
 	}
 
@@ -102,6 +105,7 @@ public class ControlsDialog extends MyApplicationWindow {
 	public void update() {
 		stagesDialog.update();
 		drawerDialog.update();
+		tableDialog.update();
 	}
 
 }

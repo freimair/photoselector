@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-public class TableDialog extends MyApplicationWindow {
+public class TableDialog extends UncloseableApplicationWindow {
 
 	public TableDialog(Shell parentShell) {
 		super(parentShell);
@@ -43,9 +43,8 @@ public class TableDialog extends MyApplicationWindow {
 					return;
 				}
 
-				// new ImageTile(tableComposite, parent.getDisplay(), (String)
-				// event.data,
-				// event.x, event.y);
+				new ImageTile(tableComposite, getShell().getDisplay(),
+						(String) event.data, event.x, event.y);
 			}
 		});
 		return tableComposite;
