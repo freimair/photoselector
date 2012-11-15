@@ -12,6 +12,13 @@ public class MyApplicationWindow extends ApplicationWindow implements Runnable {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
+
+		// TODO memorize window locations on shutdown and restore at program
+		// startup
+		if (this instanceof StagesDialog) {
+			shell.setLocation(0, 0);
+			shell.setSize(150, 300);
+		}
 	}
 
 	public void run() {
