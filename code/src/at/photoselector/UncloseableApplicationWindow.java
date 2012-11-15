@@ -3,8 +3,11 @@ package at.photoselector;
 import org.eclipse.swt.widgets.Shell;
 
 public abstract class UncloseableApplicationWindow extends MyApplicationWindow {
-	public UncloseableApplicationWindow(Shell parentShell) {
+	protected ControlsDialog controlsDialog;
+
+	public UncloseableApplicationWindow(Shell parentShell, ControlsDialog dialog) {
 		super(parentShell);
+		controlsDialog = dialog;
 	}
 
 	@Override

@@ -14,9 +14,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class TableDialog extends UncloseableApplicationWindow {
 
-	public TableDialog(Shell parentShell) {
-		super(parentShell);
-		// TODO Auto-generated constructor stub
+	public TableDialog(Shell parentShell, ControlsDialog dialog) {
+		super(parentShell, dialog);
 	}
 
 	@Override

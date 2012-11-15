@@ -23,8 +23,8 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private Composite photoListContentComposite;
 	private ScrolledComposite photoListComposite;
 
-	public DrawerDialog(Shell parentShell) {
-		super(parentShell);
+	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
+		super(parentShell, dialog);
 	}
 
 	@Override

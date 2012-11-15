@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -18,12 +19,8 @@ public class ControlsDialog extends MyApplicationWindow {
 	private DrawerDialog drawerDialog;
 	private TableDialog tableDialog;
 
-	public ControlsDialog(Shell parentShell, StagesDialog stagesDialog,
-			DrawerDialog drawerDialog, TableDialog tableDialog) {
+	public ControlsDialog(Shell parentShell) {
 		super(parentShell);
-		this.stagesDialog = stagesDialog;
-		this.drawerDialog = drawerDialog;
-		this.tableDialog = tableDialog;
 	}
 
 	@Override
@@ -35,6 +32,18 @@ public class ControlsDialog extends MyApplicationWindow {
 
 	@Override
 	protected Control createContents(final Composite parent) {
+		// create other windows
+		Display display = getShell().getDisplay();
+		stagesDialog = new StagesDialog(new Shell(display), this);
+		display.asyncExec(stagesDialog);
+
+		drawerDialog = new DrawerDialog(new Shell(display), this);
+		display.asyncExec(drawerDialog);
+
+		tableDialog = new TableDialog(new Shell(display), this);
+		display.asyncExec(tableDialog);
+
+		// create controls
 		Composite controlComposite = new Composite(parent, SWT.NONE);
 		controlComposite.setLayout(new RowLayout(SWT.VERTICAL));
 

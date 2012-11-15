@@ -17,9 +17,8 @@ public class StagesDialog extends UncloseableApplicationWindow {
 	private Table list;
 	private ProgressBar bar;
 
-	public StagesDialog(Shell parentShell) {
-		super(parentShell);
-		// TODO Auto-generated constructor stub
+	public StagesDialog(Shell parentShell, ControlsDialog dialog) {
+		super(parentShell, dialog);
 	}
 
 	@Override
