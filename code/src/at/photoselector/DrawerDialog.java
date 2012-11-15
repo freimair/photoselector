@@ -19,6 +19,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private ToolItem showAcceptedButton;
 	private ToolItem showDeclinedButton;
 	private Composite photoListContentComposite;
+	private ScrolledComposite photoListComposite;
 
 	public DrawerDialog(Shell parentShell) {
 		super(parentShell);
@@ -48,7 +49,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		zoomOutButton.setText("-");
 		drawerToolbar.pack();
 
-		final ScrolledComposite photoListComposite = new ScrolledComposite(
+		photoListComposite = new ScrolledComposite(
 				drawerComposite, SWT.V_SCROLL);
 		photoListComposite.setLayoutData(new RowData(270, 380));
 
@@ -63,7 +64,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		photoListComposite.setContent(photoListContentComposite);
 		photoListComposite.setExpandHorizontal(true);
 		photoListComposite.setExpandVertical(true);
-		
+
 		update();
 
 		return drawerComposite;
@@ -84,11 +85,14 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 						.getDisplay(),
 						current);
 			}
+
+			// just make sure that there has been a layout calculated before
+			photoListContentComposite.getParent().getParent().layout();
 			Rectangle r = photoListContentComposite.getParent().getClientArea();
 			((ScrolledComposite) photoListContentComposite.getParent())
 					.setMinSize(photoListContentComposite.computeSize(r.width,
 							SWT.DEFAULT));
-			photoListContentComposite.redraw();
+			photoListContentComposite.getParent().redraw();
 			getShell().redraw();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
