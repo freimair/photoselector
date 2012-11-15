@@ -53,48 +53,56 @@ public class Workspace {
 		return instance.db.getStringList(sql);
 	}
 
-	public static void accept(String path) {
+	public static boolean accept(String path) {
 		try {
 			instance.db.execute("UPDATE photos SET status=" + ACCEPTED
 					+ " WHERE path='"
 					+ path + "'");
+
+			return isStageCompleted();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 
-	public static void decline(String path) {
+	public static boolean decline(String path) {
 		try {
 			instance.db.execute("UPDATE photos SET status=" + DECLINED
 					+ " WHERE path='"
 					+ path + "'");
+			return isStageCompleted();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 
-	public static void stageCompleted() {
-		try {
-			String newFilterName = String.valueOf((new Random()).nextInt(100));
-
-			instance.db.execute("INSERT INTO filters (name) VALUES ('"
-					+ newFilterName
-					+ "')");
-			int fid = instance.db
-					.getInteger("SELECT fid FROM filters WHERE name = '"
-					+ newFilterName + "'");
-
-			instance.db.execute("UPDATE photos SET stage=" + fid
-					+ " WHERE status="
-					+ DECLINED);
-			instance.db.execute("UPDATE photos SET status=" + UNPROCESSED
-					+ " WHERE status=" + ACCEPTED);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static boolean isStageCompleted() throws SQLException {
+		if (0 == instance.db.getIntegerList(
+				"SELECT pid FROM photos WHERE stage IS NULL AND status <> "
+						+ UNPROCESSED).size()) {
+			stageCompleted();
+			return true;
 		}
+		return false;
+	}
+
+	public static void stageCompleted() throws SQLException {
+		String newFilterName = String.valueOf((new Random()).nextInt(100));
+
+		instance.db.execute("INSERT INTO filters (name) VALUES ('"
+				+ newFilterName + "')");
+		int fid = instance.db
+				.getInteger("SELECT fid FROM filters WHERE name = '"
+						+ newFilterName + "'");
+
+		instance.db.execute("UPDATE photos SET stage=" + fid + " WHERE status="
+				+ DECLINED);
+		instance.db.execute("UPDATE photos SET status=" + UNPROCESSED
+				+ " WHERE status=" + ACCEPTED);
 	}
 
 	public static List<String> getFilters() {

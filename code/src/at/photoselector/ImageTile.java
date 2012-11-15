@@ -1,7 +1,5 @@
 package at.photoselector;
 
-import java.sql.SQLException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -16,11 +14,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TableItem;
 
 public class ImageTile {
 
@@ -29,11 +25,14 @@ public class ImageTile {
 	Image image;
 	Image scaled;
 	private String path;
+	ControlsDialog controlsDialog;
 
-	public ImageTile(final Composite container, Display display,
+	public ImageTile(final Composite container, ControlsDialog dialog,
 			String imagePath, int x, int y) {
 		path = imagePath;
-		image = new Image(display, imagePath);
+		controlsDialog = dialog;
+
+		image = new Image(dialog.getShell().getDisplay(), imagePath);
 		scaled = image;
 
 		imageContainer = new Composite(container, SWT.NONE);
@@ -54,8 +53,8 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Workspace.accept(path);
-				processed();
+				if (Workspace.accept(path))
+					controlsDialog.update();
 				imageContainer.dispose();
 			}
 
@@ -72,8 +71,8 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Workspace.decline(path);
-				processed();
+				if (Workspace.decline(path))
+					controlsDialog.update();
 				imageContainer.dispose();
 			}
 
@@ -199,40 +198,5 @@ public class ImageTile {
 		super.finalize();
 		image.dispose();
 		scaled.dispose();
-	}
-
-	private void processed() {
-		PhotoSelector.bar.setSelection(PhotoSelector.bar.getSelection() + 1);
-		if (PhotoSelector.bar.getSelection() >= PhotoSelector.bar.getMaximum()) {
-			Workspace.stageCompleted();
-
-			// update stage list
-			for (Control current : PhotoSelector.list.getChildren())
-				current.dispose();
-			PhotoSelector.list.clearAll();
-			TableItem item = new TableItem(PhotoSelector.list, SWT.NONE);
-			String name = "all";
-			item.setText(name);
-			for (String current : Workspace.getFilters()) {
-				item = new TableItem(PhotoSelector.list, SWT.NONE);
-				item.setText(current);
-			}
-
-			// update progress bar
-			try {
-				PhotoSelector.bar.setMaximum(Workspace.getPhotos(
-						Workspace.UNPROCESSED | Workspace.ACCEPTED
-								| Workspace.DECLINED).size());
-				PhotoSelector.bar.setSelection(Workspace.getPhotos(
-						Workspace.ACCEPTED | Workspace.DECLINED).size());
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			// update drawer
-			// Main.fillTable(tableComposite, drawerComposite, list, display,
-			// showAcceptedButton, showDeclinedButton);
-		}
 	}
 }

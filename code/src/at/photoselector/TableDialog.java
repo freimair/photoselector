@@ -41,9 +41,10 @@ public class TableDialog extends UncloseableApplicationWindow {
 					event.detail = DND.DROP_NONE;
 					return;
 				}
-
-				new ImageTile(tableComposite, getShell().getDisplay(),
-						(String) event.data, event.x, event.y);
+				
+				new ImageTile(tableComposite, controlsDialog,
+						(String) event.data,
+						event.x, event.y);
 			}
 		});
 		return tableComposite;
