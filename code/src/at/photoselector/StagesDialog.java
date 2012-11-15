@@ -7,7 +7,6 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -21,11 +20,16 @@ public class StagesDialog extends UncloseableApplicationWindow {
 	}
 
 	@Override
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+
+		shell.setText("Stages");
+	}
+
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite filterComposite = new Composite(parent, SWT.BORDER);
 		filterComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		Label filterListLabel = new Label(filterComposite, SWT.NONE);
-		filterListLabel.setText("Stages");
 		Table list = new Table(filterComposite, SWT.BORDER | SWT.V_SCROLL);
 		list.setLayoutData(new RowData(100, 150));
 

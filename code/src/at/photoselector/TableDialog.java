@@ -20,6 +20,13 @@ public class TableDialog extends MyApplicationWindow {
 	}
 
 	@Override
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+
+		shell.setText("Table");
+	}
+
+	@Override
 	protected Control createContents(Composite parent) {
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new RowData(500, 500));

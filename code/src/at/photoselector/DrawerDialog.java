@@ -17,6 +17,13 @@ public class DrawerDialog extends MyApplicationWindow {
 		super(parentShell);
 	}
 
+	@Override
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+
+		shell.setText("Drawer");
+	}
+
 	protected Control createContents(Composite parent) {
 		final Composite drawerComposite = new Composite(parent, SWT.NONE);
 		drawerComposite.setLayout(new RowLayout(SWT.VERTICAL));

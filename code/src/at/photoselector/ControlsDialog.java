@@ -20,6 +20,13 @@ public class ControlsDialog extends MyApplicationWindow {
 	}
 
 	@Override
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+
+		shell.setText("PhotoSelector");
+	}
+
+	@Override
 	protected Control createContents(final Composite parent) {
 		Composite controlComposite = new Composite(parent, SWT.NONE);
 		controlComposite.setLayout(new RowLayout(SWT.VERTICAL));
