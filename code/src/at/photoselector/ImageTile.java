@@ -55,7 +55,7 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.workspace.accept(path);
+				PhotoSelector.workspace.accept(path);
 				processed();
 				imageContainer.dispose();
 			}
@@ -73,7 +73,7 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.workspace.decline(path);
+				PhotoSelector.workspace.decline(path);
 				processed();
 				imageContainer.dispose();
 			}
@@ -203,28 +203,28 @@ public class ImageTile {
 	}
 
 	private void processed() {
-		Main.bar.setSelection(Main.bar.getSelection() + 1);
-		if (Main.bar.getSelection() >= Main.bar.getMaximum()) {
-			Main.workspace.stageCompleted();
+		PhotoSelector.bar.setSelection(PhotoSelector.bar.getSelection() + 1);
+		if (PhotoSelector.bar.getSelection() >= PhotoSelector.bar.getMaximum()) {
+			PhotoSelector.workspace.stageCompleted();
 
 			// update stage list
-			for (Control current : Main.list.getChildren())
+			for (Control current : PhotoSelector.list.getChildren())
 				current.dispose();
-			Main.list.clearAll();
-			TableItem item = new TableItem(Main.list, SWT.NONE);
+			PhotoSelector.list.clearAll();
+			TableItem item = new TableItem(PhotoSelector.list, SWT.NONE);
 			String name = "all";
 			item.setText(name);
-			for (String current : Main.workspace.getFilters()) {
-				item = new TableItem(Main.list, SWT.NONE);
+			for (String current : PhotoSelector.workspace.getFilters()) {
+				item = new TableItem(PhotoSelector.list, SWT.NONE);
 				item.setText(current);
 			}
 
 			// update progress bar
 			try {
-				Main.bar.setMaximum(Main.workspace.getPhotos(
+				PhotoSelector.bar.setMaximum(PhotoSelector.workspace.getPhotos(
 						Workspace.UNPROCESSED | Workspace.ACCEPTED
 								| Workspace.DECLINED).size());
-				Main.bar.setSelection(Main.workspace.getPhotos(
+				PhotoSelector.bar.setSelection(PhotoSelector.workspace.getPhotos(
 						Workspace.ACCEPTED | Workspace.DECLINED).size());
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block

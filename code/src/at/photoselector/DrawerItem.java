@@ -64,7 +64,7 @@ public class DrawerItem {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.workspace.accept(path);
+				PhotoSelector.workspace.accept(path);
 				// processed();
 				imageContainer.dispose();
 			}
