@@ -29,7 +29,7 @@ public class ControlsDialog extends MyApplicationWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog((Shell) parent, SWT.SAVE);
+				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
 				// workspace = new Workspace(dialog.open());
 			}
 

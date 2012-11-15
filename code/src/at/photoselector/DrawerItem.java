@@ -8,8 +8,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
@@ -64,7 +62,7 @@ public class DrawerItem {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PhotoSelector.workspace.accept(path);
+				Workspace.accept(path);
 				// processed();
 				imageContainer.dispose();
 			}

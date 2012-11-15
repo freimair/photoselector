@@ -6,7 +6,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -55,7 +54,7 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PhotoSelector.workspace.accept(path);
+				Workspace.accept(path);
 				processed();
 				imageContainer.dispose();
 			}
@@ -73,7 +72,7 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PhotoSelector.workspace.decline(path);
+				Workspace.decline(path);
 				processed();
 				imageContainer.dispose();
 			}
@@ -205,7 +204,7 @@ public class ImageTile {
 	private void processed() {
 		PhotoSelector.bar.setSelection(PhotoSelector.bar.getSelection() + 1);
 		if (PhotoSelector.bar.getSelection() >= PhotoSelector.bar.getMaximum()) {
-			PhotoSelector.workspace.stageCompleted();
+			Workspace.stageCompleted();
 
 			// update stage list
 			for (Control current : PhotoSelector.list.getChildren())
@@ -214,17 +213,17 @@ public class ImageTile {
 			TableItem item = new TableItem(PhotoSelector.list, SWT.NONE);
 			String name = "all";
 			item.setText(name);
-			for (String current : PhotoSelector.workspace.getFilters()) {
+			for (String current : Workspace.getFilters()) {
 				item = new TableItem(PhotoSelector.list, SWT.NONE);
 				item.setText(current);
 			}
 
 			// update progress bar
 			try {
-				PhotoSelector.bar.setMaximum(PhotoSelector.workspace.getPhotos(
+				PhotoSelector.bar.setMaximum(Workspace.getPhotos(
 						Workspace.UNPROCESSED | Workspace.ACCEPTED
 								| Workspace.DECLINED).size());
-				PhotoSelector.bar.setSelection(PhotoSelector.workspace.getPhotos(
+				PhotoSelector.bar.setSelection(Workspace.getPhotos(
 						Workspace.ACCEPTED | Workspace.DECLINED).size());
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block

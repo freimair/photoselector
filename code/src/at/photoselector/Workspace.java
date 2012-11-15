@@ -7,18 +7,24 @@ import java.util.List;
 import java.util.Random;
 
 public class Workspace {
-
 	public final static int UNPROCESSED = 1;
 	public final static int ACCEPTED = 2;
 	public final static int DECLINED = 4;
 
+	private static Workspace instance;
+
+	public static void open(String path) {
+		instance = new Workspace(path);
+	}
+
+
 	private Database db;
 
-	public Workspace(String path) {
+	private Workspace(String path) {
 		db = new Database(path);
 	}
 
-	public void addPhoto(String path) {
+	public static void addPhoto(String path) {
 		File location = new File(path);
 		if (location.isDirectory()) {
 			for (File current : location.listFiles())
@@ -26,7 +32,8 @@ public class Workspace {
 		}
 		if (location.getName().matches(".*jpe?g$"))
 			try {
-				db.execute("INSERT INTO photos (path, status) VALUES ('"
+				instance.db
+						.execute("INSERT INTO photos (path, status) VALUES ('"
 						+ location.getAbsolutePath() + "', " + UNPROCESSED
 						+ ")");
 			} catch (SQLException e) {
@@ -35,7 +42,7 @@ public class Workspace {
 			}
 	}
 
-	public List<String> getPhotos(int filter) throws SQLException {
+	public static List<String> getPhotos(int filter) throws SQLException {
 		String sql = "SELECT path FROM photos WHERE stage IS NULL";
 		String tmp = "";
 		if ((UNPROCESSED & filter) > 0)
@@ -47,12 +54,13 @@ public class Workspace {
 		if (0 < tmp.length())
 			sql += " AND (" + tmp.substring(0, tmp.length() - 4) + ")";
 
-		return db.getStringList(sql);
+		return instance.db.getStringList(sql);
 	}
 
-	public void accept(String path) {
+	public static void accept(String path) {
 		try {
-			db.execute("UPDATE photos SET status=" + ACCEPTED + " WHERE path='"
+			instance.db.execute("UPDATE photos SET status=" + ACCEPTED
+					+ " WHERE path='"
 					+ path + "'");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -60,9 +68,10 @@ public class Workspace {
 		}
 	}
 
-	public void decline(String path) {
+	public static void decline(String path) {
 		try {
-			db.execute("UPDATE photos SET status=" + DECLINED + " WHERE path='"
+			instance.db.execute("UPDATE photos SET status=" + DECLINED
+					+ " WHERE path='"
 					+ path + "'");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -70,18 +79,21 @@ public class Workspace {
 		}
 	}
 
-	public void stageCompleted() {
+	public static void stageCompleted() {
 		try {
 			String newFilterName = String.valueOf((new Random()).nextInt(100));
 
-			db.execute("INSERT INTO filters (name) VALUES ('" + newFilterName
+			instance.db.execute("INSERT INTO filters (name) VALUES ('"
+					+ newFilterName
 					+ "')");
-			int fid = db.getInteger("SELECT fid FROM filters WHERE name = '"
+			int fid = instance.db
+					.getInteger("SELECT fid FROM filters WHERE name = '"
 					+ newFilterName + "'");
 
-			db.execute("UPDATE photos SET stage=" + fid + " WHERE status="
+			instance.db.execute("UPDATE photos SET stage=" + fid
+					+ " WHERE status="
 					+ DECLINED);
-			db.execute("UPDATE photos SET status=" + UNPROCESSED
+			instance.db.execute("UPDATE photos SET status=" + UNPROCESSED
 					+ " WHERE status=" + ACCEPTED);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -89,9 +101,9 @@ public class Workspace {
 		}
 	}
 
-	public List<String> getFilters() {
+	public static List<String> getFilters() {
 		try {
-			return db.getStringList("SELECT name FROM filters");
+			return instance.db.getStringList("SELECT name FROM filters");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

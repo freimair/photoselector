@@ -40,10 +40,10 @@ public class StagesDialog extends UncloseableApplicationWindow {
 
 		ProgressBar bar = new ProgressBar(filterComposite, SWT.SMOOTH);
 		try {
-			bar.setMaximum(PhotoSelector.workspace.getPhotos(
+			bar.setMaximum(Workspace.getPhotos(
 					Workspace.UNPROCESSED | Workspace.ACCEPTED
 							| Workspace.DECLINED).size());
-			bar.setSelection(PhotoSelector.workspace.getPhotos(
+			bar.setSelection(Workspace.getPhotos(
 					Workspace.ACCEPTED | Workspace.DECLINED).size());
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
