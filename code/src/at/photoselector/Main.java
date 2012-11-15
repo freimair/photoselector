@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class Main {
 	static Workspace workspace = new Workspace(
@@ -112,14 +114,18 @@ public class Main {
 
 		final Composite drawerComposite = new Composite(shell, SWT.NONE);
 		drawerComposite.setLayout(new RowLayout(SWT.VERTICAL));
-
-		final Button showAcceptedButton = new Button(drawerComposite,
-				SWT.TOGGLE);
+		ToolBar drawerToolbar = new ToolBar(drawerComposite, SWT.NONE);
+		final ToolItem showAcceptedButton = new ToolItem(drawerToolbar,
+				SWT.CHECK);
 		showAcceptedButton.setText("accepted");
-
-		final Button showDeclinedButton = new Button(drawerComposite,
-				SWT.TOGGLE);
+		final ToolItem showDeclinedButton = new ToolItem(drawerToolbar,
+				SWT.CHECK);
 		showDeclinedButton.setText("declined");
+		final ToolItem zoomInButton = new ToolItem(drawerToolbar, SWT.PUSH);
+		zoomInButton.setText("+");
+		final ToolItem zoomOutButton = new ToolItem(drawerToolbar, SWT.PUSH);
+		zoomOutButton.setText("-");
+		drawerToolbar.pack();
 
 		final ScrolledComposite photoListComposite = new ScrolledComposite(
 				drawerComposite, SWT.V_SCROLL);
@@ -243,8 +249,8 @@ public class Main {
 	}
 
 	public static void fillTable(Composite drawerComposite, Table list,
-			Display display, Button showAcceptedButton,
-			Button showDeclinedButton) {
+			Display display, ToolItem showAcceptedButton,
+			ToolItem showDeclinedButton) {
 		try {
 			for (Control current : drawerComposite.getChildren())
 				current.dispose();
