@@ -95,27 +95,28 @@ public class DrawerItem {
 			}
 		});
 
-		imageContainer.addMouseTrackListener(new MouseTrackListener() {
-
-			@Override
-			public void mouseHover(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExit(MouseEvent e) {
-				buttonAccept.setVisible(false);
-				buttonDecline.setVisible(false);
-
-			}
-
-			@Override
-			public void mouseEnter(MouseEvent e) {
-				buttonAccept.setVisible(true);
-				buttonDecline.setVisible(true);
-			}
-		});
+		// TODO does not work stable. overlapping and tracker loops. find other way.
+//		imageContainer.addMouseTrackListener(new MouseTrackListener() {
+//
+//			@Override
+//			public void mouseHover(MouseEvent e) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void mouseExit(MouseEvent e) {
+//				buttonAccept.setVisible(false);
+//				buttonDecline.setVisible(false);
+//
+//			}
+//
+//			@Override
+//			public void mouseEnter(MouseEvent e) {
+//				buttonAccept.setVisible(true);
+//				buttonDecline.setVisible(true);
+//			}
+//		});
 
 		final DragSource source = new DragSource(imageContainer, DND.DROP_MOVE
 				| DND.DROP_COPY | DND.DROP_LINK);

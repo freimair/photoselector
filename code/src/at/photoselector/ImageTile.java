@@ -85,27 +85,27 @@ public class ImageTile {
 			}
 		});
 
-		imageContainer.addMouseTrackListener(new MouseTrackListener() {
-
-			@Override
-			public void mouseHover(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExit(MouseEvent e) {
-				buttonAccept.setVisible(false);
-				buttonDecline.setVisible(false);
-
-			}
-
-			@Override
-			public void mouseEnter(MouseEvent e) {
-				buttonAccept.setVisible(true);
-				buttonDecline.setVisible(true);
-			}
-		});
+//		imageContainer.addMouseTrackListener(new MouseTrackListener() {
+//
+//			@Override
+//			public void mouseHover(MouseEvent e) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void mouseExit(MouseEvent e) {
+//				buttonAccept.setVisible(false);
+//				buttonDecline.setVisible(false);
+//
+//			}
+//
+//			@Override
+//			public void mouseEnter(MouseEvent e) {
+//				buttonAccept.setVisible(true);
+//				buttonDecline.setVisible(true);
+//			}
+//		});
 
 		// draw the image
 		imageContainer.addListener(SWT.Paint, new Listener() {
