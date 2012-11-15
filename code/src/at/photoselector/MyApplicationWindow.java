@@ -22,6 +22,9 @@ public abstract class MyApplicationWindow extends ApplicationWindow implements
 		} else if (this instanceof StagesDialog) {
 			shell.setLocation(0, 185);
 			shell.setSize(130, 300);
+		} else if (this instanceof DrawerDialog) {
+			shell.setLocation(130, 0);
+			shell.setSize(300, 460);
 		}
 	}
 

@@ -15,10 +15,13 @@ import org.eclipse.swt.widgets.Shell;
 public class ControlsDialog extends MyApplicationWindow {
 
 	private StagesDialog stagesDialog;
+	private DrawerDialog drawerDialog;
 
-	public ControlsDialog(Shell parentShell, StagesDialog stagesDialog) {
+	public ControlsDialog(Shell parentShell, StagesDialog stagesDialog,
+			DrawerDialog drawerDialog) {
 		super(parentShell);
 		this.stagesDialog = stagesDialog;
+		this.drawerDialog = drawerDialog;
 	}
 
 	@Override
@@ -83,6 +86,7 @@ public class ControlsDialog extends MyApplicationWindow {
 			}
 		});
 
+		// update();
 
 		return controlComposite;
 	}
@@ -90,12 +94,14 @@ public class ControlsDialog extends MyApplicationWindow {
 	@Override
 	public boolean close() {
 		stagesDialog.closeApplication();
+		drawerDialog.closeApplication();
 		return super.close();
 	}
 
 	@Override
 	public void update() {
 		stagesDialog.update();
+		drawerDialog.update();
 	}
 
 }

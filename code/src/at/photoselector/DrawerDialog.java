@@ -1,7 +1,10 @@
 package at.photoselector;
 
+import java.sql.SQLException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -10,9 +13,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class DrawerDialog extends MyApplicationWindow {
+public class DrawerDialog extends UncloseableApplicationWindow {
 
 	
+	private ToolItem showAcceptedButton;
+	private ToolItem showDeclinedButton;
+	private Composite photoListContentComposite;
+
 	public DrawerDialog(Shell parentShell) {
 		super(parentShell);
 	}
@@ -25,13 +32,14 @@ public class DrawerDialog extends MyApplicationWindow {
 	}
 
 	protected Control createContents(Composite parent) {
-		final Composite drawerComposite = new Composite(parent, SWT.NONE);
+		Composite drawerComposite = new Composite(parent, SWT.NONE);
 		drawerComposite.setLayout(new RowLayout(SWT.VERTICAL));
 		ToolBar drawerToolbar = new ToolBar(drawerComposite, SWT.NONE);
-		final ToolItem showAcceptedButton = new ToolItem(drawerToolbar,
+
+		showAcceptedButton = new ToolItem(drawerToolbar,
 				SWT.CHECK);
 		showAcceptedButton.setText("accepted");
-		final ToolItem showDeclinedButton = new ToolItem(drawerToolbar,
+		showDeclinedButton = new ToolItem(drawerToolbar,
 				SWT.CHECK);
 		showDeclinedButton.setText("declined");
 		final ToolItem zoomInButton = new ToolItem(drawerToolbar, SWT.PUSH);
@@ -42,9 +50,9 @@ public class DrawerDialog extends MyApplicationWindow {
 
 		final ScrolledComposite photoListComposite = new ScrolledComposite(
 				drawerComposite, SWT.V_SCROLL);
-		photoListComposite.setLayoutData(new RowData(330, 500));
+		photoListComposite.setLayoutData(new RowData(270, 380));
 
-		final Composite photoListContentComposite = new Composite(
+		photoListContentComposite = new Composite(
 				photoListComposite, SWT.NONE);
 		photoListContentComposite.setBackground(parent.getDisplay()
 				.getSystemColor(SWT.COLOR_GRAY));
@@ -56,13 +64,36 @@ public class DrawerDialog extends MyApplicationWindow {
 		photoListComposite.setExpandHorizontal(true);
 		photoListComposite.setExpandVertical(true);
 		
+		update();
+
 		return drawerComposite;
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-
+		try {
+			for (Control current : photoListContentComposite.getChildren())
+				current.dispose();
+			int filter = Workspace.UNPROCESSED;
+			if (showAcceptedButton.getSelection())
+				filter |= Workspace.ACCEPTED;
+			if (showDeclinedButton.getSelection())
+				filter |= Workspace.DECLINED;
+			for (String current : Workspace.getPhotos(filter)) {
+				new DrawerItem(photoListContentComposite, getShell()
+						.getDisplay(),
+						current);
+			}
+			Rectangle r = photoListContentComposite.getParent().getClientArea();
+			((ScrolledComposite) photoListContentComposite.getParent())
+					.setMinSize(photoListContentComposite.computeSize(r.width,
+							SWT.DEFAULT));
+			photoListContentComposite.redraw();
+			getShell().redraw();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 

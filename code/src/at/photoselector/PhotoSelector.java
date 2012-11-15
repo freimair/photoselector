@@ -18,13 +18,14 @@ public class PhotoSelector {
 		StagesDialog stagesDialog = new StagesDialog(new Shell(display));
 		display.asyncExec(stagesDialog);
 
-		// DrawerDialog drawerDialog = new DrawerDialog(new Shell(display));
-		// display.asyncExec(drawerDialog);
+		DrawerDialog drawerDialog = new DrawerDialog(new Shell(display));
+		display.asyncExec(drawerDialog);
 
 		// tableDialog = new TableDialog(new Shell(display));
 		// display.asyncExec(tableDialog);
 		//
-		controlsDialog = new ControlsDialog(new Shell(display), stagesDialog);
+		controlsDialog = new ControlsDialog(new Shell(display), stagesDialog,
+				drawerDialog);
 		display.syncExec(controlsDialog);
 
 		Database.closeConnection();
