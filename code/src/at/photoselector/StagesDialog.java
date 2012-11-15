@@ -37,6 +37,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 		list.setLayoutData(new RowData(100, 150));
 
 		bar = new ProgressBar(filterComposite, SWT.SMOOTH);
+		bar.setLayoutData(new RowData(120, 15));
 		try {
 			bar.setMaximum(Workspace.getPhotos(
 					Workspace.UNPROCESSED | Workspace.ACCEPTED

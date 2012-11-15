@@ -16,9 +16,12 @@ public abstract class MyApplicationWindow extends ApplicationWindow implements
 
 		// TODO memorize window locations on shutdown and restore at program
 		// startup
-		if (this instanceof StagesDialog) {
+		if (this instanceof ControlsDialog) {
 			shell.setLocation(0, 0);
-			shell.setSize(150, 300);
+			shell.setSize(130, 160);
+		} else if (this instanceof StagesDialog) {
+			shell.setLocation(0, 185);
+			shell.setSize(130, 300);
 		}
 	}
 
