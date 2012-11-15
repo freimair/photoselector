@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 public class Settings {
@@ -20,10 +19,8 @@ public class Settings {
 			.getProperty("user.home") + "/.photoselector";
 	private static File file;
 
-	public static final String controlsDialog = "controlsDialog";
-	public static final String stagesDialog = "stagesDialog";
-	public static final String drawerDialog = "drawerDialog";
-	public static final String tableDialog = "tableDialog";
+	private static final String recent = "recent";
+	private static final String recentCount = "recentCount";
 
 	public static void load() {
 		properties = new Properties();
@@ -40,14 +37,45 @@ public class Settings {
 		}
 	}
 
-	public static List<String> getRecent() {
-		return new ArrayList<String>();
+	public static void setRecent(String path) {
+		if (getRecent().contains(path)) {
+			// exchange
+			properties.setProperty(recent + (getRecent().indexOf(path) + 1),
+					properties.getProperty(recent + "1"));
+			properties.setProperty(recent + "1", path);
+		} else {
+			// add new
+			for (int i = Integer.valueOf(properties.getProperty(recentCount,
+					"5")); i > 1; i--)
+				properties.setProperty(recent + i,
+						properties.getProperty(recent + (i - 1), ""));
+
+			properties.setProperty(recent + "1", path);
+		}
+
+		// persist
+		save();
 	}
 
-	public static void memorizeWindowPosition(String control, Point location,
-			Point bounds) {
-		properties.setProperty(control, location.x + "," + location.y + ","
-				+ bounds.x + "," + bounds.y);
+	public static List<String> getRecent() {
+		List<String> result = new ArrayList<String>();
+		for (int i = 1; i <= Integer.valueOf(properties.getProperty(
+				recentCount, "5")); i++) {
+			String tmp = properties.getProperty(recent + i, "");
+			if (!"".equals(tmp))
+				result.add(tmp);
+		}
+		return result;
+	}
+
+	public static void memorizeWindowPosition(String control, Rectangle bounds) {
+		properties.setProperty(control, bounds.x + "," + bounds.y + ","
+				+ bounds.width + "," + bounds.height);
+
+		save();
+	}
+
+	private static void save() {
 		try {
 			properties.store(new FileOutputStream(propertiesPath), "");
 		} catch (FileNotFoundException e) {

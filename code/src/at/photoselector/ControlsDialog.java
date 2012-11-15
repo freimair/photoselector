@@ -1,5 +1,6 @@
 package at.photoselector;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -10,7 +11,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class ControlsDialog extends MyApplicationWindow {
@@ -33,7 +33,7 @@ public class ControlsDialog extends MyApplicationWindow {
 	@Override
 	protected Control createContents(final Composite parent) {
 		// create other windows
-		Display display = getShell().getDisplay();
+		final Display display = getShell().getDisplay();
 		stagesDialog = new StagesDialog(new Shell(display), this);
 		display.asyncExec(stagesDialog);
 
@@ -52,14 +52,11 @@ public class ControlsDialog extends MyApplicationWindow {
 		switchWorkspaceButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				try {
-					Workspace.open(dialog.open());
-
+				SelectWorkspaceDialog selectWorkspaceDialog = new SelectWorkspaceDialog(
+						getShell());
+				display.syncExec(selectWorkspaceDialog);
+				if (Dialog.CANCEL != selectWorkspaceDialog.getReturnCode())
 					update();
-				} catch (NullPointerException e) {
-					// dialog got cancelled
-				}
 			}
 		});
 
