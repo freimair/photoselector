@@ -4,6 +4,8 @@ import java.sql.SQLException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
@@ -40,9 +42,22 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		showAcceptedButton = new ToolItem(drawerToolbar,
 				SWT.CHECK);
 		showAcceptedButton.setText("accepted");
+		showAcceptedButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				update();
+			}
+		});
 		showDeclinedButton = new ToolItem(drawerToolbar,
 				SWT.CHECK);
 		showDeclinedButton.setText("declined");
+		showDeclinedButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				update();
+			}
+		});
+
 		final ToolItem zoomInButton = new ToolItem(drawerToolbar, SWT.PUSH);
 		zoomInButton.setText("+");
 		final ToolItem zoomOutButton = new ToolItem(drawerToolbar, SWT.PUSH);
