@@ -6,7 +6,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -60,7 +60,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		});
 
 		photoListComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
-		photoListComposite.setLayoutData(new RowData(270, 380));
+		photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		photoListContentComposite = new Composite(
 				photoListComposite, SWT.NONE);
@@ -83,7 +83,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	@Override
 	protected ToolBarManager createToolBarManager(int style) {
 		return super.createToolBarManager(style);
-}
+	}
 
 	@Override
 	public void update() {
