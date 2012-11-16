@@ -11,7 +11,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -23,16 +22,16 @@ import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 
+
 class ImageTile {
-
-	Point offset;
-	final Composite imageContainer;
-	Image image;
-	Image scaled;
+	private Point offset;
+	private Composite imageContainer;
+	private Image image;
+	private Image scaled;
 	private Photo photo;
-	ControlsDialog controlsDialog;
+	private ControlsDialog controlsDialog;
 
-	public ImageTile(final Composite container, ControlsDialog dialog,
+	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
 		this.photo = currentPhoto;
 		controlsDialog = dialog;
@@ -41,7 +40,7 @@ class ImageTile {
 				.getAbsolutePath());
 		scaled = image;
 
-		imageContainer = new Composite(container, SWT.NONE);
+		imageContainer = new Composite(parent, SWT.NONE);
 
 		// TODO find some smart way to calculate the initial size of the image
 		imageContainer.setSize(image.getImageData().width,
@@ -49,7 +48,7 @@ class ImageTile {
 
 		// add controls
 		imageContainer.setLayout(new RowLayout());
-		Point pt = container.toControl(x, y);
+		Point pt = parent.toControl(x, y);
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
 
@@ -163,47 +162,42 @@ class ImageTile {
 			}
 		});
 
-		container.addMouseWheelListener(new MouseWheelListener() {
+		imageContainer.addMouseWheelListener(new MouseWheelListener() {
 
 			@Override
 			public synchronized void mouseScrolled(MouseEvent event) {
-				Rectangle rect = imageContainer.getBounds();
-				if (rect.contains(event.x, event.y)) {
-					double factor = 0.9;
-					if (event.count > 0)
-						factor = 1.1;
+				Composite imageContainer = (Composite) event.widget;
+				double factor = 0.9;
+				if (event.count > 0)
+					factor = 1.1;
 
-					// do some calculations
-					int oldImageWidth = imageContainer.getBounds().width;
-					int newImageWidth = (int) (Math.round(oldImageWidth
-							* factor));
+				// do some calculations
+				int oldImageWidth = imageContainer.getBounds().width;
+				int newImageWidth = (int) (Math.round(oldImageWidth * factor));
 
-					int oldImageHeight = imageContainer.getBounds().height;
-					int newImageHeight = (int) (Math.round(oldImageHeight
-							* factor));
+				int oldImageHeight = imageContainer.getBounds().height;
+				int newImageHeight = (int) (Math.round(oldImageHeight * factor));
 
-					// resize image box
-					imageContainer.setSize(newImageWidth, newImageHeight);
+				// resize image box
+				imageContainer.setSize(newImageWidth, newImageHeight);
 
-					// recenter
-					imageContainer.setLocation(imageContainer.getLocation().x
-							+ (oldImageWidth - newImageWidth) / 2,
-							imageContainer.getLocation().y
-									+ (oldImageHeight - newImageHeight) / 2);
+				// recenter
+				imageContainer.setLocation(imageContainer.getLocation().x
+						+ (oldImageWidth - newImageWidth) / 2,
+						imageContainer.getLocation().y
+								+ (oldImageHeight - newImageHeight) / 2);
 
-					// scale image
-					scaled = new Image(Display.getDefault(), newImageWidth,
-							newImageHeight);
-					GC gc = new GC(scaled);
-					gc.setAntialias(SWT.ON);
-					gc.setInterpolation(SWT.HIGH);
-					gc.drawImage(image, 0, 0, image.getBounds().width,
-							image.getBounds().height, 0, 0, newImageWidth,
-							newImageHeight);
-					gc.dispose();
+				// scale image
+				scaled = new Image(Display.getDefault(), newImageWidth,
+						newImageHeight);
+				GC gc = new GC(scaled);
+				gc.drawImage(image, 0, 0, image.getBounds().width,
+						image.getBounds().height, 0, 0, newImageWidth,
+						newImageHeight);
+				gc.dispose();
 
-					// FIXME dispose old scaled! could not figure out how by now
-				}
+				// FIXME dispose old scaled! could not figure out how by now
+				imageContainer.layout();
 			}
 		});
 		imageContainer.layout();
