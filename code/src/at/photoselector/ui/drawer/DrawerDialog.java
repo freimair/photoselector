@@ -3,6 +3,8 @@ package at.photoselector.ui.drawer;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -24,7 +26,6 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private ToolItem showAcceptedButton;
 	private ToolItem showDeclinedButton;
 	private Composite photoListContentComposite;
-	private ScrolledComposite photoListComposite;
 
 	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
 		super(parentShell, dialog);
@@ -59,7 +60,8 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		});
 
-		photoListComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
+		ScrolledComposite photoListComposite = new ScrolledComposite(parent,
+				SWT.V_SCROLL);
 		photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		photoListContentComposite = new Composite(
@@ -74,6 +76,13 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		photoListComposite.setExpandHorizontal(true);
 		photoListComposite.setExpandVertical(true);
 
+		photoListContentComposite.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				getShell().setFullScreen(!getShell().getFullScreen());
+			}
+		});
 
 		update();
 

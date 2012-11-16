@@ -7,6 +7,8 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -48,6 +50,15 @@ public class TableDialog extends UncloseableApplicationWindow {
 						event.x, event.y);
 			}
 		});
+
+		parent.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				getShell().setFullScreen(!getShell().getFullScreen());
+			}
+		});
+
 		return parent;
 	}
 
