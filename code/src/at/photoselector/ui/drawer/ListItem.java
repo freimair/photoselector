@@ -4,8 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,19 +21,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import at.photoselector.Workspace;
+import at.photoselector.model.Photo;
 
 class ListItem {
-	private String path;
+	private Photo photo;
 	private Image scaled;
 	private Rectangle dimensions;
 	private Image image;
 
-	public ListItem(final Composite container, Display display,
-			String imagePath) {
-		path = imagePath;
+	public ListItem(final Composite container, Display display, Photo current) {
+		photo = current;
 
-		image = new Image(display, imagePath);
+		image = new Image(display, photo.getPath().getAbsolutePath());
 		dimensions = scaleAndCenterImage(image.getBounds(), 100);
 
 		final Composite imageContainer = new Composite(container, SWT.NONE);
@@ -64,7 +63,7 @@ class ListItem {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Workspace.accept(path);
+				// Workspace.accept(path);
 				// processed();
 				imageContainer.dispose();
 			}
@@ -121,23 +120,15 @@ class ListItem {
 		final DragSource source = new DragSource(imageContainer, DND.DROP_MOVE
 				| DND.DROP_COPY | DND.DROP_LINK);
 		source.setTransfer(new Transfer[] { TextTransfer.getInstance() });
-		source.addDragListener(new DragSourceListener() {
-
-			@Override
-			public void dragStart(DragSourceEvent event) {
-				// TODO Auto-generated method stub
-
-			}
+		source.addDragListener(new DragSourceAdapter() {
 
 			@Override
 			public void dragSetData(DragSourceEvent event) {
-				// TODO Auto-generated method stub
-				event.data = path;
+				event.data = String.valueOf(photo.getId());
 			}
 
 			@Override
 			public void dragFinished(DragSourceEvent event) {
-				// TODO Auto-generated method stub
 				imageContainer.dispose();
 				container.layout();
 				Rectangle r = container.getParent().getClientArea();

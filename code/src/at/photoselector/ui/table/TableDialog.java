@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 import at.photoselector.ui.UncloseableApplicationWindow;
 
@@ -45,8 +46,8 @@ public class TableDialog extends UncloseableApplicationWindow {
 					return;
 				}
 				
-				new ImageTile(tableComposite, controlsDialog,
-						(String) event.data,
+				new ImageTile(tableComposite, controlsDialog, Photo.get(Integer
+						.valueOf((String) event.data)),
 						event.x, event.y);
 			}
 		});

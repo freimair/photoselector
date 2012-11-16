@@ -27,14 +27,14 @@ public class Workspace {
 			Photo.create(location);
 	}
 
-	public static boolean accept(String path) {
-		Photo.get(new File(path)).setStatus(Photo.ACCEPTED);
+	public static boolean accept(Photo photo) {
+		photo.setStatus(Photo.ACCEPTED);
 
 		return isStageCompleted();
 	}
 
-	public static boolean decline(String path) {
-		Photo.get(new File(path)).setStatus(Photo.DECLINED);
+	public static boolean decline(Photo photo) {
+		photo.setStatus(Photo.DECLINED);
 
 		return isStageCompleted();
 	}

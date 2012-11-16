@@ -82,19 +82,9 @@ public class Photo {
 		}
 	}
 
-	public static Photo get(File path) {
+	public static Photo get(int id) {
 		updateCache();
-
-		try {
-			return cache.get(database
-					.getInteger("SELECT pid FROM photos WHERE path='"
-							+ path.getAbsolutePath()
-							+ "'"));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		return cache.get(id);
 	}
 
 	private static void updateCache() {

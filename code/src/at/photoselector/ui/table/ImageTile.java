@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import at.photoselector.Workspace;
+import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 
 class ImageTile {
@@ -27,15 +28,16 @@ class ImageTile {
 	final Composite imageContainer;
 	Image image;
 	Image scaled;
-	private String path;
+	private Photo photo;
 	ControlsDialog controlsDialog;
 
 	public ImageTile(final Composite container, ControlsDialog dialog,
-			String imagePath, int x, int y) {
-		path = imagePath;
+			Photo currentPhoto, int x, int y) {
+		this.photo = currentPhoto;
 		controlsDialog = dialog;
 
-		image = new Image(dialog.getShell().getDisplay(), imagePath);
+		image = new Image(dialog.getShell().getDisplay(), photo.getPath()
+				.getAbsolutePath());
 		scaled = image;
 
 		imageContainer = new Composite(container, SWT.NONE);
@@ -56,7 +58,7 @@ class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Workspace.accept(path);
+				Workspace.accept(photo);
 				controlsDialog.update();
 				imageContainer.dispose();
 			}
@@ -74,7 +76,7 @@ class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Workspace.decline(path);
+				Workspace.decline(photo);
 				controlsDialog.update();
 				imageContainer.dispose();
 			}
