@@ -12,7 +12,7 @@ public abstract class UncloseableApplicationWindow extends MyApplicationWindow {
 
 	@Override
 	public boolean close() {
-		return false;
+		return controlsDialog.close();
 	}
 
 	public boolean closeApplication() {

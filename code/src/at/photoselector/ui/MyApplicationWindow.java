@@ -14,7 +14,7 @@ public abstract class MyApplicationWindow extends ApplicationWindow implements
 	protected String control = null;
 
 	public MyApplicationWindow(Shell parentShell) {
-		super(parentShell);
+		super(null);
 	}
 
 	@Override
