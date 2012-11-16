@@ -2,9 +2,7 @@ package at.photoselector;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Workspace {
 
@@ -91,40 +89,11 @@ public class Workspace {
 	}
 
 	public static void stageCompleted() throws SQLException {
-		String newFilterName = String.valueOf((new Random()).nextInt(100));
-
-		addFilter(newFilterName);
-
-		instance.db.execute("INSERT INTO filters (name) VALUES ('"
-				+ newFilterName + "')");
-		int fid = instance.db
-				.getInteger("SELECT fid FROM filters WHERE name = '"
-						+ newFilterName + "'");
-
-		instance.db.execute("UPDATE photos SET stage=" + fid + " WHERE status="
+		instance.db.execute("UPDATE photos SET stage="
+				+ Stage.getCurrent().getId() + " WHERE status="
 				+ DECLINED);
 		instance.db.execute("UPDATE photos SET status=" + UNPROCESSED
 				+ " WHERE status=" + ACCEPTED);
-	}
-
-	public static List<String> getFilters() {
-		try {
-			return instance.db.getStringList("SELECT name FROM filters");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return new ArrayList<String>();
-		}
-	}
-
-	public static void addFilter(String name) {
-		try {
-			instance.db.execute("INSERT INTO filters (name) VALUES ('" + name
-					+ "')");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	// ################################ NON-STATICS ################################
@@ -141,5 +110,6 @@ public class Workspace {
 	private Workspace(String path) {
 		Database.closeConnection();
 		db = new Database(path);
+		Stage.init(db);
 	}
 }

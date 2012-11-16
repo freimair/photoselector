@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import at.photoselector.Stage;
 import at.photoselector.Workspace;
 
 public class StagesDialog extends UncloseableApplicationWindow {
@@ -74,9 +75,9 @@ public class StagesDialog extends UncloseableApplicationWindow {
 		addSimpleListItem("all");
 
 		// -- add filter stages
-		List<String> stages = Workspace.getFilters();
+		List<Stage> stages = Stage.getAll();
 		for (int i = 0; i < stages.size() - 1; i++) {
-			addSimpleListItem(stages.get(i));
+			addSimpleListItem(stages.get(i).getName());
 		}
 
 		// -- stage in progress is displayed with text and progressbar
@@ -88,13 +89,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 		itemInProgressComposite.setBackground(getShell().getDisplay()
 				.getSystemColor(SWT.COLOR_WHITE));
 		Text itemInProgressText = new Text(itemInProgressComposite, SWT.BORDER);
-		String name;
-		try {
-			name = stages.get(stages.size());
-		} catch (IndexOutOfBoundsException e) {
-			name = "Stage" + (Workspace.getFilters().size() + 1);
-		}
-		itemInProgressText.setText(name);
+		itemInProgressText.setText(Stage.getCurrent().getName());
 
 		bar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
 
