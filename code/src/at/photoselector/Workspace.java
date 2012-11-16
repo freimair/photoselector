@@ -11,10 +11,15 @@ public class Workspace {
 	//################################ STATICS ################################
 
 
-	private static Workspace instance;
+	private static File location;
 
 	public static void open(String path) {
-		instance = new Workspace(path);
+		new Workspace(path);
+		location = new File(path);
+	}
+
+	public static File getLocation() {
+		return location;
 	}
 
 	public static void addPhoto(String path) {

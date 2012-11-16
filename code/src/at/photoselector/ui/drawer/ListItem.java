@@ -41,8 +41,8 @@ class ListItem {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				image = new Image(display, photo.getPath().getAbsolutePath());
-				dimensions = scaleAndCenterImage(image.getBounds(), 100);
+				image = new Image(display, photo.getImage(100));
+				dimensions = photo.scaleAndCenterImage(100);
 				// draw image
 				scaled = new Image(display, dimensions.width, dimensions.height);
 
@@ -135,23 +135,6 @@ class ListItem {
 				event.data = String.valueOf(photo.getId());
 			}
 		});
-	}
-
-	private Rectangle scaleAndCenterImage(Rectangle imageDimension,
-			int boundingBox) {
-		Rectangle result = new Rectangle(0, 0, boundingBox, boundingBox);
-
-		// scale
-		if (imageDimension.width > imageDimension.height) {
-			result.height = (int) (1.0 * boundingBox / imageDimension.width * imageDimension.height);
-			result.y = (int) (1.0 * ((boundingBox - result.height) / 2));
-		} else {
-			result.width = (int) (1.0 * boundingBox / imageDimension.height * imageDimension.width);
-			result.x = (int) (1.0 * ((boundingBox - result.width) / 2));
-		}
-
-		return result;
-
 	}
 
 	@Override

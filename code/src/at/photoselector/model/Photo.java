@@ -7,6 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Rectangle;
+
+import at.photoselector.Workspace;
+
 public class Photo {
 
 	// ################################ STATICS ################################
@@ -118,16 +125,68 @@ public class Photo {
 	private File path;
 	private int status;
 	private Stage stage;
+	private File cacheDir;
+	private String delimiter;
+	private int width;
+	private int height;
 
 	public Photo(int newId, File path, int status) {
 		id = newId;
 		this.path = path;
 		this.status = status;
+
+		delimiter = System.getProperty("file.separator");
+		cacheDir = new File(Workspace.getLocation().getParent() + delimiter
+				+ ".cache" + delimiter);
+		if (!cacheDir.exists())
+			cacheDir.mkdir();
 	}
 
 	public Photo(int currentId, File path, int status, Stage stage) {
 		this(currentId, path, status);
 		this.stage = stage;
+	}
+
+	public ImageData getImage(int boundingBox) {
+		File cachedImage = new File(cacheDir.getPath() + delimiter
+				+ path.getName() + "." + boundingBox + ".jpg");
+		ImageData scaled;
+		if(!cachedImage.exists()) {
+			// scale
+			ImageData fullImage = new ImageData(getPath().getAbsolutePath());
+			width = fullImage.width;
+			height = fullImage.height;
+
+			Rectangle scaledDimensions = scaleAndCenterImage(boundingBox);
+			scaled = fullImage.scaledTo(scaledDimensions.width,
+					scaledDimensions.height);
+
+			// persist
+			ImageLoader imageLoader = new ImageLoader();
+			imageLoader.data = new ImageData[] { scaled };
+			imageLoader.save(cachedImage.getAbsolutePath(), SWT.IMAGE_JPEG);
+		} else {
+			scaled = new ImageData(cachedImage.getAbsolutePath());
+			width = scaled.width;
+			height = scaled.height;
+		}
+
+		return scaled;
+	}
+
+	public Rectangle scaleAndCenterImage(int boundingBox) {
+		Rectangle result = new Rectangle(0, 0, boundingBox, boundingBox);
+
+		// scale
+		if (width > height) {
+			result.height = (int) (1.0 * boundingBox / width * height);
+			result.y = (int) (1.0 * ((boundingBox - result.height) / 2));
+		} else {
+			result.width = (int) (1.0 * boundingBox / height * width);
+			result.x = (int) (1.0 * ((boundingBox - result.width) / 2));
+		}
+
+		return result;
 	}
 
 	public int getId() {
