@@ -1,7 +1,6 @@
 package at.photoselector.ui.drawer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -125,14 +124,6 @@ class ListItem {
 			@Override
 			public void dragSetData(DragSourceEvent event) {
 				event.data = String.valueOf(photo.getId());
-			}
-
-			@Override
-			public void dragFinished(DragSourceEvent event) {
-				container.layout();
-				Rectangle r = container.getParent().getClientArea();
-				((ScrolledComposite) container.getParent())
-						.setMinSize(container.computeSize(r.width, SWT.DEFAULT));
 			}
 		});
 	}
