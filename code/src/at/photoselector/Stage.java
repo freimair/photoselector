@@ -88,8 +88,8 @@ public class Stage {
 
 	public void setName(String name) {
 		try {
-			database.execute("UPDATE filters SET (name) VALUES ('" + name
-					+ "')");
+			database.execute("UPDATE filters SET name='" + name
+					+ "' WHERE fid=" + getId());
 			this.name = name;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

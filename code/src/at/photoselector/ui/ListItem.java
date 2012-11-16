@@ -3,6 +3,8 @@ package at.photoselector.ui;
 import java.sql.SQLException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -31,11 +33,19 @@ public class ListItem {
 		itemInProgressComposite.setLayout(new FillLayout(SWT.VERTICAL));
 		itemInProgressComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		itemInProgressComposite.setText(stage.getName());
+		itemInProgressComposite.setText("new Stage");
 		itemInProgressComposite.setBackground(parent.getShell().getDisplay()
 				.getSystemColor(SWT.COLOR_WHITE));
-		Text itemInProgressText = new Text(itemInProgressComposite, SWT.BORDER);
-		itemInProgressText.setText(Stage.getCurrent().getName());
+		final Text itemInProgressText = new Text(itemInProgressComposite,
+				SWT.BORDER);
+		itemInProgressText.setText(stage.getName());
+		itemInProgressText.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				stage.setName(itemInProgressText.getText());
+			}
+		});
 
 		// update progress bar
 		ProgressBar bar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
