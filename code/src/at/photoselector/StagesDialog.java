@@ -1,21 +1,25 @@
 package at.photoselector;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 
 public class StagesDialog extends UncloseableApplicationWindow {
 
-	private Table list;
 	private ProgressBar bar;
+	private Composite stageListComposite;
 
 	public StagesDialog(Shell parentShell, ControlsDialog dialog) {
 		super(parentShell, dialog);
@@ -30,44 +34,67 @@ public class StagesDialog extends UncloseableApplicationWindow {
 
 	@Override
 	protected Control createContents(Composite parent) {
-		Composite filterComposite = new Composite(parent, SWT.BORDER);
-		filterComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		list = new Table(filterComposite, SWT.BORDER | SWT.V_SCROLL);
-		list.setLayoutData(new RowData(100, 150));
+		ScrolledComposite scrollableStageListComposite = new ScrolledComposite(
+				parent, SWT.BORDER);
+		scrollableStageListComposite.setLayout(new FillLayout());
+		scrollableStageListComposite.setExpandHorizontal(true);
+		scrollableStageListComposite.setExpandVertical(true);
 
-		bar = new ProgressBar(filterComposite, SWT.SMOOTH);
-		bar.setLayoutData(new RowData(120, 15));
-		try {
-			bar.setMaximum(Workspace.getPhotos(
-					Workspace.UNPROCESSED | Workspace.ACCEPTED
-							| Workspace.DECLINED).size());
-			bar.setSelection(Workspace.getPhotos(
-					Workspace.ACCEPTED | Workspace.DECLINED).size());
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		stageListComposite = new Composite(scrollableStageListComposite,
+				SWT.NONE);
+		stageListComposite.setBackground(getShell().getDisplay()
+				.getSystemColor(SWT.COLOR_WHITE));
+		stageListComposite.setLayout(new GridLayout());
+
+		scrollableStageListComposite.setContent(stageListComposite);
 
 		update();
 
-		return filterComposite;
+		return stageListComposite;
+	}
+
+	private void addSimpleListItem(String text) {
+		Label item = new Label(stageListComposite, SWT.NONE);
+		item.setText(text);
+		item.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		item.setBackground(getShell().getDisplay().getSystemColor(
+				SWT.COLOR_WHITE));
 	}
 
 	public void update() {
 		// update list
 		// - clear list
-		list.clearAll();
-		for (TableItem current : list.getItems())
+		for (Control current : stageListComposite.getChildren())
 			current.dispose();
 
 		// - refill from database
-		TableItem item = new TableItem(list, SWT.NONE);
-		String name = "all";
-		item.setText(name);
-		for (String current : Workspace.getFilters()) {
-			item = new TableItem(list, SWT.NONE);
-			item.setText(current);
+		// -- first element reflecting the basic set without any filters
+		addSimpleListItem("all");
+
+		// -- add filter stages
+		List<String> stages = Workspace.getFilters();
+		for (int i = 0; i < stages.size() - 1; i++) {
+			addSimpleListItem(stages.get(i));
 		}
+
+		// -- stage in progress is displayed with text and progressbar
+		Group itemInProgressComposite = new Group(stageListComposite, SWT.NONE);
+		itemInProgressComposite.setLayout(new FillLayout(SWT.VERTICAL));
+		itemInProgressComposite.setLayoutData(new GridData(
+				GridData.FILL_HORIZONTAL));
+		itemInProgressComposite.setText("next Stage");
+		itemInProgressComposite.setBackground(getShell().getDisplay()
+				.getSystemColor(SWT.COLOR_WHITE));
+		Text itemInProgressText = new Text(itemInProgressComposite, SWT.BORDER);
+		String name;
+		try {
+			name = stages.get(stages.size());
+		} catch (IndexOutOfBoundsException e) {
+			name = "Stage" + (Workspace.getFilters().size() + 1);
+		}
+		itemInProgressText.setText(name);
+
+		bar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
 
 		// update progress bar
 		try {
@@ -83,5 +110,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
+		// stageListComposite.layout();
 	}
 }
