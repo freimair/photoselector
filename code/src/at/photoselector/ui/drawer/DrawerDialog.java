@@ -1,4 +1,4 @@
-package at.photoselector.ui;
+package at.photoselector.ui.drawer;
 
 import java.sql.SQLException;
 
@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import at.photoselector.Workspace;
+import at.photoselector.ui.ControlsDialog;
+import at.photoselector.ui.UncloseableApplicationWindow;
 
 public class DrawerDialog extends UncloseableApplicationWindow {
 
@@ -98,7 +100,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			if (showDeclinedButton.getSelection())
 				filter |= Workspace.DECLINED;
 			for (String current : Workspace.getPhotos(filter)) {
-				new DrawerItem(photoListContentComposite, getShell()
+				new ListItem(photoListContentComposite, getShell()
 						.getDisplay(),
 						current);
 			}

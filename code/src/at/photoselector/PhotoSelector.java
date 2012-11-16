@@ -4,6 +4,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import at.photoselector.model.Database;
 import at.photoselector.ui.ControlsDialog;
 import at.photoselector.ui.SelectWorkspaceDialog;
 

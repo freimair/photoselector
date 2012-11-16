@@ -14,6 +14,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import at.photoselector.Workspace;
+import at.photoselector.ui.drawer.DrawerDialog;
+import at.photoselector.ui.stages.StagesDialog;
+import at.photoselector.ui.table.TableDialog;
 
 public class ControlsDialog extends MyApplicationWindow {
 

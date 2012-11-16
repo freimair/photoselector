@@ -1,4 +1,4 @@
-package at.photoselector.ui;
+package at.photoselector.ui.table;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -19,8 +19,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import at.photoselector.Workspace;
+import at.photoselector.ui.ControlsDialog;
 
-public class ImageTile {
+class ImageTile {
 
 	Point offset;
 	final Composite imageContainer;

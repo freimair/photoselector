@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,4 +1,4 @@
-package at.photoselector.ui;
+package at.photoselector.ui.drawer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -23,13 +23,13 @@ import org.eclipse.swt.widgets.Listener;
 
 import at.photoselector.Workspace;
 
-public class DrawerItem {
+class ListItem {
 	private String path;
 	private Image scaled;
 	private Rectangle dimensions;
 	private Image image;
 
-	public DrawerItem(final Composite container, Display display,
+	public ListItem(final Composite container, Display display,
 			String imagePath) {
 		path = imagePath;
 

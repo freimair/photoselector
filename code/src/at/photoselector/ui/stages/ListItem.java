@@ -1,4 +1,4 @@
-package at.photoselector.ui;
+package at.photoselector.ui.stages;
 
 import java.sql.SQLException;
 
@@ -13,10 +13,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
-import at.photoselector.Stage;
 import at.photoselector.Workspace;
+import at.photoselector.model.Stage;
 
-public class ListItem {
+class ListItem {
 	private Stage stage;
 
 	public ListItem(Composite parent, Stage stage, boolean isLast) {

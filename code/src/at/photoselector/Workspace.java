@@ -4,6 +4,9 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
+import at.photoselector.model.Database;
+import at.photoselector.model.Stage;
+
 public class Workspace {
 
 	//################################ STATICS ################################

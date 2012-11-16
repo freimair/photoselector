@@ -1,4 +1,4 @@
-package at.photoselector.ui;
+package at.photoselector.ui.stages;
 
 import java.util.List;
 
@@ -10,7 +10,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import at.photoselector.Stage;
+import at.photoselector.model.Stage;
+import at.photoselector.ui.ControlsDialog;
+import at.photoselector.ui.UncloseableApplicationWindow;
 
 public class StagesDialog extends UncloseableApplicationWindow {
 
@@ -55,9 +57,6 @@ public class StagesDialog extends UncloseableApplicationWindow {
 			current.dispose();
 
 		// - refill from database
-		// -- first element reflecting the basic set without any filters
-
-		// -- add filter stages
 		List<Stage> stages = Stage.getAll();
 		for (int i = 0; i < stages.size(); i++) {
 			new ListItem(stageListComposite, stages.get(i),
