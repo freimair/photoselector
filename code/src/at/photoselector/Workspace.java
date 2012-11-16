@@ -93,6 +93,8 @@ public class Workspace {
 	public static void stageCompleted() throws SQLException {
 		String newFilterName = String.valueOf((new Random()).nextInt(100));
 
+		addFilter(newFilterName);
+
 		instance.db.execute("INSERT INTO filters (name) VALUES ('"
 				+ newFilterName + "')");
 		int fid = instance.db
@@ -112,6 +114,16 @@ public class Workspace {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ArrayList<String>();
+		}
+	}
+
+	public static void addFilter(String name) {
+		try {
+			instance.db.execute("INSERT INTO filters (name) VALUES ('" + name
+					+ "')");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

@@ -106,11 +106,11 @@ public class StagesDialog extends UncloseableApplicationWindow {
 			// - current value
 			bar.setSelection(Workspace.getPhotos(
 					Workspace.ACCEPTED | Workspace.DECLINED).size());
+
+			itemInProgressComposite.getParent().layout();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-		// stageListComposite.layout();
 	}
 }

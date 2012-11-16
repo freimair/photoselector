@@ -45,7 +45,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		showAcceptedButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				update();
+				controlsDialog.update();
 			}
 		});
 		showDeclinedButton = new ToolItem(drawerToolbar,
@@ -54,7 +54,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		showDeclinedButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				update();
+				controlsDialog.update();
 			}
 		});
 
@@ -108,12 +108,12 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 					.setMinSize(photoListContentComposite.computeSize(r.width,
 							SWT.DEFAULT));
 			photoListContentComposite.getParent().redraw();
-			getShell().redraw();
+
+			photoListContentComposite.layout();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
-	
 
 }

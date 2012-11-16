@@ -53,8 +53,8 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (Workspace.accept(path))
-					controlsDialog.update();
+				Workspace.accept(path);
+				controlsDialog.update();
 				imageContainer.dispose();
 			}
 
@@ -71,8 +71,8 @@ public class ImageTile {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (Workspace.decline(path))
-					controlsDialog.update();
+				Workspace.decline(path);
+				controlsDialog.update();
 				imageContainer.dispose();
 			}
 
