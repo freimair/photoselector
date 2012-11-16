@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import at.photoselector.Workspace;
 
 public class ImageTile {
 

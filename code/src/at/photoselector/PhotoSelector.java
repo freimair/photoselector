@@ -4,6 +4,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import at.photoselector.ui.ControlsDialog;
+import at.photoselector.ui.SelectWorkspaceDialog;
+
 public class PhotoSelector {
 	public static Settings settings;
 

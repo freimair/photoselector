@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.ui;
 
 import java.sql.SQLException;
 
@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import at.photoselector.Workspace;
 
 public class DrawerDialog extends UncloseableApplicationWindow {
 

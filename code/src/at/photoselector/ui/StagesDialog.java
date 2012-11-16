@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.ui;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -15,6 +15,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import at.photoselector.Workspace;
 
 public class StagesDialog extends UncloseableApplicationWindow {
 

@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.ui;
 
 import org.eclipse.swt.widgets.Shell;
 

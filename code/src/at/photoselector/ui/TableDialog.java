@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;

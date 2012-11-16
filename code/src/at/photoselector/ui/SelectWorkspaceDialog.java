@@ -1,4 +1,4 @@
-package at.photoselector;
+package at.photoselector.ui;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -14,11 +14,14 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import at.photoselector.Settings;
+import at.photoselector.Workspace;
+
 public class SelectWorkspaceDialog extends TitleAreaDialog implements Runnable {
 
 	private Combo workspaceCombo;
 
-	protected SelectWorkspaceDialog(Shell parentShell) {
+	public SelectWorkspaceDialog(Shell parentShell) {
 		super(parentShell);
 	}
 
