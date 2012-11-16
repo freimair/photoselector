@@ -80,7 +80,7 @@ public class Workspace {
 
 	public static boolean isStageCompleted() throws SQLException {
 		if (0 == instance.db.getIntegerList(
-				"SELECT pid FROM photos WHERE stage IS NULL AND status <> "
+				"SELECT pid FROM photos WHERE stage IS NULL AND status = "
 						+ UNPROCESSED).size()) {
 			stageCompleted();
 			return true;
@@ -94,6 +94,8 @@ public class Workspace {
 				+ DECLINED);
 		instance.db.execute("UPDATE photos SET status=" + UNPROCESSED
 				+ " WHERE status=" + ACCEPTED);
+
+		Stage.create("new Stage");
 	}
 
 	// ################################ NON-STATICS ################################
