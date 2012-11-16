@@ -148,41 +148,63 @@ public class Photo {
 		this.stage = stage;
 	}
 
+	public boolean isRaw() {
+		return getPath().getName().toLowerCase().matches(".*cr2$");
+	}
+
+	private ImageData preprocessRawImage() {
+		File cachedFullImage = new File(cacheDir.getPath() + delimiter
+				+ path.getName() + ".full.jpg");
+		ImageData result;
+		if (!cachedFullImage.exists()) {
+			try {
+				Process p = Runtime.getRuntime().exec(
+						new File(".").getAbsolutePath() + delimiter + "lib"
+								+ delimiter + "dcraw " + "-v " + // Print
+																			// verbose
+																			// messages
+						"-w " + // Use camera white balance, if possible
+						"-T " + // Write TIFF instead of PPM
+						"-j " + // Don't stretch or rotate raw pixels
+						"-W " + // Don't automatically brighten the image);
+						getPath().getAbsolutePath()
+				);
+				p.waitFor();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			File tiffImagePath = new File(getPath().getAbsolutePath()
+					.replace("CR2", "tiff"));
+			result = new ImageData(tiffImagePath.getAbsolutePath());
+
+			ImageLoader imageLoader = new ImageLoader();
+			imageLoader.data = new ImageData[] { result };
+			imageLoader.save(cachedFullImage.getAbsolutePath(),
+					SWT.IMAGE_JPEG);
+
+			tiffImagePath.delete();
+		} else
+			result = new ImageData(cachedFullImage.getAbsolutePath());
+
+		return result;
+	}
+
 	private ImageData getCachedImage(int boundingBox) {
+
 		// TODO find better way to get a suitable cache size
 		int cachedSize = (int) (500 * Math.ceil((boundingBox - 100) / 500.0) + 100);
 		File cachedImage = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + "." + cachedSize + ".jpg");
 
 		ImageData scaled;
-		if(!cachedImage.exists()) {
+		if (!cachedImage.exists()) {
 			ImageData fullImage;
-			if (getPath().getName().toLowerCase().matches(".*cr2$")) {
-				// is canon raw
-
-				try {
-					Process p = Runtime.getRuntime().exec(
-							new File(".").getAbsolutePath() + delimiter + "lib"
-									+ delimiter + "dcraw " + "-v " + // Print
-																				// verbose
-																				// messages
-							"-w " + // Use camera white balance, if possible
-							"-T " + // Write TIFF instead of PPM
-							"-j " + // Don't stretch or rotate raw pixels
-							"-W " + // Don't automatically brighten the image);
-							getPath().getAbsolutePath()
-					);
-					p.waitFor();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				fullImage = new ImageData(getPath().getAbsolutePath().replace(
-						"CR2", "tiff"));
+			if (isRaw()) {
+				fullImage = preprocessRawImage();
 			} else
 				fullImage = new ImageData(getPath().getAbsolutePath());
 			width = fullImage.width;
