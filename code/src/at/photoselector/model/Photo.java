@@ -147,9 +147,11 @@ public class Photo {
 		this.stage = stage;
 	}
 
-	public ImageData getImage(int boundingBox) {
+	private ImageData getCachedImage(int boundingBox) {
+		int cachedSize = boundingBox - (500 * (boundingBox / 500));
 		File cachedImage = new File(cacheDir.getPath() + delimiter
-				+ path.getName() + "." + boundingBox + ".jpg");
+				+ path.getName() + "." + cachedSize + ".jpg");
+
 		ImageData scaled;
 		if(!cachedImage.exists()) {
 			// scale
@@ -157,10 +159,9 @@ public class Photo {
 			width = fullImage.width;
 			height = fullImage.height;
 
-			Rectangle scaledDimensions = scaleAndCenterImage(boundingBox);
+			Rectangle scaledDimensions = scaleAndCenterImage(cachedSize);
 			scaled = fullImage.scaledTo(scaledDimensions.width,
-					scaledDimensions.height);
-
+				scaledDimensions.height);
 			// persist
 			ImageLoader imageLoader = new ImageLoader();
 			imageLoader.data = new ImageData[] { scaled };
@@ -173,6 +174,13 @@ public class Photo {
 
 		return scaled;
 	}
+
+	public ImageData getImage(int boundingBox) {
+		ImageData cachedImage = getCachedImage(boundingBox);
+		Rectangle dimensions = scaleAndCenterImage(boundingBox);
+		return cachedImage.scaledTo(dimensions.width,
+			dimensions.height);
+}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {
 		Rectangle result = new Rectangle(0, 0, boundingBox, boundingBox);

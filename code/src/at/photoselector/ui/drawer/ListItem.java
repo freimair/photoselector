@@ -25,15 +25,16 @@ import at.photoselector.model.Photo;
 class ListItem {
 	private Photo photo;
 	private Image scaled;
-	private Rectangle dimensions;
-	private Image image;
+	private int boundingBox = 100;
+	private int border = 3;
 
 	public ListItem(final Composite parent, Photo current) {
 		photo = current;
 		final Display display = parent.getDisplay();
 
 		final Composite imageContainer = new Composite(parent, SWT.NONE);
-		imageContainer.setLayoutData(new RowData(106, 106));
+		imageContainer.setLayoutData(new RowData(boundingBox + 2 * border,
+				boundingBox + 2 * border));
 		imageContainer.setLayout(new RowLayout());
 		imageContainer.setBackground(display
 				.getSystemColor(SWT.COLOR_DARK_GRAY));
@@ -41,10 +42,7 @@ class ListItem {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				image = new Image(display, photo.getImage(100));
-				dimensions = photo.scaleAndCenterImage(100);
-				// draw image
-				scaled = new Image(display, dimensions.width, dimensions.height);
+				scaled = new Image(display, photo.getImage(boundingBox));
 
 				// draw the image
 				imageContainer.addListener(SWT.Paint, new Listener() {
@@ -52,10 +50,10 @@ class ListItem {
 					@Override
 					public void handleEvent(Event e) {
 						GC gc = e.gc;
-						gc.drawImage(image, 0, 0, image.getBounds().width,
-								image.getBounds().height, dimensions.x + 3,
-								dimensions.y + 3, dimensions.width,
-								dimensions.height);
+						Rectangle dimensions = photo
+								.scaleAndCenterImage(boundingBox);
+						gc.drawImage(scaled, dimensions.x + border,
+								dimensions.y + border);
 						gc.dispose();
 					}
 				});
@@ -141,6 +139,5 @@ class ListItem {
 	protected void finalize() throws Throwable {
 		super.finalize();
 		scaled.dispose();
-		image.dispose();
 	}
 }
