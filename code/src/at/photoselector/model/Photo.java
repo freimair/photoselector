@@ -1,6 +1,7 @@
 package at.photoselector.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -155,8 +156,35 @@ public class Photo {
 
 		ImageData scaled;
 		if(!cachedImage.exists()) {
-			// scale
-			ImageData fullImage = new ImageData(getPath().getAbsolutePath());
+			ImageData fullImage;
+			if (getPath().getName().toLowerCase().matches(".*cr2$")) {
+				// is canon raw
+
+				try {
+					Process p = Runtime.getRuntime().exec(
+							new File(".").getAbsolutePath() + delimiter + "lib"
+									+ delimiter + "dcraw " + "-v " + // Print
+																				// verbose
+																				// messages
+							"-w " + // Use camera white balance, if possible
+							"-T " + // Write TIFF instead of PPM
+							"-j " + // Don't stretch or rotate raw pixels
+							"-W " + // Don't automatically brighten the image);
+							getPath().getAbsolutePath()
+					);
+					p.waitFor();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				fullImage = new ImageData(getPath().getAbsolutePath().replace(
+						"CR2", "tiff"));
+			} else
+				fullImage = new ImageData(getPath().getAbsolutePath());
 			width = fullImage.width;
 			height = fullImage.height;
 
