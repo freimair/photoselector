@@ -7,6 +7,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
@@ -26,6 +27,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private ToolItem showAcceptedButton;
 	private ToolItem showDeclinedButton;
 	private Composite photoListContentComposite;
+	private int boundingBox = 100;
 
 	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
 		super(parentShell, dialog);
@@ -60,6 +62,41 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		});
 
+		ToolItem zoomInButton = new ToolItem(drawerToolbar, SWT.PUSH);
+		zoomInButton.setText("+");
+		zoomInButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				boundingBox += 50;
+				update();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		ToolItem zoomOutButton = new ToolItem(drawerToolbar, SWT.PUSH);
+		zoomOutButton.setText("-");
+		zoomOutButton.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				boundingBox -= 50;
+				update();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 		ScrolledComposite photoListComposite = new ScrolledComposite(parent,
 				SWT.V_SCROLL);
 		photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -104,7 +141,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		if (showDeclinedButton.getSelection())
 			filter |= Photo.DECLINED;
 		for (Photo current : Photo.getFiltered(true, filter)) {
-			new ListItem(photoListContentComposite, current);
+			new ListItem(photoListContentComposite, this, current);
 		}
 
 		// just make sure that there has been a layout calculated before
@@ -116,6 +153,10 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		photoListContentComposite.getParent().redraw();
 
 		photoListContentComposite.layout();
+	}
+
+	public int getBoundingBox() {
+		return boundingBox;
 	}
 
 }

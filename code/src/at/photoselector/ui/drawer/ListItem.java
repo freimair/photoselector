@@ -25,13 +25,13 @@ import at.photoselector.model.Photo;
 class ListItem {
 	private Photo photo;
 	private Image scaled;
-	private int boundingBox = 100;
 	private int border = 3;
 
-	public ListItem(final Composite parent, Photo current) {
+	public ListItem(final Composite parent, final DrawerDialog dialog,
+			Photo current) {
 		photo = current;
 		final Display display = parent.getDisplay();
-
+		int boundingBox = dialog.getBoundingBox();
 		final Composite imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayoutData(new RowData(boundingBox + 2 * border,
 				boundingBox + 2 * border));
@@ -42,7 +42,8 @@ class ListItem {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				scaled = new Image(display, photo.getImage(boundingBox));
+				scaled = new Image(display, photo.getImage(dialog
+						.getBoundingBox()));
 
 				// draw the image
 				imageContainer.addListener(SWT.Paint, new Listener() {
@@ -50,8 +51,8 @@ class ListItem {
 					@Override
 					public void handleEvent(Event e) {
 						GC gc = e.gc;
-						Rectangle dimensions = photo
-								.scaleAndCenterImage(boundingBox);
+						Rectangle dimensions = photo.scaleAndCenterImage(dialog
+								.getBoundingBox());
 						gc.drawImage(scaled, dimensions.x + border,
 								dimensions.y + border);
 						gc.dispose();
