@@ -2,6 +2,8 @@ package at.photoselector.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -12,6 +14,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolTip;
 
 import at.photoselector.Workspace;
 import at.photoselector.ui.drawer.DrawerDialog;
@@ -76,6 +79,27 @@ public class ControlsDialog extends MyApplicationWindow {
 				Workspace.addPhoto(dialog.open());
 
 				update();
+			}
+		});
+
+		Button exportButton = new Button(controlComposite, SWT.PUSH);
+		exportButton.setText("Export");
+		
+		final ToolTip tooltip = new ToolTip(getShell(), SWT.NONE);
+		tooltip.setMessage("to export to RawTherapee create a file in ~/.cache/RawTherapee/data");
+		
+		exportButton.addMouseTrackListener(new MouseTrackAdapter() {
+
+			@Override
+			public void mouseExit(MouseEvent e) {
+				tooltip.setVisible(false);
+			}
+			
+			@Override
+			public void mouseEnter(MouseEvent e) {
+				tooltip.setLocation(e.x, e.y);
+				tooltip.setVisible(true);
+
 			}
 		});
 
