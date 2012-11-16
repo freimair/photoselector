@@ -1,7 +1,5 @@
 package at.photoselector.ui.drawer;
 
-import java.sql.SQLException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -15,7 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import at.photoselector.Workspace;
+import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 import at.photoselector.ui.UncloseableApplicationWindow;
 
@@ -91,33 +89,27 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 	@Override
 	public void update() {
-		try {
-			for (Control current : photoListContentComposite.getChildren())
-				current.dispose();
-			int filter = Workspace.UNPROCESSED;
-			if (showAcceptedButton.getSelection())
-				filter |= Workspace.ACCEPTED;
-			if (showDeclinedButton.getSelection())
-				filter |= Workspace.DECLINED;
-			for (String current : Workspace.getPhotos(filter)) {
-				new ListItem(photoListContentComposite, getShell()
-						.getDisplay(),
-						current);
-			}
-
-			// just make sure that there has been a layout calculated before
-			photoListContentComposite.getParent().getParent().layout();
-			Rectangle r = photoListContentComposite.getParent().getClientArea();
-			((ScrolledComposite) photoListContentComposite.getParent())
-					.setMinSize(photoListContentComposite.computeSize(r.width,
-							SWT.DEFAULT));
-			photoListContentComposite.getParent().redraw();
-
-			photoListContentComposite.layout();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		for (Control current : photoListContentComposite.getChildren())
+			current.dispose();
+		int filter = Photo.UNPROCESSED;
+		if (showAcceptedButton.getSelection())
+			filter |= Photo.ACCEPTED;
+		if (showDeclinedButton.getSelection())
+			filter |= Photo.DECLINED;
+		for (Photo current : Photo.getFiltered(true, filter)) {
+			new ListItem(photoListContentComposite, getShell().getDisplay(),
+					current.getPath().getAbsolutePath());
 		}
+
+		// just make sure that there has been a layout calculated before
+		photoListContentComposite.getParent().getParent().layout();
+		Rectangle r = photoListContentComposite.getParent().getClientArea();
+		((ScrolledComposite) photoListContentComposite.getParent())
+				.setMinSize(photoListContentComposite.computeSize(r.width,
+						SWT.DEFAULT));
+		photoListContentComposite.getParent().redraw();
+
+		photoListContentComposite.layout();
 	}
 
 }

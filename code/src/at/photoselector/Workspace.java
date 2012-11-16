@@ -1,19 +1,15 @@
 package at.photoselector;
 
 import java.io.File;
-import java.sql.SQLException;
-import java.util.List;
 
 import at.photoselector.model.Database;
+import at.photoselector.model.Photo;
 import at.photoselector.model.Stage;
 
 public class Workspace {
 
 	//################################ STATICS ################################
 
-	public final static int UNPROCESSED = 1;
-	public final static int ACCEPTED = 2;
-	public final static int DECLINED = 4;
 
 	private static Workspace instance;
 
@@ -28,75 +24,35 @@ public class Workspace {
 				addPhoto(current.getAbsolutePath());
 		}
 		if (location.getName().matches(".*jpe?g$"))
-			try {
-				instance.db
-						.execute("INSERT INTO photos (path, status) VALUES ('"
-						+ location.getAbsolutePath() + "', " + UNPROCESSED
-						+ ")");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	}
-
-	public static List<String> getPhotos(int filter) throws SQLException {
-		String sql = "SELECT path FROM photos WHERE stage IS NULL";
-		String tmp = "";
-		if ((UNPROCESSED & filter) > 0)
-			tmp += "status = " + UNPROCESSED + " OR ";
-		if ((ACCEPTED & filter) > 0)
-			tmp += "status = " + ACCEPTED + " OR ";
-		if ((DECLINED & filter) > 0)
-			tmp += "status = " + DECLINED + " OR ";
-		if (0 < tmp.length())
-			sql += " AND (" + tmp.substring(0, tmp.length() - 4) + ")";
-
-		return instance.db.getStringList(sql);
+			Photo.create(location);
 	}
 
 	public static boolean accept(String path) {
-		try {
-			instance.db.execute("UPDATE photos SET status=" + ACCEPTED
-					+ " WHERE path='"
-					+ path + "'");
+		Photo.get(new File(path)).setStatus(Photo.ACCEPTED);
 
-			return isStageCompleted();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
+		return isStageCompleted();
 	}
 
 	public static boolean decline(String path) {
-		try {
-			instance.db.execute("UPDATE photos SET status=" + DECLINED
-					+ " WHERE path='"
-					+ path + "'");
-			return isStageCompleted();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
+		Photo.get(new File(path)).setStatus(Photo.DECLINED);
+
+		return isStageCompleted();
 	}
 
-	public static boolean isStageCompleted() throws SQLException {
-		if (0 == instance.db.getIntegerList(
-				"SELECT pid FROM photos WHERE stage IS NULL AND status = "
-						+ UNPROCESSED).size()) {
+	public static boolean isStageCompleted() {
+		if (0 == Photo.getFiltered(true, Photo.UNPROCESSED).size()) {
 			stageCompleted();
 			return true;
 		}
 		return false;
 	}
 
-	public static void stageCompleted() throws SQLException {
-		instance.db.execute("UPDATE photos SET stage="
-				+ Stage.getCurrent().getId() + " WHERE status="
-				+ DECLINED);
-		instance.db.execute("UPDATE photos SET status=" + UNPROCESSED
-				+ " WHERE status=" + ACCEPTED);
+	public static void stageCompleted() {
+		for (Photo current : Photo.getFiltered(true, Photo.DECLINED))
+			current.setStage(Stage.getCurrent());
+
+		for (Photo current : Photo.getFiltered(true, Photo.ACCEPTED))
+			current.setStatus(Photo.UNPROCESSED);
 
 		Stage.create("new Stage");
 	}
@@ -116,5 +72,6 @@ public class Workspace {
 		Database.closeConnection();
 		db = new Database(path);
 		Stage.init(db);
+		Photo.init(db);
 	}
 }

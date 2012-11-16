@@ -1,7 +1,5 @@
 package at.photoselector.ui.stages;
 
-import java.sql.SQLException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -13,7 +11,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
-import at.photoselector.Workspace;
+import at.photoselector.model.Photo;
 import at.photoselector.model.Stage;
 
 class ListItem {
@@ -49,20 +47,14 @@ class ListItem {
 
 		// update progress bar
 		ProgressBar bar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
-		try {
-			// - maximum
-			bar.setMaximum(Workspace.getPhotos(
-					Workspace.UNPROCESSED | Workspace.ACCEPTED
-							| Workspace.DECLINED).size());
 
-			// - current value
-			bar.setSelection(Workspace.getPhotos(
-					Workspace.ACCEPTED | Workspace.DECLINED).size());
+		// - maximum
+		bar.setMaximum(Photo.getFiltered(true,
+				Photo.UNPROCESSED | Photo.ACCEPTED | Photo.DECLINED).size());
 
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		// - current value
+		bar.setSelection(Photo.getFiltered(true,
+				Photo.ACCEPTED | Photo.DECLINED).size());
 	}
 
 	private void createSimpleListItem(Composite parent) {

@@ -51,6 +51,11 @@ public class Stage {
 		}
 	}
 
+	public static Stage get(int id) {
+		updateCache();
+		return cache.get(id);
+	}
+
 	private static void updateCache() {
 		try {
 			List<Integer> allIds = database
