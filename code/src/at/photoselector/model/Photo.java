@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
 
+import at.photoselector.Settings;
 import at.photoselector.Workspace;
 
 public class Photo {
@@ -159,14 +160,14 @@ public class Photo {
 		if (!cachedFullImage.exists()) {
 			try {
 				Process p = Runtime.getRuntime().exec(
-						new File(".").getAbsolutePath() + delimiter + "lib"
-								+ delimiter + "dcraw " + "-v " + // Print
-																			// verbose
-																			// messages
-						"-w " + // Use camera white balance, if possible
+						Settings.getDCRawLocation() + " -w " + // Use camera
+																// white
+																// balance, if
+																// possible
 						"-T " + // Write TIFF instead of PPM
-						"-j " + // Don't stretch or rotate raw pixels
-						"-W " + // Don't automatically brighten the image);
+								// "-j " + // Don't stretch or rotate raw pixels
+								// "-W " + // Don't automatically brighten the
+								// image);
 						getPath().getAbsolutePath()
 				);
 				p.waitFor();

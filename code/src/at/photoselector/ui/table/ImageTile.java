@@ -41,7 +41,7 @@ class ImageTile {
 				parent.getBounds().height);
 		image = new Image(parent.getDisplay(), photo.getImage(boundingBox));
 
-		imageContainer = new Composite(parent, SWT.BORDER);
+		imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayout(new RowLayout());
 
 		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);

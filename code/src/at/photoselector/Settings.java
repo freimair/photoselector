@@ -22,6 +22,8 @@ public class Settings {
 	private static final String recent = "recent";
 	private static final String recentCount = "recentCount";
 
+	private static final String dcrawlocation = "dcrawbinary";
+
 	public static void load() {
 		properties = new Properties();
 		try {
@@ -75,6 +77,20 @@ public class Settings {
 		save();
 	}
 
+	public static String getDCRawLocation() {
+		// TODO Auto-generated method stub
+		String location = properties.getProperty(dcrawlocation);
+		if(null == location) {
+			properties.setProperty(
+					dcrawlocation,
+					new File(".").getAbsolutePath()
+							+ System.getProperty("file.separator") + "lib"
+							+ System.getProperty("file.separator") + "dcraw");
+			save();
+		}
+		return properties.getProperty(dcrawlocation);
+	}
+
 	private static void save() {
 		try {
 			properties.store(new FileOutputStream(propertiesPath), "");
@@ -98,6 +114,7 @@ public class Settings {
 				Integer.valueOf(tmp[1].trim()), Integer.valueOf(tmp[2].trim()),
 				Integer.valueOf(tmp[3].trim()));
 	}
+
 
 	// public Rectangle getControlsDialogPosition() {
 	// return rememberWindowPosition(controlsDialog);
