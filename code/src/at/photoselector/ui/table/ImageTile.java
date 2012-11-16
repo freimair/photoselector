@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -27,7 +28,6 @@ class ImageTile {
 	private Point offset;
 	private Composite imageContainer;
 	private Image image;
-	private Image scaled;
 	private Photo photo;
 	private ControlsDialog controlsDialog;
 
@@ -36,22 +36,22 @@ class ImageTile {
 		this.photo = currentPhoto;
 		controlsDialog = dialog;
 
-		image = new Image(dialog.getShell().getDisplay(), photo.getPath()
-				.getAbsolutePath());
-		scaled = image;
-
-		imageContainer = new Composite(parent, SWT.NONE);
-
 		// TODO find some smart way to calculate the initial size of the image
-		imageContainer.setSize(image.getImageData().width,
-				image.getImageData().height);
+		int boundingBox = Math.min(parent.getBounds().width,
+				parent.getBounds().height);
+		image = new Image(parent.getDisplay(), photo.getImage(boundingBox));
 
-		// add controls
+		imageContainer = new Composite(parent, SWT.BORDER);
 		imageContainer.setLayout(new RowLayout());
+
+		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
+		imageContainer.setSize(dimensions.width, dimensions.height);
+
 		Point pt = parent.toControl(x, y);
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
 
+		// add controls
 		final Button buttonAccept = new Button(imageContainer, SWT.PUSH);
 		buttonAccept.setText("Accept");
 		buttonAccept.addSelectionListener(new SelectionListener() {
@@ -126,7 +126,7 @@ class ImageTile {
 			@Override
 			public void handleEvent(Event e) {
 				GC gc = e.gc;
-				gc.drawImage(scaled, 0, 0);
+				gc.drawImage(image, 0, 0);
 				gc.dispose();
 
 			}
@@ -172,34 +172,38 @@ class ImageTile {
 					factor = 1.1;
 
 				// do some calculations
-				int oldImageWidth = imageContainer.getBounds().width;
-				int newImageWidth = (int) (Math.round(oldImageWidth * factor));
+				int oldBoundingBox = Math.max(imageContainer.getBounds().width,
+						imageContainer.getBounds().height);
+				Rectangle oldDimensions = photo
+						.scaleAndCenterImage(oldBoundingBox);
 
-				int oldImageHeight = imageContainer.getBounds().height;
-				int newImageHeight = (int) (Math.round(oldImageHeight * factor));
+				int newBoundingBox = (int) (oldBoundingBox * factor);
+				Rectangle newDimensions = photo
+						.scaleAndCenterImage(newBoundingBox);
+
+				imageContainer.setVisible(false);
+				imageContainer.setVisible(true);
 
 				// resize image box
-				imageContainer.setSize(newImageWidth, newImageHeight);
+				imageContainer.setSize(newDimensions.width,
+						newDimensions.height);
 
 				// recenter
 				imageContainer.setLocation(imageContainer.getLocation().x
-						+ (oldImageWidth - newImageWidth) / 2,
+						+ (oldDimensions.width - newDimensions.width) / 2,
 						imageContainer.getLocation().y
-								+ (oldImageHeight - newImageHeight) / 2);
+								+ (oldDimensions.height - newDimensions.height)
+								/ 2);
 
 				// scale image
-				scaled = new Image(Display.getDefault(), newImageWidth,
-						newImageHeight);
-				GC gc = new GC(scaled);
-				gc.drawImage(image, 0, 0, image.getBounds().width,
-						image.getBounds().height, 0, 0, newImageWidth,
-						newImageHeight);
-				gc.dispose();
+				image.dispose();
+				image = new Image(Display.getCurrent(), photo
+						.getImage(newBoundingBox));
 
-				// FIXME dispose old scaled! could not figure out how by now
-				imageContainer.layout();
+				imageContainer.redraw();
 			}
 		});
+
 		imageContainer.layout();
 	}
 
@@ -207,6 +211,5 @@ class ImageTile {
 	protected void finalize() throws Throwable {
 		super.finalize();
 		image.dispose();
-		scaled.dispose();
 	}
 }

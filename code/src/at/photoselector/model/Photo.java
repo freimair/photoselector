@@ -148,7 +148,8 @@ public class Photo {
 	}
 
 	private ImageData getCachedImage(int boundingBox) {
-		int cachedSize = boundingBox - (500 * (boundingBox / 500));
+		// TODO find better way to get a suitable cache size
+		int cachedSize = (int) (500 * Math.ceil((boundingBox - 100) / 500.0) + 100);
 		File cachedImage = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + "." + cachedSize + ".jpg");
 
