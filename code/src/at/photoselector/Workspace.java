@@ -23,7 +23,7 @@ public class Workspace {
 			for (File current : location.listFiles())
 				addPhoto(current.getAbsolutePath());
 		}
-		if (location.getName().matches(".*jpe?g$"))
+		if (location.getName().toLowerCase().matches(".*jpe?g$"))
 			Photo.create(location);
 	}
 

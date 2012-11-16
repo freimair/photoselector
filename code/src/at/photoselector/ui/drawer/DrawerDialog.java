@@ -95,8 +95,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		if (showDeclinedButton.getSelection())
 			filter |= Photo.DECLINED;
 		for (Photo current : Photo.getFiltered(true, filter)) {
-			new ListItem(photoListContentComposite, getShell().getDisplay(),
-					current);
+			new ListItem(photoListContentComposite, current);
 		}
 
 		// just make sure that there has been a layout calculated before

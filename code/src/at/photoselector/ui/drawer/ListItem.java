@@ -28,30 +28,39 @@ class ListItem {
 	private Rectangle dimensions;
 	private Image image;
 
-	public ListItem(final Composite container, Display display, Photo current) {
+	public ListItem(final Composite parent, Photo current) {
 		photo = current;
+		final Display display = parent.getDisplay();
 
-		image = new Image(display, photo.getPath().getAbsolutePath());
-		dimensions = scaleAndCenterImage(image.getBounds(), 100);
-
-		final Composite imageContainer = new Composite(container, SWT.NONE);
+		final Composite imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayoutData(new RowData(106, 106));
 		imageContainer.setLayout(new RowLayout());
 		imageContainer.setBackground(display
 				.getSystemColor(SWT.COLOR_DARK_GRAY));
-		// draw image
-		scaled = new Image(display, dimensions.width, dimensions.height);
 
-		// draw the image
-		imageContainer.addListener(SWT.Paint, new Listener() {
-
+		display.asyncExec(new Runnable() {
 			@Override
-			public void handleEvent(Event e) {
-				GC gc = e.gc;
-				gc.drawImage(image, 0, 0, image.getBounds().width,
-						image.getBounds().height, dimensions.x + 3,
-						dimensions.y + 3, dimensions.width, dimensions.height);
-				gc.dispose();
+			public void run() {
+				image = new Image(display, photo.getPath().getAbsolutePath());
+				dimensions = scaleAndCenterImage(image.getBounds(), 100);
+				// draw image
+				scaled = new Image(display, dimensions.width, dimensions.height);
+
+				// draw the image
+				imageContainer.addListener(SWT.Paint, new Listener() {
+
+					@Override
+					public void handleEvent(Event e) {
+						GC gc = e.gc;
+						gc.drawImage(image, 0, 0, image.getBounds().width,
+								image.getBounds().height, dimensions.x + 3,
+								dimensions.y + 3, dimensions.width,
+								dimensions.height);
+						gc.dispose();
+					}
+				});
+
+				imageContainer.redraw();
 			}
 		});
 
