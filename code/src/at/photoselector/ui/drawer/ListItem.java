@@ -129,7 +129,6 @@ class ListItem {
 
 			@Override
 			public void dragFinished(DragSourceEvent event) {
-				imageContainer.dispose();
 				container.layout();
 				Rectangle r = container.getParent().getClientArea();
 				((ScrolledComposite) container.getParent())

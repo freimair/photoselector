@@ -5,6 +5,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseWheelListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
@@ -85,6 +86,16 @@ class ImageTile {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 
+			}
+		});
+
+		final Button buttonCancel = new Button(imageContainer, SWT.PUSH);
+		buttonCancel.setText("Cancel");
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				imageContainer.dispose();
 			}
 		});
 
