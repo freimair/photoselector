@@ -1,5 +1,6 @@
 package at.photoselector.ui.drawer;
 
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,6 +28,8 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
 		super(parentShell, dialog);
+
+		addToolBar(SWT.FLAT);
 	}
 
 	@Override
@@ -37,12 +40,9 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	}
 
 	protected Control createContents(Composite parent) {
-		Composite drawerComposite = new Composite(parent, SWT.NONE);
-		drawerComposite.setLayout(new RowLayout(SWT.VERTICAL));
-		ToolBar drawerToolbar = new ToolBar(drawerComposite, SWT.NONE);
+		ToolBar drawerToolbar = (ToolBar) getToolBarControl();
 
-		showAcceptedButton = new ToolItem(drawerToolbar,
-				SWT.CHECK);
+		showAcceptedButton = new ToolItem(drawerToolbar, SWT.CHECK);
 		showAcceptedButton.setText("accepted");
 		showAcceptedButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -50,8 +50,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 				controlsDialog.update();
 			}
 		});
-		showDeclinedButton = new ToolItem(drawerToolbar,
-				SWT.CHECK);
+		showDeclinedButton = new ToolItem(drawerToolbar, SWT.CHECK);
 		showDeclinedButton.setText("declined");
 		showDeclinedButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -60,14 +59,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		});
 
-		final ToolItem zoomInButton = new ToolItem(drawerToolbar, SWT.PUSH);
-		zoomInButton.setText("+");
-		final ToolItem zoomOutButton = new ToolItem(drawerToolbar, SWT.PUSH);
-		zoomOutButton.setText("-");
-		drawerToolbar.pack();
-
-		photoListComposite = new ScrolledComposite(
-				drawerComposite, SWT.V_SCROLL);
+		photoListComposite = new ScrolledComposite(parent, SWT.V_SCROLL);
 		photoListComposite.setLayoutData(new RowData(270, 380));
 
 		photoListContentComposite = new Composite(
@@ -82,10 +74,16 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		photoListComposite.setExpandHorizontal(true);
 		photoListComposite.setExpandVertical(true);
 
+
 		update();
 
-		return drawerComposite;
+		return parent;
 	}
+
+	@Override
+	protected ToolBarManager createToolBarManager(int style) {
+		return super.createToolBarManager(style);
+}
 
 	@Override
 	public void update() {
