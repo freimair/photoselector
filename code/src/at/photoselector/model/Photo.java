@@ -11,6 +11,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 import at.photoselector.Settings;
@@ -129,8 +130,8 @@ public class Photo {
 	private Stage stage = null;
 	private File cacheDir;
 	private String delimiter;
-	private int width;
-	private int height;
+	private int width = 0;
+	private int height = 0;
 
 	public Photo(int newId, File path, int status) {
 		id = newId;
@@ -219,9 +220,8 @@ public class Photo {
 			imageLoader.data = new ImageData[] { scaled };
 			imageLoader.save(cachedImage.getAbsolutePath(), SWT.IMAGE_JPEG);
 		} else {
+			getDimensions();
 			scaled = new ImageData(cachedImage.getAbsolutePath());
-			width = scaled.width;
-			height = scaled.height;
 		}
 
 		return scaled;
@@ -247,6 +247,16 @@ public class Photo {
 		}
 
 		return result;
+	}
+
+	public Point getDimensions() {
+		if (width == 0 || height == 0) {
+			ImageData fullImage = new ImageData(getPath().getAbsolutePath());
+			width = fullImage.width;
+			height = fullImage.height;
+		}
+
+		return new Point(width, height);
 	}
 
 	public int getId() {

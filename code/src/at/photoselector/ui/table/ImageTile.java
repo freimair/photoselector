@@ -102,6 +102,36 @@ class ImageTile {
 			}
 		});
 
+		Button hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
+		hundredPercentButton.setText("100%");
+		hundredPercentButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int oldBoundingBox = Math.max(imageContainer.getBounds().width,
+						imageContainer.getBounds().height);
+				Rectangle oldDimensions = photo
+						.scaleAndCenterImage(oldBoundingBox);
+
+				Point newDimensions = photo.getDimensions();
+
+				imageContainer.setSize(newDimensions.x, newDimensions.y);
+
+				// recenter
+				imageContainer.setLocation(imageContainer.getLocation().x
+						+ (oldDimensions.width - newDimensions.x) / 2,
+						imageContainer.getLocation().y
+								+ (oldDimensions.height - newDimensions.y) / 2);
+
+				// scale image
+				image.dispose();
+				image = new Image(Display.getCurrent(), photo.getImage(Math
+						.max(newDimensions.x, newDimensions.y)));
+
+				imageContainer.redraw();
+				controlsComposite.setVisible(false);
+			}
+		});
 
 		imageContainer.addMenuDetectListener(new MenuDetectListener() {
 			
