@@ -1,13 +1,14 @@
 package at.photoselector.ui.table;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -30,6 +31,7 @@ class ImageTile {
 	private Image image;
 	private Photo photo;
 	private ControlsDialog controlsDialog;
+	private Composite controlsComposite;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
@@ -52,9 +54,13 @@ class ImageTile {
 				pt.y - imageContainer.getBounds().height / 2);
 
 		// add controls
-		final Button buttonAccept = new Button(imageContainer, SWT.PUSH);
+		controlsComposite = new Composite(imageContainer, SWT.NONE);
+		controlsComposite.setLayout(new RowLayout());
+		controlsComposite.setVisible(false);
+
+		Button buttonAccept = new Button(controlsComposite, SWT.PUSH);
 		buttonAccept.setText("Accept");
-		buttonAccept.addSelectionListener(new SelectionListener() {
+		buttonAccept.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -62,17 +68,11 @@ class ImageTile {
 				controlsDialog.update();
 				imageContainer.dispose();
 			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
 		});
 
-		final Button buttonDecline = new Button(imageContainer, SWT.PUSH);
+		Button buttonDecline = new Button(controlsComposite, SWT.PUSH);
 		buttonDecline.setText("Decline");
-		buttonDecline.addSelectionListener(new SelectionListener() {
+		buttonDecline.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -80,15 +80,19 @@ class ImageTile {
 				controlsDialog.update();
 				imageContainer.dispose();
 			}
+		});
+
+		Button exitButton = new Button(controlsComposite, SWT.PUSH);
+		exitButton.setText("Exit Controls");
+		exitButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
+			public void widgetSelected(SelectionEvent e) {
+				controlsComposite.setVisible(false);
 			}
 		});
 
-		final Button buttonCancel = new Button(imageContainer, SWT.PUSH);
+		Button buttonCancel = new Button(controlsComposite, SWT.PUSH);
 		buttonCancel.setText("Cancel");
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 
@@ -98,27 +102,18 @@ class ImageTile {
 			}
 		});
 
-//		imageContainer.addMouseTrackListener(new MouseTrackListener() {
-//
-//			@Override
-//			public void mouseHover(MouseEvent e) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//
-//			@Override
-//			public void mouseExit(MouseEvent e) {
-//				buttonAccept.setVisible(false);
-//				buttonDecline.setVisible(false);
-//
-//			}
-//
-//			@Override
-//			public void mouseEnter(MouseEvent e) {
-//				buttonAccept.setVisible(true);
-//				buttonDecline.setVisible(true);
-//			}
-//		});
+
+		imageContainer.addMenuDetectListener(new MenuDetectListener() {
+			
+			@Override
+			public void menuDetected(MenuDetectEvent e) {
+				controlsComposite.setVisible(true);
+				Point location = imageContainer.toControl(e.x, e.y);
+				controlsComposite.setLocation(
+						location.x - controlsComposite.getBounds().width / 2,
+						location.y - controlsComposite.getBounds().height / 2);
+			}
+		});
 
 		// draw the image
 		imageContainer.addListener(SWT.Paint, new Listener() {
