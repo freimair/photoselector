@@ -126,7 +126,7 @@ public class Photo {
 	private int id;
 	private File path;
 	private int status;
-	private Stage stage;
+	private Stage stage = null;
 	private File cacheDir;
 	private String delimiter;
 	private int width;

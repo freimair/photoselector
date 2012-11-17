@@ -2,6 +2,8 @@ package at.photoselector.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,14 @@ public class Stage {
 
 	public static List<Stage> getAll() {
 		updateCache();
-		return new ArrayList<Stage>(cache.values());
+		ArrayList<Stage> result = new ArrayList<Stage>(cache.values());
+		Collections.sort(result, new Comparator<Stage>() {
+			@Override
+			public int compare(Stage o1, Stage o2) {
+				return Integer.valueOf(o2.getId()).compareTo(o1.getId());
+			}
+		});
+		return result;
 	}
 
 	public static Stage getCurrent() {
