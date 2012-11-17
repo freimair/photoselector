@@ -1,6 +1,5 @@
 package at.photoselector.ui.table;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
@@ -9,6 +8,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -32,8 +32,7 @@ public class TableDialog extends UncloseableApplicationWindow {
 
 	@Override
 	protected Control createContents(final Composite parent) {
-		parent.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_DARK_GRAY));
+		parent.setBackground(new Color(parent.getDisplay(), 75, 75, 75));
 
 		DropTarget target = new DropTarget(parent, DND.DROP_MOVE
 				| DND.DROP_COPY | DND.DROP_LINK);

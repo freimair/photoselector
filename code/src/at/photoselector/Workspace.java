@@ -63,7 +63,7 @@ public class Workspace {
 		for (Photo current : Photo.getFiltered(true, Photo.ACCEPTED))
 			current.setStatus(Photo.UNPROCESSED);
 
-		Stage.create("new Stage");
+		Stage.create("Stage " + Stage.getAll().size());
 	}
 
 	// ################################ NON-STATICS ################################

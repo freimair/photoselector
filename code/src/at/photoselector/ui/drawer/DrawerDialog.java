@@ -7,7 +7,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
@@ -65,7 +64,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 		ToolItem zoomInButton = new ToolItem(drawerToolbar, SWT.PUSH);
 		zoomInButton.setText("+");
-		zoomInButton.addSelectionListener(new SelectionListener() {
+		zoomInButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -73,29 +72,17 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 				boundingBox += 50;
 				update();
 			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
-			}
 		});
 
 		ToolItem zoomOutButton = new ToolItem(drawerToolbar, SWT.PUSH);
 		zoomOutButton.setText("-");
-		zoomOutButton.addSelectionListener(new SelectionListener() {
+		zoomOutButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// TODO Auto-generated method stub
 				boundingBox -= 50;
 				update();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -117,7 +104,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		photoListContentComposite = new Composite(
 				photoListComposite, SWT.NONE);
 		photoListContentComposite.setBackground(parent.getDisplay()
-				.getSystemColor(SWT.COLOR_GRAY));
+				.getSystemColor(SWT.COLOR_DARK_GRAY));
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.wrap = true;
 		photoListContentComposite.setLayout(layout);

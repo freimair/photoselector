@@ -84,7 +84,6 @@ class ListItem {
 
 		buttonAccept = new Button(imageContainer, SWT.PUSH);
 		buttonAccept.setText("Accept");
-		buttonAccept.setVisible(false);
 		buttonAccept.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -99,7 +98,6 @@ class ListItem {
 
 		buttonDecline = new Button(imageContainer, SWT.PUSH);
 		buttonDecline.setText("Decline");
-		buttonDecline.setVisible(false);
 		buttonDecline.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -134,6 +132,8 @@ class ListItem {
 		};
 
 		parent.addPaintListener(paintListener);
+		// remove paint listener on dispose. we cannot wait for gc to finalize
+		// the object and therefore remove the paint listener
 		imageContainer.addDisposeListener(new DisposeListener() {
 
 			@Override
