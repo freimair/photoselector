@@ -7,8 +7,12 @@ import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -20,18 +24,29 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
+import at.photoselector.ui.ControlsDialog;
 
 class ListItem {
 	private Photo photo;
 	private Image scaled;
 	private int border = 3;
+	private DrawerDialog drawerDialog;
+	private ControlsDialog controlsDialog;
+	private Button buttonAccept;
+	private Button buttonDecline;
+	private PaintListener paintListener;
 
 	public ListItem(final Composite parent, final DrawerDialog dialog,
+			ControlsDialog cDialog,
 			Photo current) {
 		photo = current;
+		drawerDialog = dialog;
+		this.controlsDialog = cDialog;
+
 		final Display display = parent.getDisplay();
-		int boundingBox = dialog.getBoundingBox();
+		int boundingBox = drawerDialog.getBoundingBox();
 		final Composite imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayoutData(new RowData(boundingBox + 2 * border,
 				boundingBox + 2 * border));
@@ -42,7 +57,7 @@ class ListItem {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				scaled = new Image(display, photo.getImage(dialog
+				scaled = new Image(display, photo.getImage(drawerDialog
 						.getBoundingBox()));
 
 				// draw the image
@@ -51,7 +66,8 @@ class ListItem {
 					@Override
 					public void handleEvent(Event e) {
 						GC gc = e.gc;
-						Rectangle dimensions = photo.scaleAndCenterImage(dialog
+						Rectangle dimensions = photo
+								.scaleAndCenterImage(drawerDialog
 								.getBoundingBox());
 						gc.drawImage(scaled, dimensions.x + border,
 								dimensions.y + border);
@@ -63,41 +79,51 @@ class ListItem {
 			}
 		});
 
-		final Button buttonAccept = new Button(imageContainer, SWT.PUSH);
+		buttonAccept = new Button(imageContainer, SWT.PUSH);
 		buttonAccept.setText("Accept");
 		buttonAccept.setVisible(false);
-		buttonAccept.addSelectionListener(new SelectionListener() {
+		buttonAccept.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// Workspace.accept(path);
-				// processed();
+				if (Workspace.accept(photo))
+					controlsDialog.update();
+				else
+					drawerDialog.update();
 				imageContainer.dispose();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 
-		final Button buttonDecline = new Button(imageContainer, SWT.PUSH);
+		buttonDecline = new Button(imageContainer, SWT.PUSH);
 		buttonDecline.setText("Decline");
 		buttonDecline.setVisible(false);
-		buttonDecline.addSelectionListener(new SelectionListener() {
+		buttonDecline.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// Main.workspace.decline(path);
-				// processed();
+				if (Workspace.decline(photo))
+					controlsDialog.update();
+				else
+					drawerDialog.update();
 				imageContainer.dispose();
 			}
+		});
+
+		paintListener = new PaintListener() {
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+			public void paintControl(PaintEvent e) {
+				buttonAccept.setVisible(drawerDialog.isShowDialogs());
+				buttonDecline.setVisible(drawerDialog.isShowDialogs());
+			}
+		};
 
+		parent.addPaintListener(paintListener);
+		imageContainer.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				parent.removePaintListener(paintListener);
 			}
 		});
 

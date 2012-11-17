@@ -28,6 +28,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private ToolItem showDeclinedButton;
 	private Composite photoListContentComposite;
 	private int boundingBox = 100;
+	private ToolItem showControlsButton;
 
 	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
 		super(parentShell, dialog);
@@ -97,6 +98,18 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 			}
 		});
+
+		showControlsButton = new ToolItem(drawerToolbar, SWT.CHECK);
+		showControlsButton.setText("show controls");
+		showControlsButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// photoListContentComposite.layout();
+				photoListContentComposite.redraw();
+			}
+		});
+
 		ScrolledComposite photoListComposite = new ScrolledComposite(parent,
 				SWT.V_SCROLL);
 		photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -141,7 +154,8 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		if (showDeclinedButton.getSelection())
 			filter |= Photo.DECLINED;
 		for (Photo current : Photo.getFiltered(true, filter)) {
-			new ListItem(photoListContentComposite, this, current);
+			new ListItem(photoListContentComposite, this, controlsDialog,
+					current);
 		}
 
 		// just make sure that there has been a layout calculated before
@@ -157,6 +171,10 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 	public int getBoundingBox() {
 		return boundingBox;
+	}
+
+	public boolean isShowDialogs() {
+		return showControlsButton.getSelection();
 	}
 
 }
