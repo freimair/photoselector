@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import at.photoselector.Workspace;
 import at.photoselector.tools.Exporter;
+import at.photoselector.tools.RawTherapeeLinuxExporter;
 import at.photoselector.ui.drawer.DrawerDialog;
 import at.photoselector.ui.stages.StagesDialog;
 import at.photoselector.ui.table.TableDialog;

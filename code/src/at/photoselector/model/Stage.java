@@ -42,7 +42,7 @@ public class Stage {
 		Collections.sort(result, new Comparator<Stage>() {
 			@Override
 			public int compare(Stage o1, Stage o2) {
-				return Integer.valueOf(o2.getId()).compareTo(o1.getId());
+				return Integer.valueOf(o1.getId()).compareTo(o2.getId());
 			}
 		});
 		return result;
