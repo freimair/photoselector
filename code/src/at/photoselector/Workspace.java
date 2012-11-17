@@ -44,6 +44,10 @@ public class Workspace {
 		return isStageCompleted();
 	}
 
+	public static void reset(Photo photo) {
+		photo.setStatus(Photo.UNPROCESSED);
+	}
+
 	public static boolean isStageCompleted() {
 		if (0 == Photo.getFiltered(true, Photo.UNPROCESSED).size()) {
 			stageCompleted();

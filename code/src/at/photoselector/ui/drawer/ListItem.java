@@ -37,6 +37,7 @@ class ListItem {
 	private Button buttonAccept;
 	private Button buttonDecline;
 	private PaintListener paintListener;
+	private Button buttonReset;
 
 	public ListItem(final Composite parent, final DrawerDialog dialog,
 			ControlsDialog cDialog,
@@ -109,12 +110,24 @@ class ListItem {
 			}
 		});
 
+		buttonReset = new Button(imageContainer, SWT.PUSH);
+		buttonReset.setText("Reset");
+		buttonReset.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Workspace.reset(photo);
+				drawerDialog.update();
+			}
+		});
+
 		paintListener = new PaintListener() {
 
 			@Override
 			public void paintControl(PaintEvent e) {
 				buttonAccept.setVisible(drawerDialog.isShowDialogs());
 				buttonDecline.setVisible(drawerDialog.isShowDialogs());
+				buttonReset.setVisible(drawerDialog.isShowDialogs());
 			}
 		};
 
