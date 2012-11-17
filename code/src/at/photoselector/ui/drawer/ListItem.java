@@ -13,6 +13,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -52,8 +53,9 @@ class ListItem {
 		imageContainer.setLayoutData(new RowData(boundingBox + 2 * border,
 				boundingBox + 2 * border));
 		imageContainer.setLayout(new RowLayout());
-		imageContainer.setBackground(display
-				.getSystemColor(SWT.COLOR_DARK_GRAY));
+		imageContainer.setBackground(new Color(display,
+				Photo.DECLINED == current.getStatus() ? 100 : 75,
+				Photo.ACCEPTED == current.getStatus() ? 100 : 75, 75));
 
 		display.asyncExec(new Runnable() {
 			@Override
