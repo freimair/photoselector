@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.SWT;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -154,10 +157,9 @@ public class Photo {
 		return getPath().getName().toLowerCase().matches(".*cr2$");
 	}
 
-	private ImageData preprocessRawImage() {
+	private File preprocessRawImage() {
 		File cachedFullImage = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + ".full.jpg");
-		ImageData result;
 		if (!cachedFullImage.exists()) {
 			try {
 				Process p = Runtime.getRuntime().exec(
@@ -181,60 +183,86 @@ public class Photo {
 			}
 			File tiffImagePath = new File(getPath().getAbsolutePath()
 					.replace("CR2", "tiff"));
-			result = new ImageData(tiffImagePath.getAbsolutePath());
 
-			ImageLoader imageLoader = new ImageLoader();
-			imageLoader.data = new ImageData[] { result };
-			imageLoader.save(cachedFullImage.getAbsolutePath(),
-					SWT.IMAGE_JPEG);
+			// use imagemagic to convert to jpg
+			try {
+				Process p = Runtime.getRuntime().exec(
+						"convert " + tiffImagePath.getAbsolutePath() + " "
+								+ cachedFullImage.getAbsolutePath());
+				p.waitFor();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			tiffImagePath.delete();
-		} else
-			result = new ImageData(cachedFullImage.getAbsolutePath());
+		}
 
-		return result;
+		return cachedFullImage;
 	}
 
-	private ImageData getCachedImage(int boundingBox) {
+	private File getCachedImage(int boundingBox) {
 
 		// TODO find better way to get a suitable cache size
 		int cachedSize = (int) (500 * Math.ceil((boundingBox - 100) / 500.0) + 100);
 		File cachedImage = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + "." + cachedSize + ".jpg");
 
-		ImageData scaled;
 		if (!cachedImage.exists()) {
-			ImageData fullImage;
+			File fullImage;
 			if (isRaw()) {
 				fullImage = preprocessRawImage();
 			} else
-				fullImage = new ImageData(getPath().getAbsolutePath());
-			width = fullImage.width;
-			height = fullImage.height;
+				fullImage = getPath();
 
-			Rectangle scaledDimensions = scaleAndCenterImage(cachedSize);
-			scaled = fullImage.scaledTo(scaledDimensions.width,
-				scaledDimensions.height);
-			// persist
-			ImageLoader imageLoader = new ImageLoader();
-			imageLoader.data = new ImageData[] { scaled };
-			imageLoader.save(cachedImage.getAbsolutePath(), SWT.IMAGE_JPEG);
-		} else {
-			getDimensions();
-			scaled = new ImageData(cachedImage.getAbsolutePath());
+			try {
+				Process p = Runtime.getRuntime().exec(
+						"convert -verbose " + fullImage + " -resize "
+								+ cachedSize + "x" + cachedSize + " "
+								+ cachedImage.getAbsolutePath());
+				p.waitFor();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
-		return scaled;
+		return cachedImage;
 	}
 
 	public ImageData getImage(int boundingBox) {
-		ImageData cachedImage = getCachedImage(boundingBox);
-		Rectangle dimensions = scaleAndCenterImage(boundingBox);
-		return cachedImage.scaledTo(dimensions.width,
-			dimensions.height);
-}
+		File cachedImage = getCachedImage(boundingBox);
+		File tmp = new File("/tmp/" + getPath().getName().hashCode());
+
+		ImageData result = null;
+		try {
+			Process p = Runtime.getRuntime().exec(
+					"convert " + cachedImage + " -resize " + boundingBox + "x"
+							+ boundingBox + " " + tmp.getAbsolutePath());
+			p.waitFor();
+
+			result = new ImageData(tmp.getAbsolutePath());
+			tmp.delete();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {
+		getDimensions();
+
 		Rectangle result = new Rectangle(0, 0, boundingBox, boundingBox);
 
 		// scale
@@ -251,9 +279,38 @@ public class Photo {
 
 	public Point getDimensions() {
 		if (width == 0 || height == 0) {
-			ImageData fullImage = new ImageData(getPath().getAbsolutePath());
-			width = fullImage.width;
-			height = fullImage.height;
+			File resourceFile = null;
+			if (isRaw())
+				resourceFile = preprocessRawImage();
+			else
+				resourceFile = getPath();
+
+			ImageInputStream in = null;
+			try {
+				in = ImageIO.createImageInputStream(resourceFile);
+				final Iterator readers = ImageIO.getImageReaders(in);
+				if (readers.hasNext()) {
+					ImageReader reader = (ImageReader) readers.next();
+					try {
+						reader.setInput(in);
+						width = reader.getWidth(0);
+						height = reader.getHeight(0);
+					} finally {
+						reader.dispose();
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (in != null)
+					try {
+						in.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
 		}
 
 		return new Point(width, height);
