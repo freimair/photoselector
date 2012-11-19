@@ -281,6 +281,12 @@ public class Photo {
 		getCachedImage(getCacheLevel(boundingBox) - 1);
 	}
 
+	public void clearCachedImages() {
+		for (Image current : imageCache.values())
+			current.dispose();
+		imageCache.clear();
+	}
+
 	public Rectangle scaleAndCenterImage(int boundingBox) {
 		getDimensions();
 

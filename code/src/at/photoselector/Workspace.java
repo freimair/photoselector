@@ -57,8 +57,12 @@ public class Workspace {
 	}
 
 	public static void stageCompleted() {
-		for (Photo current : Photo.getFiltered(true, Photo.DECLINED))
+		for (Photo current : Photo.getFiltered(true, Photo.DECLINED)) {
 			current.setStage(Stage.getCurrent());
+
+			// clear cached photos
+			current.clearCachedImages();
+		}
 
 		for (Photo current : Photo.getFiltered(true, Photo.ACCEPTED))
 			current.setStatus(Photo.UNPROCESSED);
