@@ -317,7 +317,8 @@ public class Photo {
 			ImageInputStream in = null;
 			try {
 				in = ImageIO.createImageInputStream(resourceFile);
-				final Iterator readers = ImageIO.getImageReaders(in);
+				final Iterator<ImageReader> readers = ImageIO
+						.getImageReaders(in);
 				if (readers.hasNext()) {
 					ImageReader reader = (ImageReader) readers.next();
 					try {
