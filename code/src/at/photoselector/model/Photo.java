@@ -276,6 +276,11 @@ public class Photo {
 		return result;
 	}
 
+	public void preCacheNeighbors(int boundingBox) {
+		getCachedImage(getCacheLevel(boundingBox) + 1);
+		getCachedImage(getCacheLevel(boundingBox) - 1);
+	}
+
 	public Rectangle scaleAndCenterImage(int boundingBox) {
 		getDimensions();
 

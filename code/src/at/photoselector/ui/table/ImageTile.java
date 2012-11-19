@@ -40,6 +40,8 @@ class ImageTile {
 			image = photo.getImage(myBoundingBox);
 
 			imageContainer.redraw();
+
+			photo.preCacheNeighbors(myBoundingBox);
 		}
 	}
 
