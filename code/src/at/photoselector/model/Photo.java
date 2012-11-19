@@ -139,6 +139,7 @@ public class Photo {
 	private int width = 0;
 	private int height = 0;
 	private final Map<File, Image> imageCache = new HashMap<File, Image>();
+	private int section;
 
 	public Photo(int newId, File path, int status) {
 		id = newId;
@@ -208,10 +209,9 @@ public class Photo {
 		return cachedFullImage;
 	}
 
-	private Image getCachedImage(int boundingBox) {
+	private Image getCachedImage(int level) {
+		int cachedSize = getSize(level);
 
-		// TODO find better way to get a suitable cache size
-		int cachedSize = (int) (500 * Math.ceil((boundingBox - 100) / 500.0) + 100);
 		File cachedImageLocation = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + "." + cachedSize + ".jpg");
 
@@ -247,8 +247,22 @@ public class Photo {
 		return cachedImage;
 	}
 
+	private int getCacheLevel(int boundingBox) {
+		if (100 >= boundingBox)
+			return 0;
+		int full = Math.max(getDimensions().x, getDimensions().y) - 100;
+		section = full / 5; // make 5 a configurable number
+		return boundingBox / section + 1;
+	}
+
+	private int getSize(int cacheLevel) {
+		if (0 > cacheLevel)
+			cacheLevel = 0;
+		return 100 + cacheLevel * section;
+	}
+
 	public Image getImage(int boundingBox) {
-		Image cached = getCachedImage(boundingBox);
+		Image cached = getCachedImage(getCacheLevel(boundingBox));
 		Rectangle dimensions = scaleAndCenterImage(boundingBox);
 		Image result = new Image(Display.getCurrent(), dimensions.width,
 				dimensions.height);
