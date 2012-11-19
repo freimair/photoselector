@@ -60,8 +60,7 @@ class ListItem {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				scaled = new Image(display, photo.getImage(drawerDialog
-						.getBoundingBox()));
+				scaled = photo.getImage(drawerDialog.getBoundingBox());
 
 				// draw the image
 				imageContainer.addListener(SWT.Paint, new Listener() {

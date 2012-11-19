@@ -16,7 +16,6 @@ import javax.imageio.stream.ImageInputStream;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -248,7 +247,7 @@ public class Photo {
 		return cachedImage;
 	}
 
-	public ImageData getImage(int boundingBox) {
+	public Image getImage(int boundingBox) {
 		Image cached = getCachedImage(boundingBox);
 		Rectangle dimensions = scaleAndCenterImage(boundingBox);
 		Image result = new Image(Display.getCurrent(), dimensions.width,
@@ -260,7 +259,7 @@ public class Photo {
 				dimensions.height);
 		gc.dispose();
 
-		return result.getImageData();
+		return result;
 	}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {

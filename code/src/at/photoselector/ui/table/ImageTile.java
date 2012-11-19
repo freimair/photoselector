@@ -37,8 +37,7 @@ class ImageTile {
 		@Override
 		public void run() {
 			image.dispose();
-			image = new Image(Display.getCurrent(),
-					photo.getImage(myBoundingBox));
+			image = photo.getImage(myBoundingBox);
 
 			imageContainer.redraw();
 		}
@@ -59,7 +58,7 @@ class ImageTile {
 		// TODO find some smart way to calculate the initial size of the image
 		int boundingBox = Math.min(parent.getBounds().width,
 				parent.getBounds().height);
-		image = new Image(parent.getDisplay(), photo.getImage(boundingBox));
+		image = photo.getImage(boundingBox);
 
 		imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayout(new RowLayout());
