@@ -13,9 +13,13 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 
 import at.photoselector.Settings;
 import at.photoselector.Workspace;
@@ -135,6 +139,7 @@ public class Photo {
 	private String delimiter;
 	private int width = 0;
 	private int height = 0;
+	private final Map<File, ImageData> imageCache = new HashMap<File, ImageData>();
 
 	public Photo(int newId, File path, int status) {
 		id = newId;
@@ -204,14 +209,14 @@ public class Photo {
 		return cachedFullImage;
 	}
 
-	private File getCachedImage(int boundingBox) {
+	private ImageData getCachedImage(int boundingBox) {
 
 		// TODO find better way to get a suitable cache size
 		int cachedSize = (int) (500 * Math.ceil((boundingBox - 100) / 500.0) + 100);
-		File cachedImage = new File(cacheDir.getPath() + delimiter
+		File cachedImageLocation = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + "." + cachedSize + ".jpg");
 
-		if (!cachedImage.exists()) {
+		if (!cachedImageLocation.exists()) {
 			File fullImage;
 			if (isRaw()) {
 				fullImage = preprocessRawImage();
@@ -222,7 +227,7 @@ public class Photo {
 				Process p = Runtime.getRuntime().exec(
 						"convert -verbose " + fullImage + " -resize "
 								+ cachedSize + "x" + cachedSize + " "
-								+ cachedImage.getAbsolutePath());
+								+ cachedImageLocation.getAbsolutePath());
 				p.waitFor();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -233,31 +238,30 @@ public class Photo {
 			}
 		}
 
-		return cachedImage;
+		ImageData cachedImageData = imageCache.get(cachedImageLocation);
+		if (null == cachedImageData) {
+			cachedImageData = new ImageData(
+					cachedImageLocation.getAbsolutePath());
+			imageCache.put(cachedImageLocation, cachedImageData);
+		}
+
+		return cachedImageData;
 	}
 
 	public ImageData getImage(int boundingBox) {
-		File cachedImage = getCachedImage(boundingBox);
-		File tmp = new File("/tmp/" + getPath().getName().hashCode());
+		Image cached = new Image(Display.getCurrent(),
+				getCachedImage(boundingBox));
+		Rectangle dimensions = scaleAndCenterImage(boundingBox);
+		Image result = new Image(Display.getCurrent(), dimensions.width,
+				dimensions.height);
+		GC gc = new GC(result);
+		gc.setAntialias(SWT.ON);
+		gc.drawImage(getCachedImage(boundingBox), 0, 0, cached.getBounds().width,
+				cached.getBounds().height, 0, 0, dimensions.width,
+				dimensions.height);
+		gc.dispose();
 
-		ImageData result = null;
-		try {
-			Process p = Runtime.getRuntime().exec(
-					"convert " + cachedImage + " -resize " + boundingBox + "x"
-							+ boundingBox + " " + tmp.getAbsolutePath());
-			p.waitFor();
-
-			result = new ImageData(tmp.getAbsolutePath());
-			tmp.delete();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return result;
+		return result.getImageData();
 	}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {
