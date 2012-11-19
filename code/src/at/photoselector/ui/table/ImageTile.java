@@ -26,6 +26,24 @@ import at.photoselector.ui.ControlsDialog;
 
 
 class ImageTile {
+
+	private class ImageDrawer implements Runnable {
+		private int myBoundingBox;
+
+		public ImageDrawer(int boundingBox) {
+			myBoundingBox = boundingBox;
+		}
+
+		@Override
+		public void run() {
+			image.dispose();
+			image = new Image(Display.getCurrent(),
+					photo.getImage(myBoundingBox));
+
+			imageContainer.redraw();
+		}
+	}
+
 	private Point offset;
 	private Composite imageContainer;
 	private Image image;
@@ -124,9 +142,9 @@ class ImageTile {
 								+ (oldDimensions.height - newDimensions.y) / 2);
 
 				// scale image
-				image.dispose();
-				image = new Image(Display.getCurrent(), photo.getImage(Math
-						.max(newDimensions.x, newDimensions.y)));
+				Display.getCurrent().asyncExec(
+						new ImageDrawer(Math.max(newDimensions.x,
+								newDimensions.y)));
 
 				imageContainer.redraw();
 				controlsComposite.setVisible(false);
@@ -151,9 +169,11 @@ class ImageTile {
 			@Override
 			public void handleEvent(Event e) {
 				GC gc = e.gc;
-				gc.drawImage(image, 0, 0);
+				gc.drawImage(image, 0, 0, image.getBounds().width,
+						image.getBounds().height, 0, 0,
+						imageContainer.getBounds().width,
+						imageContainer.getBounds().height);
 				gc.dispose();
-
 			}
 		});
 
@@ -221,10 +241,7 @@ class ImageTile {
 								/ 2);
 
 				// scale image
-				image.dispose();
-				image = new Image(Display.getCurrent(), photo
-						.getImage(newBoundingBox));
-
+				Display.getCurrent().asyncExec(new ImageDrawer(newBoundingBox));
 				imageContainer.redraw();
 			}
 		});
