@@ -258,7 +258,9 @@ public class Photo {
 	private int getSize(int cacheLevel) {
 		if (0 > cacheLevel)
 			cacheLevel = 0;
-		return 100 + cacheLevel * section;
+		int size = 100 + cacheLevel * section;
+		int fullsize = Math.max(getDimensions().x, getDimensions().y);
+		return size <= fullsize ? size : fullsize;
 	}
 
 	public Image getImage(int boundingBox) {
