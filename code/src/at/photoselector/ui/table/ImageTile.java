@@ -71,6 +71,7 @@ class ImageTile {
 		Point pt = parent.toControl(x, y);
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
+		imageContainer.moveAbove(null);
 
 		// add controls
 		controlsComposite = new Composite(imageContainer, SWT.NONE);
@@ -188,6 +189,7 @@ class ImageTile {
 			@Override
 			public void mouseDown(MouseEvent event) {
 				offset = new Point(event.x, event.y);
+				imageContainer.moveAbove(null);
 			}
 
 			@Override
@@ -243,6 +245,7 @@ class ImageTile {
 
 				// scale image
 				Display.getCurrent().asyncExec(new ImageDrawer(newBoundingBox));
+				imageContainer.moveAbove(null);
 				imageContainer.redraw();
 			}
 		});
