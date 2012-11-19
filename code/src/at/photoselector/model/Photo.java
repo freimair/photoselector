@@ -139,7 +139,7 @@ public class Photo {
 	private String delimiter;
 	private int width = 0;
 	private int height = 0;
-	private final Map<File, ImageData> imageCache = new HashMap<File, ImageData>();
+	private final Map<File, Image> imageCache = new HashMap<File, Image>();
 
 	public Photo(int newId, File path, int status) {
 		id = newId;
@@ -209,7 +209,7 @@ public class Photo {
 		return cachedFullImage;
 	}
 
-	private ImageData getCachedImage(int boundingBox) {
+	private Image getCachedImage(int boundingBox) {
 
 		// TODO find better way to get a suitable cache size
 		int cachedSize = (int) (500 * Math.ceil((boundingBox - 100) / 500.0) + 100);
@@ -238,25 +238,24 @@ public class Photo {
 			}
 		}
 
-		ImageData cachedImageData = imageCache.get(cachedImageLocation);
-		if (null == cachedImageData) {
-			cachedImageData = new ImageData(
+		Image cachedImage = imageCache.get(cachedImageLocation);
+		if (null == cachedImage) {
+			cachedImage = new Image(Display.getCurrent(),
 					cachedImageLocation.getAbsolutePath());
-			imageCache.put(cachedImageLocation, cachedImageData);
+			imageCache.put(cachedImageLocation, cachedImage);
 		}
 
-		return cachedImageData;
+		return cachedImage;
 	}
 
 	public ImageData getImage(int boundingBox) {
-		Image cached = new Image(Display.getCurrent(),
-				getCachedImage(boundingBox));
+		Image cached = getCachedImage(boundingBox);
 		Rectangle dimensions = scaleAndCenterImage(boundingBox);
 		Image result = new Image(Display.getCurrent(), dimensions.width,
 				dimensions.height);
 		GC gc = new GC(result);
 		gc.setAntialias(SWT.ON);
-		gc.drawImage(getCachedImage(boundingBox), 0, 0, cached.getBounds().width,
+		gc.drawImage(cached, 0, 0, cached.getBounds().width,
 				cached.getBounds().height, 0, 0, dimensions.width,
 				dimensions.height);
 		gc.dispose();
