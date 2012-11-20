@@ -40,6 +40,7 @@ public class Workspace {
 
 	public static boolean decline(Photo photo) {
 		photo.setStatus(Photo.DECLINED);
+		photo.clearCachedImages();
 
 		return isStageCompleted();
 	}
