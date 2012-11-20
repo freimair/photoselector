@@ -20,7 +20,7 @@ public class Stage {
 		cache = new HashMap<Integer, Stage>();
 		database = db;
 		if (0 == getAll().size())
-			create("new Stage");
+			create("Stage 0");
 	}
 
 	public static void create(String name) {
