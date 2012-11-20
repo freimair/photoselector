@@ -75,27 +75,6 @@ public class SelectWorkspaceDialog extends TitleAreaDialog implements Runnable {
 	}
 
 	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		parent.setLayout(new GridLayout());
-		Button okButton = createButton(parent, OK, "OK", true);
-		okButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				okPressed();
-			}
-		});
-
-		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
-		cancelButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				setReturnCode(CANCEL);
-				close();
-			}
-		});
-	}
-
-	@Override
 	protected void okPressed() {
 		String path = workspaceCombo.getText();
 		Workspace.open(path);
