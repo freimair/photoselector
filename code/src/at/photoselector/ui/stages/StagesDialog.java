@@ -71,5 +71,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 				.setMinSize(stageListComposite
 						.computeSize(r.width, SWT.DEFAULT));
 		stageListComposite.getParent().redraw();
+
+		stageListComposite.layout();
 	}
 }
