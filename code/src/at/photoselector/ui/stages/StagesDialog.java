@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,6 +50,18 @@ public class StagesDialog extends UncloseableApplicationWindow {
 
 		update();
 
+		parent.addPaintListener(new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent arg0) {
+				Rectangle r = stageListComposite.getParent().getClientArea();
+				((ScrolledComposite) stageListComposite.getParent())
+						.setMinSize(stageListComposite.computeSize(r.width,
+								SWT.DEFAULT));
+				stageListComposite.getParent().redraw();
+			}
+		});
+
 		return stageListComposite;
 	}
 
@@ -63,14 +77,6 @@ public class StagesDialog extends UncloseableApplicationWindow {
 			new ListItem(stageListComposite, stages.get(i),
 					i == stages.size() - 1);
 		}
-
-		// just make sure that there has been a layout calculated before
-		stageListComposite.getParent().getParent().layout();
-		Rectangle r = stageListComposite.getParent().getClientArea();
-		((ScrolledComposite) stageListComposite.getParent())
-				.setMinSize(stageListComposite
-						.computeSize(r.width, SWT.DEFAULT));
-		stageListComposite.getParent().redraw();
 
 		stageListComposite.layout();
 	}
