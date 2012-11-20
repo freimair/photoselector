@@ -192,7 +192,8 @@ public class Photo {
 			// use imagemagic to convert to jpg
 			try {
 				Process p = Runtime.getRuntime().exec(
-						"convert " + tiffImagePath.getAbsolutePath() + " "
+						Settings.getImageMagicBinaryLocation() + " "
+								+ tiffImagePath.getAbsolutePath() + " "
 								+ cachedFullImage.getAbsolutePath());
 				p.waitFor();
 			} catch (IOException e) {
@@ -224,8 +225,9 @@ public class Photo {
 
 			try {
 				Process p = Runtime.getRuntime().exec(
-						"convert -verbose " + fullImage + " -resize "
-								+ cachedSize + "x" + cachedSize + " "
+						Settings.getImageMagicBinaryLocation() + " "
+								+ fullImage + " -resize " + cachedSize + "x"
+								+ cachedSize + " "
 								+ cachedImageLocation.getAbsolutePath());
 				p.waitFor();
 			} catch (IOException e) {

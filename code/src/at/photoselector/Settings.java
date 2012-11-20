@@ -19,10 +19,12 @@ public class Settings {
 			.getProperty("user.home") + "/.photoselector";
 	private static File file;
 
+
 	private static final String recent = "recent";
 	private static final String recentCount = "recentCount";
 
 	private static final String dcrawlocation = "dcrawbinary";
+	private static final String imagemagicklocation = "imagemagickbinary";
 
 	public static void load() {
 		properties = new Properties();
@@ -89,6 +91,15 @@ public class Settings {
 			save();
 		}
 		return properties.getProperty(dcrawlocation);
+	}
+
+	public static String getImageMagicBinaryLocation() {
+		String location = properties.getProperty(imagemagicklocation);
+		if (null == location) {
+			properties.setProperty(imagemagicklocation, "convert");
+			save();
+		}
+		return properties.getProperty(imagemagicklocation);
 	}
 
 	private static void save() {
