@@ -43,6 +43,19 @@ public class TableDialog extends UncloseableApplicationWindow {
 					event.detail = DND.DROP_NONE;
 					return;
 				}
+
+				for (Control current : getShell().getChildren()) {
+					if (current instanceof ImageTile)
+						if (((ImageTile) current)
+								.getPhoto()
+								.getPath()
+								.getAbsolutePath()
+								.equalsIgnoreCase(
+										Photo.get(
+												Integer.valueOf((String) event.data))
+												.getPath().getAbsolutePath()))
+							return;
+				}
 				
 				new ImageTile(parent, controlsDialog, Photo.get(Integer
 						.valueOf((String) event.data)),

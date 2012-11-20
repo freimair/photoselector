@@ -25,7 +25,7 @@ import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 
 
-class ImageTile {
+class ImageTile extends Composite {
 
 	private class ImageDrawer implements Runnable {
 		private int myBoundingBox;
@@ -54,6 +54,9 @@ class ImageTile {
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
+		super(parent, SWT.NONE);
+		imageContainer = this;
+
 		this.photo = currentPhoto;
 		controlsDialog = dialog;
 
@@ -62,7 +65,6 @@ class ImageTile {
 				parent.getBounds().height);
 		image = photo.getImage(boundingBox);
 
-		imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayout(new RowLayout());
 
 		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
@@ -257,5 +259,9 @@ class ImageTile {
 	protected void finalize() throws Throwable {
 		super.finalize();
 		image.dispose();
+	}
+
+	public Photo getPhoto() {
+		return photo;
 	}
 }
