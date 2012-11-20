@@ -4,6 +4,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -28,10 +29,13 @@ public class SettingsDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		container.setLayout(new GridLayout(3, false));
+		GridData secondColumGridData = new GridData(200, SWT.DEFAULT);
 
 		Label dcrawLabel = new Label(container, SWT.NONE);
 		dcrawLabel.setText("dcraw binary location");
 		dcrawText = new Text(container, SWT.BORDER);
+		dcrawText.setLayoutData(secondColumGridData);
+		dcrawText.setText(Settings.getDCRawLocation());
 		Button dcrawButton = new Button(container, SWT.PUSH);
 		dcrawButton.setText("Browse...");
 		dcrawButton.addSelectionListener(new SelectionAdapter() {
@@ -44,8 +48,10 @@ public class SettingsDialog extends Dialog {
 		});
 
 		Label imagemagickLabel = new Label(container, SWT.NONE);
-		imagemagickLabel.setText("dcraw binary location");
+		imagemagickLabel.setText("imagemagick binary location");
 		imagemagickText = new Text(container, SWT.BORDER);
+		imagemagickText.setLayoutData(secondColumGridData);
+		imagemagickText.setText(Settings.getImageMagicBinaryLocation());
 		Button imagemagickButton = new Button(container, SWT.PUSH);
 		imagemagickButton.setText("Browse...");
 		imagemagickButton.addSelectionListener(new SelectionAdapter() {
