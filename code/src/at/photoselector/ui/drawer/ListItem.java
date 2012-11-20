@@ -140,6 +140,7 @@ class ListItem {
 				parent.removePaintListener(paintListener);
 			}
 		});
+		parent.redraw();
 
 		// TODO does not work stable. overlapping and tracker loops. find other way.
 //		imageContainer.addMouseTrackListener(new MouseTrackListener() {
