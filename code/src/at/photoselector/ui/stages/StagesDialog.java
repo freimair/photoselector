@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +33,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 	@Override
 	protected Control createContents(Composite parent) {
 		ScrolledComposite scrollableStageListComposite = new ScrolledComposite(
-				parent, SWT.BORDER);
+				parent, SWT.V_SCROLL | SWT.BORDER);
 		scrollableStageListComposite.setLayout(new FillLayout());
 		scrollableStageListComposite.setExpandHorizontal(true);
 		scrollableStageListComposite.setExpandVertical(true);
@@ -63,6 +64,12 @@ public class StagesDialog extends UncloseableApplicationWindow {
 					i == stages.size() - 1);
 		}
 
-		stageListComposite.layout();
+		// just make sure that there has been a layout calculated before
+		stageListComposite.getParent().getParent().layout();
+		Rectangle r = stageListComposite.getParent().getClientArea();
+		((ScrolledComposite) stageListComposite.getParent())
+				.setMinSize(stageListComposite
+						.computeSize(r.width, SWT.DEFAULT));
+		stageListComposite.getParent().redraw();
 	}
 }
