@@ -12,8 +12,6 @@ public class PhotoSelector {
 	public static Settings settings;
 
 	public PhotoSelector() {
-		Settings.load();
-
 		Display display = new Display();
 
 		// select workspace

@@ -1,24 +1,20 @@
 package at.photoselector;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import org.eclipse.swt.graphics.Rectangle;
 
 public class Settings {
 
-	private static Properties properties;
-
-	private static final String propertiesPath = System
-			.getProperty("user.home") + "/.photoselector";
-	private static File file;
-
+	private static final Preferences preferences = Preferences
+			.userNodeForPackage(PhotoSelector.class);
 
 	private static final String recent = "recent";
 	private static final String recentCount = "recentCount";
@@ -26,46 +22,25 @@ public class Settings {
 	private static final String dcrawlocation = "dcrawbinary";
 	private static final String imagemagicklocation = "imagemagickbinary";
 
-	public static void load() {
-		properties = new Properties();
-		try {
-			file = new File(propertiesPath);
-			System.out.println(file.getAbsolutePath());
-			if (!file.exists())
-				file.createNewFile();
-			properties.load(new FileInputStream(propertiesPath));
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public static void setRecent(String path) {
 		if (getRecent().contains(path)) {
 			// exchange
-			properties.setProperty(recent + (getRecent().indexOf(path) + 1),
-					properties.getProperty(recent + "1"));
-			properties.setProperty(recent + "1", path);
+			preferences.put(recent + (getRecent().indexOf(path) + 1),
+					preferences.get(recent + "1", ""));
+			preferences.put(recent + "1", path);
 		} else {
 			// add new
-			for (int i = Integer.valueOf(properties.getProperty(recentCount,
-					"5")); i > 1; i--)
-				properties.setProperty(recent + i,
-						properties.getProperty(recent + (i - 1), ""));
+			for (int i = Integer.valueOf(preferences.get(recentCount, "5")); i > 1; i--)
+				preferences.put(recent + i, preferences.get(recent + (i - 1), ""));
 
-			properties.setProperty(recent + "1", path);
+			preferences.put(recent + "1", path);
 		}
-
-		// persist
-		save();
 	}
 
 	public static List<String> getRecent() {
 		List<String> result = new ArrayList<String>();
-		for (int i = 1; i <= Integer.valueOf(properties.getProperty(
-				recentCount, "5")); i++) {
-			String tmp = properties.getProperty(recent + i, "");
+		for (int i = 1; i <= Integer.valueOf(preferences.get(recentCount, "5")); i++) {
+			String tmp = preferences.get(recent + i, "");
 			if (!"".equals(tmp))
 				result.add(tmp);
 		}
@@ -73,61 +48,49 @@ public class Settings {
 	}
 
 	public static void memorizeWindowPosition(String control, Rectangle bounds) {
-		properties.setProperty(control, bounds.x + "," + bounds.y + ","
-				+ bounds.width + "," + bounds.height);
+		preferences.putByteArray(control, object2Bytes(bounds));
+	}
 
-		save();
+	public static Rectangle rememberWindowPosition(String control) {
+		return (Rectangle) bytes2Object(preferences.getByteArray(control,
+				object2Bytes(new Rectangle(0, 0, 200, 200))));
 	}
 
 	public static String getDCRawLocation() {
-		// TODO Auto-generated method stub
-		String location = properties.getProperty(dcrawlocation);
-		if(null == location) {
-			properties.setProperty(
-					dcrawlocation,
-					new File(".").getAbsolutePath()
-							+ System.getProperty("file.separator") + "lib"
-							+ System.getProperty("file.separator") + "dcraw");
-			save();
-		}
-		return properties.getProperty(dcrawlocation);
+		return preferences.get(dcrawlocation, "dcraw");
 	}
 
 	public static String getImageMagicBinaryLocation() {
-		String location = properties.getProperty(imagemagicklocation);
-		if (null == location) {
-			properties.setProperty(imagemagicklocation, "convert");
-			save();
-		}
-		return properties.getProperty(imagemagicklocation);
+		return preferences.get(imagemagicklocation, "convert");
 	}
 
-	private static void save() {
+	static private byte[] object2Bytes(Object o) {
 		try {
-			properties.store(new FileOutputStream(propertiesPath), "");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(o);
+			return baos.toByteArray();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 	}
 
-	// public void setControlsDialogPosition(Rectangle rectangle) {
-	// memorizeWindowPosition(controlsDialog, rectangle);
-	// }
-
-	public static Rectangle rememberWindowPosition(String control) {
-		String[] tmp = properties.getProperty(control, "0,0,200,200")
-				.split(",");
-		return new Rectangle(Integer.valueOf(tmp[0].trim()),
-				Integer.valueOf(tmp[1].trim()), Integer.valueOf(tmp[2].trim()),
-				Integer.valueOf(tmp[3].trim()));
+	static private Object bytes2Object(byte raw[]) {
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(raw);
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			Object o = ois.readObject();
+			return o;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
-
-
-	// public Rectangle getControlsDialogPosition() {
-	// return rememberWindowPosition(controlsDialog);
-	// }
 }
