@@ -94,7 +94,13 @@ public class ControlsDialog extends MyApplicationWindow {
 
 		Button settingsButton = new Button(controlComposite, SWT.PUSH);
 		settingsButton.setText("Settings");
-		settingsButton.setEnabled(false);
+		settingsButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				new SettingsDialog(getShell()).open();
+			}
+		});
 
 		Button exitButton = new Button(controlComposite, SWT.PUSH);
 		exitButton.setText("Exit");

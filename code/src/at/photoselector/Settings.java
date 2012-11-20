@@ -60,8 +60,16 @@ public class Settings {
 		return preferences.get(dcrawlocation, "dcraw");
 	}
 
+	public static void setDCRawLocation(String text) {
+		preferences.put(dcrawlocation, text);
+	}
+
 	public static String getImageMagicBinaryLocation() {
 		return preferences.get(imagemagicklocation, "convert");
+	}
+
+	public static void setImageMagicBinaryLocation(String text) {
+		preferences.put(imagemagicklocation, text);
 	}
 
 	static private byte[] object2Bytes(Object o) {
