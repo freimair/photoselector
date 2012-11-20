@@ -40,6 +40,11 @@ public abstract class MyApplicationWindow extends ApplicationWindow implements
 				 */
 				getShell().setVisible(false);
 				getShell().setVisible(true);
+				if (((Shell) e.widget).getText().equals("PhotoSelector"))
+					getShell().setBounds(getShell().getBounds().x,
+							getShell().getBounds().y,
+							getShell().getBounds().width + 4,
+							getShell().getBounds().height + 4);
 				Settings.memorizeWindowPosition(control, getShell().getBounds());
 			}
 		});
