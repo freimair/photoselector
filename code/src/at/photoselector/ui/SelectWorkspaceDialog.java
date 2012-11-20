@@ -5,6 +5,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -37,16 +38,22 @@ public class SelectWorkspaceDialog extends TitleAreaDialog implements Runnable {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		parent.setLayout(layout);
+		Composite container = (Composite) super.createDialogArea(parent);
+		container.setLayout(new GridLayout(3, false));
 
-		Label label = new Label(parent, SWT.NONE);
+		// FIXME somehow there is a label existing right after instantiating a
+		// composite. This label is visible as a thin gray line and breaks the
+		// whole layout
+		for (Control current : container.getChildren())
+			current.dispose();
+
+		Label label = new Label(container, SWT.NONE);
 		label.setText("Workspace");
 
-		workspaceCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
+		workspaceCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER);
+		workspaceCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		Button switchWorkspaceButton = new Button(parent, SWT.PUSH);
+		Button switchWorkspaceButton = new Button(container, SWT.PUSH);
 		switchWorkspaceButton.setText("Browse...");
 		switchWorkspaceButton.addSelectionListener(new SelectionAdapter() {
 
@@ -64,7 +71,7 @@ public class SelectWorkspaceDialog extends TitleAreaDialog implements Runnable {
 
 		update();
 
-		return parent;
+		return container;
 	}
 
 	public void update() {
