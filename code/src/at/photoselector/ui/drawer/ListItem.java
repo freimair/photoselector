@@ -87,10 +87,8 @@ class ListItem {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (Workspace.accept(photo))
-					controlsDialog.update();
-				else
-					drawerDialog.update();
+				Workspace.accept(photo);
+				controlsDialog.update();
 				imageContainer.dispose();
 			}
 		});
@@ -101,10 +99,8 @@ class ListItem {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (Workspace.decline(photo))
-					controlsDialog.update();
-				else
-					drawerDialog.update();
+				Workspace.decline(photo);
+				controlsDialog.update();
 				imageContainer.dispose();
 			}
 		});
