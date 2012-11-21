@@ -1,6 +1,7 @@
 package at.photoselector;
 
 import java.io.File;
+import java.util.Arrays;
 
 import at.photoselector.model.Database;
 import at.photoselector.model.Photo;
@@ -25,7 +26,9 @@ public class Workspace {
 	public static void addPhoto(String path) {
 		File location = new File(path);
 		if (location.isDirectory()) {
-			for (File current : location.listFiles())
+			File[] files = location.listFiles();
+			Arrays.sort(files);
+			for (File current : files)
 				addPhoto(current.getAbsolutePath());
 		}
 		if (location.getName().toLowerCase().matches(".*(\\.jpe?g|\\.cr2)$"))
