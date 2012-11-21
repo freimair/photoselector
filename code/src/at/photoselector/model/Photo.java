@@ -140,6 +140,7 @@ public class Photo {
 	private int height = 0;
 	private final Map<File, Image> imageCache = new HashMap<File, Image>();
 	private int section;
+	private boolean portrait = false;
 
 	public Photo(int newId, File path, int status) {
 		id = newId;
@@ -219,6 +220,7 @@ public class Photo {
 				Process p = Runtime.getRuntime().exec(
 						new String[] {
 								Settings.getImageMagicBinaryLocation(),
+								"-auto-orient",
 								fullImage.getAbsolutePath(), "-resize",
 								cachedSize + "x" + cachedSize,
 								cachedImageLocation.getAbsolutePath() });
@@ -239,7 +241,18 @@ public class Photo {
 			imageCache.put(cachedImageLocation, cachedImage);
 		}
 
+		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
+			setPortrait(true);
+
 		return cachedImage;
+	}
+
+	private void setPortrait(boolean b) {
+		portrait = b;
+	}
+
+	public boolean isPortrait() {
+		return portrait;
 	}
 
 	private int getCacheLevel(int boundingBox) {
@@ -336,6 +349,12 @@ public class Photo {
 						e.printStackTrace();
 					}
 			}
+		}
+
+		if (isPortrait() && width > height) {
+			int tmp = width;
+			width = height;
+			height = tmp;
 		}
 
 		return new Point(width, height);
