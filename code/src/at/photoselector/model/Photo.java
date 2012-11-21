@@ -168,16 +168,8 @@ public class Photo {
 		if (!cachedFullImage.exists()) {
 			try {
 				Process p = Runtime.getRuntime().exec(
-						Settings.getDCRawLocation() + " -w " + // Use camera
-																// white
-																// balance, if
-																// possible
-						"-T " + // Write TIFF instead of PPM
-								// "-j " + // Don't stretch or rotate raw pixels
-								// "-W " + // Don't automatically brighten the
-								// image);
-						getPath().getAbsolutePath()
-				);
+						new String[] { Settings.getDCRawLocation(), "-w", "-T",
+								getPath().getAbsolutePath() });
 				p.waitFor();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -192,9 +184,9 @@ public class Photo {
 			// use imagemagic to convert to jpg
 			try {
 				Process p = Runtime.getRuntime().exec(
-						Settings.getImageMagicBinaryLocation() + " "
-								+ tiffImagePath.getAbsolutePath() + " "
-								+ cachedFullImage.getAbsolutePath());
+						new String[] { Settings.getImageMagicBinaryLocation(),
+								tiffImagePath.getAbsolutePath(),
+								cachedFullImage.getAbsolutePath() });
 				p.waitFor();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -225,10 +217,11 @@ public class Photo {
 
 			try {
 				Process p = Runtime.getRuntime().exec(
-						Settings.getImageMagicBinaryLocation() + " "
-								+ fullImage + " -resize " + cachedSize + "x"
-								+ cachedSize + " "
-								+ cachedImageLocation.getAbsolutePath());
+						new String[] {
+								Settings.getImageMagicBinaryLocation(),
+								fullImage.getAbsolutePath(), "-resize",
+								cachedSize + "x" + cachedSize,
+								cachedImageLocation.getAbsolutePath() });
 				p.waitFor();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
