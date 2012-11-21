@@ -138,4 +138,12 @@ public class ControlsDialog extends MyApplicationWindow {
 		tableDialog.update();
 	}
 
+	public void updateAllBut(UncloseableApplicationWindow dialog) {
+		if (!stagesDialog.equals(dialog))
+			stagesDialog.update();
+		if (!drawerDialog.equals(dialog))
+			drawerDialog.update();
+		if (!tableDialog.equals(dialog))
+			tableDialog.update();
+	}
 }

@@ -88,8 +88,10 @@ class ListItem {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.accept(photo);
-				controlsDialog.update();
+				controlsDialog.updateAllBut(drawerDialog);
+				Composite parent = imageContainer.getParent();
 				imageContainer.dispose();
+				parent.layout();
 			}
 		});
 
@@ -100,8 +102,10 @@ class ListItem {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.decline(photo);
-				controlsDialog.update();
+				controlsDialog.updateAllBut(drawerDialog);
+				Composite parent = imageContainer.getParent();
 				imageContainer.dispose();
+				parent.layout();
 			}
 		});
 
