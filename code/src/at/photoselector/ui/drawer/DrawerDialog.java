@@ -5,6 +5,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -121,6 +123,18 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		});
 
+		parent.addPaintListener(new PaintListener() {
+
+			@Override
+			public void paintControl(PaintEvent e) {
+				Rectangle r = photoListContentComposite.getParent().getClientArea();
+				((ScrolledComposite) photoListContentComposite.getParent())
+						.setMinSize(photoListContentComposite.computeSize(r.width,
+								SWT.DEFAULT));
+				photoListContentComposite.getParent().redraw();
+			}
+		});
+
 		update();
 
 		return parent;
@@ -144,14 +158,6 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			new ListItem(photoListContentComposite, this, controlsDialog,
 					current);
 		}
-
-		// just make sure that there has been a layout calculated before
-		photoListContentComposite.getParent().getParent().layout();
-		Rectangle r = photoListContentComposite.getParent().getClientArea();
-		((ScrolledComposite) photoListContentComposite.getParent())
-				.setMinSize(photoListContentComposite.computeSize(r.width,
-						SWT.DEFAULT));
-		photoListContentComposite.getParent().redraw();
 
 		photoListContentComposite.layout();
 	}
