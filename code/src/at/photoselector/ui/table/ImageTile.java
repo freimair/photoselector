@@ -130,27 +130,15 @@ class ImageTile extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				int oldBoundingBox = Math.max(imageContainer.getBounds().width,
-						imageContainer.getBounds().height);
-				Rectangle oldDimensions = photo
-						.scaleAndCenterImage(oldBoundingBox);
+				int y = controlsComposite.getLocation().y
+						+ controlsComposite.getSize().y / 2;
+				int x = controlsComposite.getLocation().x
+						+ controlsComposite.getSize().x / 2;
 
-				Point newDimensions = photo.getDimensions();
+				double factor = (double) photo.getDimensions().x
+						/ imageContainer.getSize().x;
 
-				imageContainer.setSize(newDimensions.x, newDimensions.y);
-
-				// recenter
-				imageContainer.setLocation(imageContainer.getLocation().x
-						+ (oldDimensions.width - newDimensions.x) / 2,
-						imageContainer.getLocation().y
-								+ (oldDimensions.height - newDimensions.y) / 2);
-
-				// scale image
-				Display.getCurrent().asyncExec(
-						new ImageDrawer(Math.max(newDimensions.x,
-								newDimensions.y)));
-
-				imageContainer.redraw();
+				zoomImageContainer(factor, x, y);
 				controlsComposite.setVisible(false);
 			}
 		});
@@ -223,38 +211,39 @@ class ImageTile extends Composite {
 				if (event.count > 0)
 					factor = 1 / factor;
 
-				// do some calculations
-				int oldBoundingBox = Math.max(imageContainer.getBounds().width,
-						imageContainer.getBounds().height);
-				Rectangle oldDimensions = photo
-						.scaleAndCenterImage(oldBoundingBox);
-
-				int newBoundingBox = (int) (oldBoundingBox * factor);
-				Rectangle newDimensions = photo
-						.scaleAndCenterImage(newBoundingBox);
-
-				// relocate
-				imageContainer.setLocation(
-						(int) (imageContainer.getLocation().x + (oldDimensions.width - newDimensions.width)
-								* (double) event.x / imageContainer.getSize().x),
-						(int) (imageContainer.getLocation().y
-								+ (oldDimensions.height - newDimensions.height)
-								* (double) event.y / imageContainer.getSize().y));
-
-				// resize image box
-				imageContainer.setSize(newDimensions.width,
-						newDimensions.height);
-
-				// scale image
-				Display.getCurrent().asyncExec(new ImageDrawer(newBoundingBox));
-				imageContainer.moveAbove(null);
-				imageContainer.redraw();
+				zoomImageContainer(factor, event.x, event.y);
 
 				imageContainer.forceFocus(); // for win
 			}
 		});
 
 		imageContainer.layout();
+	}
+
+	private void zoomImageContainer(double factor, int x, int y) {
+		// do some calculations
+		int oldBoundingBox = Math.max(imageContainer.getBounds().width,
+				imageContainer.getBounds().height);
+		Rectangle oldDimensions = photo.scaleAndCenterImage(oldBoundingBox);
+
+		int newBoundingBox = (int) (oldBoundingBox * factor);
+		Rectangle newDimensions = photo.scaleAndCenterImage(newBoundingBox);
+
+		// relocate
+		imageContainer
+				.setLocation(
+						(int) (imageContainer.getLocation().x + (oldDimensions.width - newDimensions.width)
+								* (double) x / imageContainer.getSize().x),
+						(int) (imageContainer.getLocation().y + (oldDimensions.height - newDimensions.height)
+								* (double) y / imageContainer.getSize().y));
+
+		// resize image box
+		imageContainer.setSize(newDimensions.width, newDimensions.height);
+
+		// scale image
+		Display.getCurrent().asyncExec(new ImageDrawer(newBoundingBox));
+		imageContainer.moveAbove(null);
+		imageContainer.redraw();
 	}
 
 	@Override
