@@ -221,7 +221,7 @@ class ImageTile extends Composite {
 				Composite imageContainer = (Composite) event.widget;
 				double factor = 0.9;
 				if (event.count > 0)
-					factor = 1.1;
+					factor = 1 / factor;
 
 				// do some calculations
 				int oldBoundingBox = Math.max(imageContainer.getBounds().width,
@@ -233,19 +233,17 @@ class ImageTile extends Composite {
 				Rectangle newDimensions = photo
 						.scaleAndCenterImage(newBoundingBox);
 
-				imageContainer.setVisible(false);
-				imageContainer.setVisible(true);
+				// relocate
+				imageContainer.setLocation(
+						(int) (imageContainer.getLocation().x + (oldDimensions.width - newDimensions.width)
+								* (double) event.x / imageContainer.getSize().x),
+						(int) (imageContainer.getLocation().y
+								+ (oldDimensions.height - newDimensions.height)
+								* (double) event.y / imageContainer.getSize().y));
 
 				// resize image box
 				imageContainer.setSize(newDimensions.width,
 						newDimensions.height);
-
-				// recenter
-				imageContainer.setLocation(imageContainer.getLocation().x
-						+ (oldDimensions.width - newDimensions.width) / 2,
-						imageContainer.getLocation().y
-								+ (oldDimensions.height - newDimensions.height)
-								/ 2);
 
 				// scale image
 				Display.getCurrent().asyncExec(new ImageDrawer(newBoundingBox));
