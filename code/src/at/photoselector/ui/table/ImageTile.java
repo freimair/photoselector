@@ -204,6 +204,8 @@ class ImageTile extends Composite {
 
 			@Override
 			public void mouseMove(MouseEvent event) {
+				imageContainer.forceFocus(); // for win
+
 				if (offset != null) {
 					imageContainer.setLocation(imageContainer.getLocation().x
 							+ event.x - offset.x,
@@ -249,6 +251,8 @@ class ImageTile extends Composite {
 				Display.getCurrent().asyncExec(new ImageDrawer(newBoundingBox));
 				imageContainer.moveAbove(null);
 				imageContainer.redraw();
+
+				imageContainer.forceFocus(); // for win
 			}
 		});
 
