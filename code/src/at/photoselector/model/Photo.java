@@ -277,6 +277,7 @@ public class Photo {
 		Image result = new Image(Display.getCurrent(), dimensions.width,
 				dimensions.height);
 		GC gc = new GC(result);
+		gc.setAdvanced(true);
 		gc.setAntialias(SWT.ON);
 		gc.drawImage(cached, 0, 0, cached.getBounds().width,
 				cached.getBounds().height, 0, 0, dimensions.width,
