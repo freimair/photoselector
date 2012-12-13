@@ -107,21 +107,26 @@ public class Photo {
 		try {
 			List<Integer> allIds = database
 					.getIntegerList("SELECT pid FROM photos");
-			allIds.removeAll(cache.keySet());
+			// allIds.removeAll(cache.keySet());
 
-			for (int currentId : allIds)
-				cache.put(
+			for (int currentId : allIds) {
+				Photo fresh = new Photo(
 						currentId,
-						new Photo(
-								currentId,
-								new File(
-										database.getString("SELECT path FROM photos WHERE pid = "
-												+ currentId)),
-								database.getInteger("SELECT status FROM photos WHERE pid = "
-										+ currentId),
-								Stage.get(database
-										.getInteger("SELECT stage FROM photos WHERE pid = "
-												+ currentId))));
+						new File(
+								database.getString("SELECT path FROM photos WHERE pid = "
+										+ currentId)),
+						database.getInteger("SELECT status FROM photos WHERE pid = "
+								+ currentId),
+						Stage.get(database
+								.getInteger("SELECT stage FROM photos WHERE pid = "
+										+ currentId)));
+
+				// check if cache is up to date
+				if (!fresh.equals(cache.get(currentId))) {
+					// if not - recreate
+					cache.put(currentId, fresh);
+				}
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -398,4 +403,49 @@ public class Photo {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((cacheDir == null) ? 0 : cacheDir.hashCode());
+		result = prime * result + id;
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + ((stage == null) ? 0 : stage.hashCode());
+		result = prime * result + status;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Photo other = (Photo) obj;
+		if (cacheDir == null) {
+			if (other.cacheDir != null)
+				return false;
+		} else if (!cacheDir.equals(other.cacheDir))
+			return false;
+		if (id != other.id)
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		if (stage == null) {
+			if (other.stage != null)
+				return false;
+		} else if (!stage.equals(other.stage))
+			return false;
+		if (status != other.status)
+			return false;
+		return true;
+	}
+
 }
