@@ -5,17 +5,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import at.photoselector.Workspace;
 import at.photoselector.tools.Exporter;
-import at.photoselector.tools.RawTherapeeLinuxExporter;
 import at.photoselector.ui.drawer.DrawerDialog;
 import at.photoselector.ui.stages.StagesDialog;
 import at.photoselector.ui.table.TableDialog;
@@ -83,14 +88,25 @@ public class ControlsDialog extends MyApplicationWindow {
 			}
 		});
 
+		final Menu exportMenu = new Menu(getShell(), SWT.POP_UP);
+		for (Exporter current : Exporter.getAvailable()) {
+			MenuItem menuItem = new MenuItem(exportMenu, SWT.NONE);
+			menuItem.setText(current.getName());
+			menuItem.addListener(SWT.Selection, new ExportSelectionListener(
+					current));
+		}
+
 		Button exportButton = new Button(controlComposite, SWT.PUSH);
 		exportButton.setText("Export");
 		exportButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Exporter exporter = new RawTherapeeLinuxExporter();
-				exporter.run();
+				Rectangle rect = ((Control) e.widget).getBounds();
+				Point pt = new Point(rect.x, rect.y + rect.height);
+				pt = ((Control) e.widget).getParent().toDisplay(pt);
+				exportMenu.setLocation(pt.x, pt.y);
+				exportMenu.setVisible(true);
 			}
 		});
 
@@ -147,5 +163,19 @@ public class ControlsDialog extends MyApplicationWindow {
 			drawerDialog.update();
 		if (!tableDialog.equals(dialog))
 			tableDialog.update();
+	}
+
+	private class ExportSelectionListener implements Listener {
+
+		private Exporter myExporter;
+
+		public ExportSelectionListener(Exporter exporter) {
+			myExporter = exporter;
+		}
+
+		public void handleEvent(Event event) {
+			myExporter.run();
+		}
+
 	}
 }
