@@ -142,7 +142,7 @@ public class Photo {
 	private int section;
 	private boolean portrait = false;
 
-	public Photo(int newId, File path, int status) {
+	private Photo(int newId, File path, int status) {
 		id = newId;
 		this.path = path;
 		this.status = status;
@@ -154,7 +154,7 @@ public class Photo {
 			cacheDir.mkdir();
 	}
 
-	public Photo(int currentId, File path, int status, Stage stage) {
+	private Photo(int currentId, File path, int status, Stage stage) {
 		this(currentId, path, status);
 		this.stage = stage;
 	}
