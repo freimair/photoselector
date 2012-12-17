@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -143,9 +145,9 @@ public class Photo {
 	private String delimiter;
 	private int width = 0;
 	private int height = 0;
-	private final Map<File, Image> imageCache = new HashMap<File, Image>();
-	private int section;
+	private final SortedMap<Integer, Image> imageCache = new TreeMap<Integer, Image>();
 	private boolean portrait = false;
+	private Image fullImage;
 
 	private Photo(int newId, File path, int status) {
 		id = newId;
@@ -208,42 +210,66 @@ public class Photo {
 		return cachedFullImage;
 	}
 
-	private Image getCachedImage(int level) {
-		int cachedSize = getSize(level);
+	private Image getCachedImage(int boundingBox) {
+		Image cachedImage;
+		try {
 
-		File cachedImageLocation = new File(cacheDir.getPath() + delimiter
-				+ path.getName() + "." + cachedSize + ".jpg");
+			// limit caching sizes to 100%
+			int maxDimensions = Math.max(getDimensions().x, getDimensions().y);
+			if (boundingBox > maxDimensions)
+				boundingBox = maxDimensions;
 
-		if (!cachedImageLocation.exists()) {
-			File fullImage;
-			if (isRaw()) {
-				fullImage = preprocessRawImage();
-			} else
-				fullImage = getPath();
+			System.out.println("request: " + boundingBox);
 
-			try {
-				Process p = Runtime.getRuntime().exec(
-						new String[] {
-								Settings.getImageMagicBinaryLocation(),
-								"-auto-orient",
-								fullImage.getAbsolutePath(), "-resize",
-								cachedSize + "x" + cachedSize,
-								cachedImageLocation.getAbsolutePath() });
-				p.waitFor();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+			boundingBox = imageCache.subMap(boundingBox,
+					(int) (boundingBox * 1.1))
+					.firstKey();
 
-		Image cachedImage = imageCache.get(cachedImageLocation);
-		if (null == cachedImage) {
-			cachedImage = new Image(Display.getCurrent(),
-					cachedImageLocation.getAbsolutePath());
-			imageCache.put(cachedImageLocation, cachedImage);
+		// File cachedImageLocation = new File(cacheDir.getPath() + delimiter
+		// + path.getName() + "." + cachedSize + ".jpg");
+		//
+		// if (!cachedImageLocation.exists()) {
+		// File fullImage;
+		// if (isRaw()) {
+		// fullImage = preprocessRawImage();
+		// } else
+		// fullImage = getPath();
+		//
+		// try {
+		// Process p = Runtime.getRuntime().exec(
+		// new String[] {
+		// Settings.getImageMagicBinaryLocation(),
+		// "-auto-orient",
+		// fullImage.getAbsolutePath(), "-resize",
+		// cachedSize + "x" + cachedSize,
+		// cachedImageLocation.getAbsolutePath() });
+		// p.waitFor();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
+
+			cachedImage = imageCache.get(boundingBox);
+			System.out.println("cache hit: got " + boundingBox);
+		} catch (Exception e) {
+			if (null == fullImage)
+				fullImage = new Image(Display.getCurrent(),
+						path.getAbsolutePath()); // TODO tweak to support raws!
+			Rectangle dimensions = scaleAndCenterImage(boundingBox);
+			cachedImage = new Image(Display.getCurrent(), dimensions.width,
+					dimensions.height);
+			GC gc = new GC(cachedImage);
+			gc.setAdvanced(true);
+			gc.setAntialias(SWT.ON); // is about 10% slower if activated
+			gc.drawImage(fullImage, 0, 0, fullImage.getBounds().width,
+					fullImage.getBounds().height, 0, 0, dimensions.width,
+					dimensions.height);
+			gc.dispose();
+			imageCache.put(boundingBox, cachedImage);
 		}
 
 		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
@@ -260,41 +286,8 @@ public class Photo {
 		return portrait;
 	}
 
-	private int getCacheLevel(int boundingBox) {
-		if (100 >= boundingBox)
-			return 0;
-		int full = Math.max(getDimensions().x, getDimensions().y) - 100;
-		section = full / 5; // make 5 a configurable number
-		return boundingBox / section + 1;
-	}
-
-	private int getSize(int cacheLevel) {
-		if (0 > cacheLevel)
-			cacheLevel = 0;
-		int size = 100 + cacheLevel * section;
-		int fullsize = Math.max(getDimensions().x, getDimensions().y);
-		return size <= fullsize ? size : fullsize;
-	}
-
 	public Image getImage(int boundingBox) {
-		Image cached = getCachedImage(getCacheLevel(boundingBox));
-		Rectangle dimensions = scaleAndCenterImage(boundingBox);
-		Image result = new Image(Display.getCurrent(), dimensions.width,
-				dimensions.height);
-		GC gc = new GC(result);
-		gc.setAdvanced(true);
-		gc.setAntialias(SWT.ON);
-		gc.drawImage(cached, 0, 0, cached.getBounds().width,
-				cached.getBounds().height, 0, 0, dimensions.width,
-				dimensions.height);
-		gc.dispose();
-
-		return result;
-	}
-
-	public void preCacheNeighbors(int boundingBox) {
-		getCachedImage(getCacheLevel(boundingBox) + 1);
-		getCachedImage(getCacheLevel(boundingBox) - 1);
+		return getCachedImage(boundingBox);
 	}
 
 	public void clearCachedImages() {
@@ -446,6 +439,12 @@ public class Photo {
 		if (status != other.status)
 			return false;
 		return true;
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		fullImage.dispose();
+		super.finalize();
 	}
 
 }

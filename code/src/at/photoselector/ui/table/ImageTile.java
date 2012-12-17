@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import at.photoselector.Workspace;
@@ -36,12 +37,10 @@ class ImageTile extends Composite {
 
 		@Override
 		public void run() {
-			image.dispose();
+			// image.dispose();
 			image = photo.getImage(myBoundingBox);
 
 			imageContainer.redraw();
-
-			photo.preCacheNeighbors(myBoundingBox);
 		}
 	}
 
@@ -51,6 +50,7 @@ class ImageTile extends Composite {
 	private Photo photo;
 	private ControlsDialog controlsDialog;
 	private Composite controlsComposite;
+	private Label probelabel;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
@@ -66,6 +66,7 @@ class ImageTile extends Composite {
 		image = photo.getImage(boundingBox);
 
 		imageContainer.setLayout(new RowLayout());
+		probelabel = new Label(this, SWT.NONE);
 
 		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
 		imageContainer.setSize(dimensions.width, dimensions.height);
@@ -101,6 +102,7 @@ class ImageTile extends Composite {
 				Workspace.decline(photo);
 				controlsDialog.update();
 				imageContainer.dispose();
+				photo.clearCachedImages();
 			}
 		});
 
@@ -207,7 +209,7 @@ class ImageTile extends Composite {
 			@Override
 			public synchronized void mouseScrolled(MouseEvent event) {
 				Composite imageContainer = (Composite) event.widget;
-				double factor = 0.9;
+				double factor = 0.8; // 8/10 = finite, 10/8 = finite. :)
 				if (event.count > 0)
 					factor = 1 / factor;
 
@@ -249,7 +251,7 @@ class ImageTile extends Composite {
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		image.dispose();
+		// image.dispose();
 	}
 
 	public Photo getPhoto() {
