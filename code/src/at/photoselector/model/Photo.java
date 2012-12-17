@@ -167,7 +167,7 @@ public class Photo {
 	}
 
 	public boolean isRaw() {
-		return getPath().getName().toLowerCase().matches(".*cr2$");
+		return !getPath().getName().toLowerCase().matches(".*jpe?g2$");
 	}
 
 	private File preprocessRawImage() {
@@ -256,9 +256,17 @@ public class Photo {
 			cachedImage = imageCache.get(boundingBox);
 			System.out.println("cache hit: got " + boundingBox);
 		} catch (Exception e) {
-			if (null == fullImage)
+			// cache full image
+			if (null == fullImage) {
+				File imagePath;
+				if (isRaw())
+					imagePath = preprocessRawImage();
+				else
+					imagePath = path;
 				fullImage = new Image(Display.getCurrent(),
-						path.getAbsolutePath()); // TODO tweak to support raws!
+						imagePath.getAbsolutePath());
+			}
+
 			Rectangle dimensions = scaleAndCenterImage(boundingBox);
 			cachedImage = new Image(Display.getCurrent(), dimensions.width,
 					dimensions.height);
