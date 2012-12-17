@@ -5,15 +5,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -24,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 
 import at.photoselector.Settings;
 import at.photoselector.Workspace;
+import at.photoselector.util.ImageUtils;
 
 public class Photo {
 
@@ -225,47 +221,10 @@ public class Photo {
 					(int) (boundingBox * 1.1))
 					.firstKey();
 
-		// File cachedImageLocation = new File(cacheDir.getPath() + delimiter
-		// + path.getName() + "." + cachedSize + ".jpg");
-		//
-		// if (!cachedImageLocation.exists()) {
-		// File fullImage;
-		// if (isRaw()) {
-		// fullImage = preprocessRawImage();
-		// } else
-		// fullImage = getPath();
-		//
-		// try {
-		// Process p = Runtime.getRuntime().exec(
-		// new String[] {
-		// Settings.getImageMagicBinaryLocation(),
-		// "-auto-orient",
-		// fullImage.getAbsolutePath(), "-resize",
-		// cachedSize + "x" + cachedSize,
-		// cachedImageLocation.getAbsolutePath() });
-		// p.waitFor();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-
 			cachedImage = imageCache.get(boundingBox);
 			System.out.println("cache hit: got " + boundingBox);
 		} catch (Exception e) {
-			// cache full image
-			if (null == fullImage) {
-				File imagePath;
-				if (isRaw())
-					imagePath = preprocessRawImage();
-				else
-					imagePath = path;
-				fullImage = new Image(Display.getCurrent(),
-						imagePath.getAbsolutePath());
-			}
+			cacheFullImage();
 
 			Rectangle dimensions = scaleAndCenterImage(boundingBox);
 			cachedImage = new Image(Display.getCurrent(), dimensions.width,
@@ -284,6 +243,18 @@ public class Photo {
 			setPortrait(true);
 
 		return cachedImage;
+	}
+
+	private void cacheFullImage() {
+		// cache full image
+		if (null == fullImage) {
+			File imagePath;
+			if (isRaw())
+				imagePath = preprocessRawImage();
+			else
+				imagePath = path;
+			fullImage = ImageUtils.load(imagePath);
+		}
 	}
 
 	private void setPortrait(boolean b) {
@@ -323,39 +294,10 @@ public class Photo {
 
 	public Point getDimensions() {
 		if (width == 0 || height == 0) {
-			File resourceFile = null;
-			if (isRaw())
-				resourceFile = preprocessRawImage();
-			else
-				resourceFile = getPath();
+			cacheFullImage();
 
-			ImageInputStream in = null;
-			try {
-				in = ImageIO.createImageInputStream(resourceFile);
-				final Iterator<ImageReader> readers = ImageIO
-						.getImageReaders(in);
-				if (readers.hasNext()) {
-					ImageReader reader = (ImageReader) readers.next();
-					try {
-						reader.setInput(in);
-						width = reader.getWidth(0);
-						height = reader.getHeight(0);
-					} finally {
-						reader.dispose();
-					}
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (in != null)
-					try {
-						in.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
+			width = fullImage.getBounds().width;
+			height = fullImage.getBounds().height;
 		}
 
 		if (isPortrait() && width > height) {
