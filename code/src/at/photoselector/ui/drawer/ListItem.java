@@ -39,6 +39,8 @@ class ListItem {
 	private Button buttonDecline;
 	private PaintListener paintListener;
 	private Button buttonReset;
+	private Composite imageContainer;
+	private boolean loaded = false;
 
 	public ListItem(final Composite parent, final DrawerDialog dialog,
 			ControlsDialog cDialog,
@@ -49,7 +51,7 @@ class ListItem {
 
 		final Display display = parent.getDisplay();
 		int boundingBox = drawerDialog.getBoundingBox();
-		final Composite imageContainer = new Composite(parent, SWT.NONE);
+		imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayoutData(new RowData(boundingBox + 2 * border,
 				boundingBox + 2 * border));
 		imageContainer.setLayout(new RowLayout());
@@ -57,27 +59,56 @@ class ListItem {
 				Photo.DECLINED == current.getStatus() ? 100 : 75,
 				Photo.ACCEPTED == current.getStatus() ? 100 : 75, 75));
 
-		display.asyncExec(new Runnable() {
+		// fetch thumbnails asynchronously
+		// if and only if the current thumbnail is visible on screen
+		imageContainer.getParent().addPaintListener(new PaintListener() {
+
 			@Override
-			public void run() {
-				scaled = photo.getImage(drawerDialog.getBoundingBox());
+			public void paintControl(PaintEvent e) {
+				if (!loaded) {
+					// extract client area of scrolledcomposite
+					Rectangle visibleArea = imageContainer
+							.getParent()
+							.getParent()
+							.getClientArea();
+					// add scroll offset
+					visibleArea.height += -imageContainer.getParent()
+							.getLocation().y;
 
-				// draw the image
-				imageContainer.addListener(SWT.Paint, new Listener() {
+					// check if current thumbnail is visible
+					if (visibleArea.contains(imageContainer.getLocation())) {
+						// memorize that this thumbnail is already fetched
+						loaded = true;
 
-					@Override
-					public void handleEvent(Event e) {
-						GC gc = e.gc;
-						Rectangle dimensions = photo
-								.scaleAndCenterImage(drawerDialog
-								.getBoundingBox());
-						gc.drawImage(scaled, dimensions.x + border,
-								dimensions.y + border);
-						gc.dispose();
+						// fetch thumbnail
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								scaled = photo.getImage(drawerDialog
+										.getBoundingBox());
+
+								// draw the image
+								imageContainer.addListener(SWT.Paint,
+										new Listener() {
+
+											@Override
+											public void handleEvent(Event e) {
+												GC gc = e.gc;
+												Rectangle dimensions = photo
+														.scaleAndCenterImage(drawerDialog
+																.getBoundingBox());
+												gc.drawImage(scaled,
+														dimensions.x + border,
+														dimensions.y + border);
+												gc.dispose();
+											}
+										});
+
+								imageContainer.redraw();
+							}
+						});
 					}
-				});
-
-				imageContainer.redraw();
+				}
 			}
 		});
 
