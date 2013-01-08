@@ -219,14 +219,11 @@ public class Photo {
 			if (boundingBox > maxDimensions)
 				boundingBox = maxDimensions;
 
-			System.out.println("request: " + boundingBox);
-
 			boundingBox = imageCache.subMap(boundingBox,
 					(int) (boundingBox * 1.1))
 					.firstKey();
 
 			cachedImage = imageCache.get(boundingBox);
-			System.out.println("cache hit: got " + boundingBox);
 		} catch (Exception e) {
 			cacheFullImage();
 
