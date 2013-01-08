@@ -98,6 +98,8 @@ public class ControlsDialog extends MyApplicationWindow {
 
 		Button exportButton = new Button(controlComposite, SWT.PUSH);
 		exportButton.setText("Export");
+		exportButton
+				.setToolTipText("exiftool '-filename<DateTimeOriginal' -d %y%m%d_%H%M%S%%-c.%%le .");
 		exportButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
