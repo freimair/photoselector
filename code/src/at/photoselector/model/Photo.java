@@ -243,6 +243,11 @@ public class Photo {
 		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
 			setPortrait(true);
 
+		if (200 > boundingBox && 1 == imageCache.size()) {
+			fullImage.dispose();
+			fullImage = null;
+		}
+
 		return cachedImage;
 	}
 
@@ -274,6 +279,8 @@ public class Photo {
 		for (Image current : imageCache.values())
 			current.dispose();
 		imageCache.clear();
+		fullImage.dispose();
+		fullImage = null;
 	}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {
