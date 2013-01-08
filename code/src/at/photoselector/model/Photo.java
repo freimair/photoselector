@@ -163,10 +163,13 @@ public class Photo {
 	}
 
 	public boolean isRaw() {
-		return !getPath().getName().toLowerCase().matches(".*jpe?g2$");
+		return !getPath().getName().toLowerCase().matches(".*jpe?g$");
 	}
 
 	private File preprocessRawImage() {
+		if (!isRaw())
+			return getPath();
+
 		File cachedFullImage = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + ".full.jpg");
 		if (!cachedFullImage.exists()) {
