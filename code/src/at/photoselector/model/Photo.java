@@ -186,7 +186,8 @@ public class Photo {
 				e.printStackTrace();
 			}
 			File tiffImagePath = new File(getPath().getAbsolutePath()
-					.replace("CR2", "tiff"));
+					.replaceFirst(
+					"[a-zA-Z0-9]+$", "tiff"));
 
 			// use imagemagic to convert to jpg
 			try {
