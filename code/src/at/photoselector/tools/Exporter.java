@@ -9,6 +9,7 @@ public abstract class Exporter {
 		List<Exporter> result = new ArrayList<Exporter>();
 		result.add(new RawTherapeeLinuxExporter());
 		result.add(new FileSystemExporter());
+		result.add(new RawTherapeeExporter());
 
 		return result;
 	}
