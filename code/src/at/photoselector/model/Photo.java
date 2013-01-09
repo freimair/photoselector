@@ -238,15 +238,17 @@ public class Photo {
 					dimensions.height);
 			gc.dispose();
 			imageCache.put(boundingBox, cachedImage);
+
+			// cleanup fullImage if just the thumbnail is needed
+			if (200 > boundingBox && 1 == imageCache.size()) {
+				fullImage.dispose();
+				fullImage = null;
+			}
 		}
 
 		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
 			setPortrait(true);
 
-		if (200 > boundingBox && 1 == imageCache.size()) {
-			fullImage.dispose();
-			fullImage = null;
-		}
 
 		return cachedImage;
 	}
