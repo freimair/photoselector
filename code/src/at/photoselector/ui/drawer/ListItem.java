@@ -155,9 +155,9 @@ class ListItem {
 
 			@Override
 			public void paintControl(PaintEvent e) {
-				buttonAccept.setVisible(drawerDialog.isShowDialogs());
-				buttonDecline.setVisible(drawerDialog.isShowDialogs());
-				buttonReset.setVisible(drawerDialog.isShowDialogs());
+				buttonAccept.setVisible(drawerDialog.isShowControls());
+				buttonDecline.setVisible(drawerDialog.isShowControls());
+				buttonReset.setVisible(drawerDialog.isShowControls());
 			}
 		};
 

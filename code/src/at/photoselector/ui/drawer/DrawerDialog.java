@@ -166,7 +166,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		return boundingBox;
 	}
 
-	public boolean isShowDialogs() {
+	public boolean isShowControls() {
 		return showControlsButton.getSelection();
 	}
 
