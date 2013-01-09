@@ -285,6 +285,8 @@ public class Photo {
 			fullImage.dispose();
 			fullImage = null;
 		}
+
+		// TODO preserve thumbnail to gain performance
 	}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {

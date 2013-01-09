@@ -90,6 +90,7 @@ class ImageTile extends Composite {
 				Workspace.accept(photo);
 				controlsDialog.update();
 				imageContainer.dispose();
+				photo.clearCachedImages();
 			}
 		});
 
