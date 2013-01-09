@@ -1,6 +1,7 @@
 package at.photoselector.ui.drawer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceAdapter;
@@ -65,50 +66,58 @@ class ListItem {
 
 			@Override
 			public void paintControl(PaintEvent e) {
-				if (!loaded) {
-					// extract client area of scrolledcomposite
-					Rectangle visibleArea = imageContainer
-							.getParent()
-							.getParent()
-							.getClientArea();
-					// add scroll offset
-					visibleArea.height += -imageContainer.getParent()
-							.getLocation().y;
+				try {
+					if (!loaded) {
+						// extract client area of scrolledcomposite
+						Rectangle visibleArea = imageContainer.getParent()
+								.getParent().getClientArea();
+						// add scroll offset
+						visibleArea.height += -imageContainer.getParent()
+								.getLocation().y;
 
-					// check if current thumbnail is visible
-					if (visibleArea.contains(imageContainer.getLocation())) {
-						// memorize that this thumbnail is already fetched
-						loaded = true;
-
-						// fetch thumbnail
-						display.asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								scaled = photo.getImage(drawerDialog
-										.getBoundingBox());
-
-								// draw the image
-								imageContainer.addListener(SWT.Paint,
-										new Listener() {
-
-											@Override
-											public void handleEvent(Event e) {
-												GC gc = e.gc;
-												Rectangle dimensions = photo
-														.scaleAndCenterImage(drawerDialog
-																.getBoundingBox());
-												gc.drawImage(scaled,
-														dimensions.x + border,
-														dimensions.y + border);
-												gc.dispose();
-											}
-										});
-
-								imageContainer.redraw();
-							}
-						});
+						// check if current thumbnail is visible
+						if (visibleArea.contains(imageContainer.getLocation())) {
+							// memorize that this thumbnail is already fetched
+							loaded = true;
+							getThumbnail();
+						}
 					}
+				} catch (Exception ex) {
 				}
+			}
+
+			private void getThumbnail() {
+				// fetch thumbnail
+				Display.getCurrent().asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						try {
+						scaled = photo.getImage(drawerDialog
+								.getBoundingBox());
+
+						// draw the image
+						imageContainer.addListener(SWT.Paint,
+								new Listener() {
+
+									@Override
+									public void handleEvent(Event e) {
+										GC gc = e.gc;
+										Rectangle dimensions = photo
+												.scaleAndCenterImage(drawerDialog
+														.getBoundingBox());
+										gc.drawImage(scaled,
+												dimensions.x + border,
+												dimensions.y + border);
+										gc.dispose();
+									}
+								});
+
+						imageContainer.redraw();
+						} catch (SWTException ex) {
+
+						}
+					}
+				});
 			}
 		});
 
@@ -119,10 +128,10 @@ class ListItem {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.accept(photo);
-				controlsDialog.update();
-				Composite parent = imageContainer.getParent();
+				// Composite parent = imageContainer.getParent();
 				imageContainer.dispose();
-				parent.layout();
+				// parent.layout();
+				controlsDialog.update();
 			}
 		});
 
@@ -133,10 +142,10 @@ class ListItem {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.decline(photo);
-				controlsDialog.update();
-				Composite parent = imageContainer.getParent();
+				// Composite parent = imageContainer.getParent();
 				imageContainer.dispose();
-				parent.layout();
+				// parent.layout();
+				controlsDialog.update();
 			}
 		});
 

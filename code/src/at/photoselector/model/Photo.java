@@ -281,8 +281,10 @@ public class Photo {
 		for (Image current : imageCache.values())
 			current.dispose();
 		imageCache.clear();
-		fullImage.dispose();
-		fullImage = null;
+		if (null != fullImage && !fullImage.isDisposed()) {
+			fullImage.dispose();
+			fullImage = null;
+		}
 	}
 
 	public Rectangle scaleAndCenterImage(int boundingBox) {
