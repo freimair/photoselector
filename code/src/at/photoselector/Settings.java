@@ -22,6 +22,8 @@ public class Settings {
 	private static final String dcrawlocation = "dcrawbinary";
 	private static final String imagemagicklocation = "imagemagickbinary";
 
+	private static final String initialThumbnailSize = "initialThumbnailSize";
+
 	public static void setRecent(String path) {
 		if (getRecent().contains(path)) {
 			// exchange
@@ -70,6 +72,14 @@ public class Settings {
 
 	public static void setImageMagicBinaryLocation(String text) {
 		preferences.put(imagemagicklocation, text);
+	}
+
+	public static Integer getInitialThumbnailSize() {
+		return Integer.valueOf(preferences.get(initialThumbnailSize, "150"));
+	}
+
+	public static void setInitialThumbnailSize(String size) {
+		preferences.put(initialThumbnailSize, size);
 	}
 
 	static private byte[] object2Bytes(Object o) {

@@ -20,6 +20,7 @@ public class SettingsDialog extends Dialog {
 
 	private Text dcrawText;
 	private Text imagemagickText;
+	private Text initialThumbnailSizeText;
 
 	protected SettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -63,6 +64,14 @@ public class SettingsDialog extends Dialog {
 			}
 		});
 
+		Label initialThumbnailSizeLabel = new Label(container, SWT.NONE);
+		initialThumbnailSizeLabel.setText("initial thumbnail size in pixels");
+		initialThumbnailSizeText = new Text(container, SWT.BORDER);
+		initialThumbnailSizeText.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				false, false, 2, 1));
+		initialThumbnailSizeText.setText(Settings.getInitialThumbnailSize()
+				.toString());
+
 		return parent;
 	}
 
@@ -76,6 +85,7 @@ public class SettingsDialog extends Dialog {
 		// TODO maybe check selection
 		Settings.setDCRawLocation(dcrawText.getText());
 		Settings.setImageMagicBinaryLocation(imagemagickText.getText());
+		Settings.setInitialThumbnailSize(initialThumbnailSizeText.getText());
 		super.okPressed();
 	}
 }

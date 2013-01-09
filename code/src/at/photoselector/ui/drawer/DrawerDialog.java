@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import at.photoselector.Settings;
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 import at.photoselector.ui.UncloseableApplicationWindow;
@@ -28,7 +29,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private ToolItem showAcceptedButton;
 	private ToolItem showDeclinedButton;
 	private Composite photoListContentComposite;
-	private int boundingBox = 100;
+	private int boundingBox = 0;
 	private ToolItem showControlsButton;
 
 	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
@@ -70,7 +71,6 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
 				boundingBox += 50;
 				update();
 			}
@@ -82,8 +82,9 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
 				boundingBox -= 50;
+				if (boundingBox < 50)
+					boundingBox = 50;
 				update();
 			}
 		});
@@ -163,7 +164,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	}
 
 	public int getBoundingBox() {
-		return boundingBox;
+		return Settings.getInitialThumbnailSize() + boundingBox;
 	}
 
 	public boolean isShowControls() {
