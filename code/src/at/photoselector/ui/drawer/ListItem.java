@@ -17,6 +17,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
@@ -62,62 +63,72 @@ class ListItem {
 
 		// fetch thumbnails asynchronously
 		// if and only if the current thumbnail is visible on screen
+		// at the time the execution is performed (we do not need to render
+		// thumbnails the user isn't going to see on screen)
 		imageContainer.getParent().addPaintListener(new PaintListener() {
 
 			@Override
 			public void paintControl(PaintEvent e) {
 				try {
-					if (!loaded) {
-						// extract client area of scrolledcomposite
-						Rectangle visibleArea = imageContainer.getParent()
-								.getParent().getClientArea();
-						// add scroll offset
-						visibleArea.height += -imageContainer.getParent()
-								.getLocation().y;
+					Display.getCurrent().asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							if (!loaded) {
+								// extract client area of scrolledcomposite
+								Rectangle visibleArea = imageContainer
+										.getParent().getParent()
+										.getClientArea();
+								// add scroll offset
+								visibleArea.y += -imageContainer.getParent()
+										.getLocation().y;
 
-						// check if current thumbnail is visible
-						if (visibleArea.contains(imageContainer.getLocation())) {
-							// memorize that this thumbnail is already fetched
-							loaded = true;
-							getThumbnail();
+								// check if current thumbnail is visible
+								if (visibleArea.contains(imageContainer
+										.getLocation())
+										|| visibleArea.contains(new Point(
+												imageContainer.getLocation().x
+														+ imageContainer
+																.getSize().x,
+												imageContainer.getLocation().y
+														+ imageContainer
+																.getSize().y))) {
+									// memorize that this thumbnail is already
+									// fetched
+									loaded = true;
+									getThumbnail();
+								}
+							}
 						}
-					}
+					});
 				} catch (Exception ex) {
 				}
 			}
 
 			private void getThumbnail() {
 				// fetch thumbnail
-				Display.getCurrent().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						try {
-						scaled = photo.getImage(drawerDialog
-								.getBoundingBox());
 
-						// draw the image
-						imageContainer.addListener(SWT.Paint,
-								new Listener() {
+				try {
+					scaled = photo.getImage(drawerDialog.getBoundingBox());
 
-									@Override
-									public void handleEvent(Event e) {
-										GC gc = e.gc;
-										Rectangle dimensions = photo
-												.scaleAndCenterImage(drawerDialog
-														.getBoundingBox());
-										gc.drawImage(scaled,
-												dimensions.x + border,
-												dimensions.y + border);
-										gc.dispose();
-									}
-								});
+					// draw the image
+					imageContainer.addListener(SWT.Paint, new Listener() {
 
-						imageContainer.redraw();
-						} catch (SWTException ex) {
-
+						@Override
+						public void handleEvent(Event e) {
+							GC gc = e.gc;
+							Rectangle dimensions = photo
+									.scaleAndCenterImage(drawerDialog
+											.getBoundingBox());
+							gc.drawImage(scaled, dimensions.x + border,
+									dimensions.y + border);
+							gc.dispose();
 						}
-					}
-				});
+					});
+
+					imageContainer.redraw();
+				} catch (SWTException ex) {
+
+				}
 			}
 		});
 
