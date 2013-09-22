@@ -38,12 +38,16 @@ public class Workspace {
 	public static boolean accept(Photo photo) {
 		photo.setStatus(Photo.ACCEPTED);
 
+		lastTreated = photo;
+
 		return isStageCompleted();
 	}
 
 	public static boolean decline(Photo photo) {
 		photo.setStatus(Photo.DECLINED);
 		photo.clearCachedImages();
+
+		lastTreated = photo;
 
 		return isStageCompleted();
 	}
@@ -90,5 +94,11 @@ public class Workspace {
 		db = new Database(path);
 		Stage.init(db);
 		Photo.init(db);
+	}
+
+	static private Photo lastTreated = null;
+
+	public static Photo getLastTreated() {
+		return lastTreated;
 	}
 }

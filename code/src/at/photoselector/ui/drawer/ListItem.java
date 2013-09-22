@@ -140,7 +140,7 @@ class ListItem {
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.accept(photo);
 				// Composite parent = imageContainer.getParent();
-				imageContainer.dispose();
+				// imageContainer.dispose();
 				// parent.layout();
 				controlsDialog.update();
 			}
@@ -232,5 +232,9 @@ class ListItem {
 	protected void finalize() throws Throwable {
 		super.finalize();
 		scaled.dispose();
+	}
+
+	public void dispose() {
+		imageContainer.dispose();
 	}
 }

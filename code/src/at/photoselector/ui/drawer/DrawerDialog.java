@@ -1,5 +1,8 @@
 package at.photoselector.ui.drawer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -19,6 +22,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import at.photoselector.Settings;
+import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 import at.photoselector.ui.UncloseableApplicationWindow;
@@ -54,6 +58,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				controlsDialog.update();
+				updateAll();
 			}
 		});
 		showDeclinedButton = new ToolItem(drawerToolbar, SWT.CHECK);
@@ -62,6 +67,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				controlsDialog.update();
+				updateAll();
 			}
 		});
 
@@ -72,7 +78,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boundingBox += 50;
-				update();
+				updateAll();
 			}
 		});
 
@@ -85,7 +91,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 				boundingBox -= 50;
 				if (boundingBox < 50)
 					boundingBox = 50;
-				update();
+				updateAll();
 			}
 		});
 
@@ -146,21 +152,43 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		return super.createToolBarManager(style);
 	}
 
+	private Map<String, ListItem> cache;
+	
 	@Override
 	public void update() {
-		for (Control current : photoListContentComposite.getChildren())
-			current.dispose();
-		int filter = Photo.UNPROCESSED;
-		if (showAcceptedButton.getSelection())
-			filter |= Photo.ACCEPTED;
-		if (showDeclinedButton.getSelection())
-			filter |= Photo.DECLINED;
-		for (Photo current : Photo.getFiltered(true, filter)) {
-			new ListItem(photoListContentComposite, this, controlsDialog,
-					current);
+		update(false);
+	}
+
+	public void updateAll() {
+		update(true);
+	}
+
+	public void update(boolean force) {
+		Photo lastTreated = Workspace.getLastTreated();
+		if (lastTreated != null && !force) {
+			ListItem tmp = cache
+					.remove(lastTreated.getPath().getAbsolutePath());
+			if (null != tmp)
+				tmp.dispose();
+			photoListContentComposite.update();
+		} else {
+			for (Control current : photoListContentComposite.getChildren())
+				current.dispose();
+			int filter = Photo.UNPROCESSED;
+			if (showAcceptedButton.getSelection())
+				filter |= Photo.ACCEPTED;
+			if (showDeclinedButton.getSelection())
+				filter |= Photo.DECLINED;
+			cache = new HashMap<String, ListItem>();
+			for (Photo current : Photo.getFiltered(true, filter)) {
+				cache.put(current.getPath().getAbsolutePath(), new ListItem(
+						photoListContentComposite,
+						this, controlsDialog, current));
+			}
 		}
 
 		photoListContentComposite.layout();
+		photoListContentComposite.getParent().getParent().redraw();
 	}
 
 	public int getBoundingBox() {
