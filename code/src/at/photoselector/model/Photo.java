@@ -240,10 +240,22 @@ public class Photo {
 			imageCache.put(boundingBox, cachedImage);
 
 			// cleanup fullImage if just the thumbnail is needed
-			if (200 > boundingBox && 1 == imageCache.size()) {
-				fullImage.dispose();
-				fullImage = null;
+			// System.out.print(this.getPath() + ": " + imageCache.size()
+			// + "...");
+			if (400 > boundingBox) {
+				boolean dispose = true;
+				for (Object current : imageCache.keySet().toArray())
+					if (400 < (Integer) current) {
+						dispose = false;
+						break;
+					}
+				if (dispose) {
+					fullImage.dispose();
+					fullImage = null;
+					// System.out.print("disposed");
+				}
 			}
+			// System.out.println("");
 		}
 
 		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
