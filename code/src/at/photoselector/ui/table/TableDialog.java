@@ -34,6 +34,9 @@ public class TableDialog extends UncloseableApplicationWindow {
 	protected Control createContents(final Composite parent) {
 		parent.setBackground(new Color(parent.getDisplay(), 75, 75, 75));
 
+		for (Control current : parent.getChildren())
+			current.dispose();
+
 		DropTarget target = new DropTarget(parent, DND.DROP_MOVE
 				| DND.DROP_COPY | DND.DROP_LINK);
 		target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
