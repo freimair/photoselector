@@ -75,7 +75,7 @@ public class ControlsDialog extends MyApplicationWindow {
 		Button addPhotosButton = new Button(controlComposite, SWT.PUSH);
 		addPhotosButton.setText("Add photos");
 		addPhotosButton
-				.setToolTipText("exiftool \"-FileName<DateTimeOriginal\" -d \"%Y%m%d_%H%M%S.%%e\" .");
+				.setToolTipText("exiftool \"-FileName<DateTimeOriginal\" -d \"%Y%m%d_%H%M%S%%-c.%%e\" .");
 		addPhotosButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
