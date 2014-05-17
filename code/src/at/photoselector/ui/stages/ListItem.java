@@ -55,6 +55,9 @@ class ListItem {
 		// - current value
 		bar.setSelection(Photo.getFiltered(true,
 				Photo.ACCEPTED | Photo.DECLINED).size());
+
+		Label label = new Label(itemInProgressComposite, SWT.NONE);
+		label.setText(bar.getSelection() + "/" + bar.getMaximum());
 	}
 
 	private void createSimpleListItem(Composite parent) {
