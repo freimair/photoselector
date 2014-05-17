@@ -25,6 +25,8 @@ public class Settings {
 	private static final String initialThumbnailSize = "initialThumbnailSize";
 	private static final String maximumDrawerItems = "maximumDrawerItems";
 
+	private static String tryFindingJpgBesideRaw = "tryFindingJpgBesideRaw";
+
 	public static void setRecent(String path) {
 		if (getRecent().contains(path)) {
 			// exchange
@@ -89,6 +91,15 @@ public class Settings {
 
 	public static void setMaximumDrawerItems(String number) {
 		preferences.put(maximumDrawerItems, number);
+	}
+
+	public static boolean isTryFindingJpgBesideRaw() {
+		return Boolean.valueOf(preferences.get(tryFindingJpgBesideRaw,
+				Boolean.toString(true)));
+	}
+
+	public static void setTryFindingJpgBesideRaw(boolean value) {
+		preferences.put(tryFindingJpgBesideRaw, Boolean.toString(value));
 	}
 
 	static private byte[] object2Bytes(Object o) {

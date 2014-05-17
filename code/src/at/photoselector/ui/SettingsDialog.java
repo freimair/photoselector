@@ -22,6 +22,7 @@ public class SettingsDialog extends Dialog {
 	private Text imagemagickText;
 	private Text initialThumbnailSizeText;
 	private Text maxDrawerItemsText;
+	private Button tryFindingJpgBesideRawCheckbox;
 
 	protected SettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -81,6 +82,14 @@ public class SettingsDialog extends Dialog {
 				false, false, 2, 1));
 		maxDrawerItemsText.setText(Settings.getMaximumDrawerItems().toString());
 
+		Label tryFindingJpgBesideRawLabel = new Label(container, SWT.NONE);
+		tryFindingJpgBesideRawLabel.setText("try to find jpg beside raw?");
+		tryFindingJpgBesideRawCheckbox = new Button(container, SWT.CHECK);
+		tryFindingJpgBesideRawCheckbox.setLayoutData(new GridData(SWT.FILL,
+				SWT.FILL, false, false, 2, 1));
+		tryFindingJpgBesideRawCheckbox.setSelection(Settings
+				.isTryFindingJpgBesideRaw());
+
 		return parent;
 	}
 
@@ -96,6 +105,8 @@ public class SettingsDialog extends Dialog {
 		Settings.setImageMagicBinaryLocation(imagemagickText.getText());
 		Settings.setInitialThumbnailSize(initialThumbnailSizeText.getText());
 		Settings.setMaximumDrawerItems(maxDrawerItemsText.getText());
+		Settings.setTryFindingJpgBesideRaw(tryFindingJpgBesideRawCheckbox
+				.getSelection());
 		super.okPressed();
 	}
 }
