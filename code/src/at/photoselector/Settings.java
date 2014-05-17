@@ -23,6 +23,7 @@ public class Settings {
 	private static final String imagemagicklocation = "imagemagickbinary";
 
 	private static final String initialThumbnailSize = "initialThumbnailSize";
+	private static final String maximumDrawerItems = "maximumDrawerItems";
 
 	public static void setRecent(String path) {
 		if (getRecent().contains(path)) {
@@ -80,6 +81,14 @@ public class Settings {
 
 	public static void setInitialThumbnailSize(String size) {
 		preferences.put(initialThumbnailSize, size);
+	}
+
+	public static Integer getMaximumDrawerItems() {
+		return Integer.valueOf(preferences.get(maximumDrawerItems, "250"));
+	}
+
+	public static void setMaximumDrawerItems(String number) {
+		preferences.put(maximumDrawerItems, number);
 	}
 
 	static private byte[] object2Bytes(Object o) {

@@ -21,6 +21,7 @@ public class SettingsDialog extends Dialog {
 	private Text dcrawText;
 	private Text imagemagickText;
 	private Text initialThumbnailSizeText;
+	private Text maxDrawerItemsText;
 
 	protected SettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -72,6 +73,14 @@ public class SettingsDialog extends Dialog {
 		initialThumbnailSizeText.setText(Settings.getInitialThumbnailSize()
 				.toString());
 
+		Label maxDrawerItemsLabel = new Label(container, SWT.NONE);
+		maxDrawerItemsLabel
+				.setText("maximum number of concurrent drawer items");
+		maxDrawerItemsText = new Text(container, SWT.BORDER);
+		maxDrawerItemsText.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				false, false, 2, 1));
+		maxDrawerItemsText.setText(Settings.getMaximumDrawerItems().toString());
+
 		return parent;
 	}
 
@@ -86,6 +95,7 @@ public class SettingsDialog extends Dialog {
 		Settings.setDCRawLocation(dcrawText.getText());
 		Settings.setImageMagicBinaryLocation(imagemagickText.getText());
 		Settings.setInitialThumbnailSize(initialThumbnailSizeText.getText());
+		Settings.setMaximumDrawerItems(maxDrawerItemsText.getText());
 		super.okPressed();
 	}
 }

@@ -15,6 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -184,6 +185,21 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 				cache.put(current.getPath().getAbsolutePath(), new ListItem(
 						photoListContentComposite,
 						this, controlsDialog, current));
+
+				if (Settings.getMaximumDrawerItems() < cache.size()) {
+					Button moreButton = new Button(photoListContentComposite,
+							SWT.PUSH);
+					moreButton.setText("load more");
+					moreButton.addSelectionListener(new SelectionAdapter() {
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							update(true);
+						}
+					});
+
+					break;
+				}
 			}
 		}
 
