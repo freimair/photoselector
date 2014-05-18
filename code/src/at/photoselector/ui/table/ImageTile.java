@@ -169,6 +169,7 @@ class ImageTile extends Composite {
 				zoomBoxContainer.setLocation(x - zoomBoxContainerSize / 2, y
 						- zoomBoxContainerSize / 2);
 
+				controlsComposite.setVisible(false);
 				zoomBoxContainer.setVisible(true);
 			}
 		});
