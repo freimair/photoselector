@@ -51,6 +51,7 @@ class ImageTile extends Composite {
 	private ControlsDialog controlsDialog;
 	private Composite controlsComposite;
 	private Label probelabel;
+	private Composite zoomBoxContainer;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
@@ -75,6 +76,12 @@ class ImageTile extends Composite {
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
 		imageContainer.moveAbove(null);
+
+		// add zoombox container
+		zoomBoxContainer = new Composite(imageContainer, SWT.NONE);
+		zoomBoxContainer.setSize(50, 50);
+		zoomBoxContainer.moveAbove(null);
+		zoomBoxContainer.setVisible(false);
 
 		// add controls
 		controlsComposite = new Composite(imageContainer, SWT.NONE);
@@ -143,6 +150,17 @@ class ImageTile extends Composite {
 
 				zoomImageContainer(factor, x, y);
 				controlsComposite.setVisible(false);
+			}
+		});
+
+		Button sharpnessComparisonButton = new Button(controlsComposite,
+				SWT.PUSH);
+		sharpnessComparisonButton.setText("compare sharpness");
+		sharpnessComparisonButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				zoomBoxContainer.setVisible(true);
 			}
 		});
 
@@ -221,6 +239,37 @@ class ImageTile extends Composite {
 		});
 
 		imageContainer.layout();
+
+		zoomBoxContainer.addListener(SWT.Paint, new Listener() {
+
+			@Override
+			public void handleEvent(Event e) {
+				GC gc = e.gc;
+				gc.drawImage(image, 0, 0, image.getBounds().width,
+						image.getBounds().height, 0, 0,
+						zoomBoxContainer.getBounds().width,
+						zoomBoxContainer.getBounds().height);
+				gc.dispose();
+			}
+		});
+
+		zoomBoxContainer.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseDown(MouseEvent event) {
+				zoomBoxContainer.setVisible(false);
+			}
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+
+			}
+		});
 	}
 
 	private void zoomImageContainer(double factor, int x, int y) {
