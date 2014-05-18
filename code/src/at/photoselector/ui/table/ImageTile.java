@@ -52,7 +52,7 @@ class ImageTile extends Composite {
 	private Composite controlsComposite;
 	private Label probelabel;
 	private Composite zoomBoxContainer;
-	private Integer zoomBoxContainerSize = 50;
+	private Integer zoomBoxContainerSize = 64;
 	private Point zoomBoxOffset;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
@@ -80,7 +80,7 @@ class ImageTile extends Composite {
 		imageContainer.moveAbove(null);
 
 		// add zoombox container
-		zoomBoxContainer = new Composite(imageContainer, SWT.NONE);
+		zoomBoxContainer = new Composite(imageContainer, SWT.BORDER);
 		zoomBoxContainer.setSize(zoomBoxContainerSize, zoomBoxContainerSize);
 		zoomBoxContainer.moveAbove(null);
 		zoomBoxContainer.setVisible(false);
@@ -167,8 +167,8 @@ class ImageTile extends Composite {
 				int x = controlsComposite.getLocation().x
 						+ controlsComposite.getSize().x / 2;
 
-				zoomBoxContainer.setLocation(x - zoomBoxContainerSize / 2, y
-						- zoomBoxContainerSize / 2);
+				zoomBoxContainer.setLocation(x - zoomBoxContainer.getSize().x
+						/ 2, y - zoomBoxContainer.getSize().y / 2);
 
 				controlsComposite.setVisible(false);
 				zoomBoxContainer.setVisible(true);
@@ -255,12 +255,42 @@ class ImageTile extends Composite {
 
 			@Override
 			public void handleEvent(Event e) {
-				GC gc = e.gc;
-				gc.drawImage(image, 0, 0, image.getBounds().width,
-						image.getBounds().height, 0, 0,
-						zoomBoxContainer.getBounds().width,
-						zoomBoxContainer.getBounds().height);
-				gc.dispose();
+				if (zoomBoxContainer.isVisible()) {
+					// get center of zoomBoxContainer in imageContainer
+					// coordinates
+					int centerX = zoomBoxContainer.getLocation().x
+							+ zoomBoxContainer.getSize().x / 2;
+					int centerY = zoomBoxContainer.getLocation().y
+							+ zoomBoxContainer.getSize().y / 2;
+
+					// normalize to image size
+					double normalizedX = (double) centerX
+							/ imageContainer.getSize().x;
+					double normalizedY = (double) centerY
+							/ imageContainer.getSize().y;
+
+					// calculate "center" for full scale image
+					int x = (int) Math.round(normalizedX
+							* photo.getDimensions().x);
+					int y = (int) Math.round(normalizedY
+							* photo.getDimensions().y);
+
+					// calculate bounding box
+					int left = x - zoomBoxContainer.getSize().x / 2;
+					int top = y - zoomBoxContainer.getSize().y / 2;
+
+					// render
+					GC gc = e.gc;
+					// use full image as source...
+					gc.drawImage(photo.getImage(Math.max(
+							photo.getDimensions().x, photo.getDimensions().y)),
+							left, top,
+							zoomBoxContainer.getSize().x,
+							zoomBoxContainer.getSize().y, 0, 0,
+							zoomBoxContainer.getBounds().width,
+							zoomBoxContainer.getBounds().height);
+					gc.dispose();
+				}
 			}
 		});
 
@@ -283,6 +313,7 @@ class ImageTile extends Composite {
 							&& imageContainer.getSize().y
 									- zoomBoxContainerSize / 2 > newY) {
 						zoomBoxContainer.setLocation(newX, newY);
+						zoomBoxContainer.redraw();
 					}
 				}
 			}
