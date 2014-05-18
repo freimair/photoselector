@@ -53,6 +53,7 @@ class ImageTile extends Composite {
 	private Label probelabel;
 	private Composite zoomBoxContainer;
 	private Integer zoomBoxContainerSize = 50;
+	private Point zoomBoxOffset;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
@@ -263,21 +264,37 @@ class ImageTile extends Composite {
 			}
 		});
 
+		zoomBoxContainer.addMouseMoveListener(new MouseMoveListener() {
+
+			@Override
+			public void mouseMove(MouseEvent event) {
+				zoomBoxContainer.forceFocus(); // for win
+
+				if (zoomBoxOffset != null) {
+					zoomBoxContainer.setLocation(
+							zoomBoxContainer.getLocation().x + event.x
+									- zoomBoxOffset.x,
+							zoomBoxContainer.getLocation().y + event.y
+									- zoomBoxOffset.y);
+				}
+			}
+		});
+
 		zoomBoxContainer.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseUp(MouseEvent e) {
-
+				zoomBoxOffset = null;
 			}
 
 			@Override
 			public void mouseDown(MouseEvent event) {
-				zoomBoxContainer.setVisible(false);
+				zoomBoxOffset = new Point(event.x, event.y);
 			}
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-
+				zoomBoxContainer.setVisible(false);
 			}
 		});
 	}
