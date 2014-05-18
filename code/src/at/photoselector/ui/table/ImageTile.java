@@ -52,6 +52,7 @@ class ImageTile extends Composite {
 	private Composite controlsComposite;
 	private Label probelabel;
 	private Composite zoomBoxContainer;
+	private Integer zoomBoxContainerSize = 50;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
@@ -79,7 +80,7 @@ class ImageTile extends Composite {
 
 		// add zoombox container
 		zoomBoxContainer = new Composite(imageContainer, SWT.NONE);
-		zoomBoxContainer.setSize(50, 50);
+		zoomBoxContainer.setSize(zoomBoxContainerSize, zoomBoxContainerSize);
 		zoomBoxContainer.moveAbove(null);
 		zoomBoxContainer.setVisible(false);
 
@@ -160,6 +161,14 @@ class ImageTile extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				int y = controlsComposite.getLocation().y
+						+ controlsComposite.getSize().y / 2;
+				int x = controlsComposite.getLocation().x
+						+ controlsComposite.getSize().x / 2;
+
+				zoomBoxContainer.setLocation(x - zoomBoxContainerSize / 2, y
+						- zoomBoxContainerSize / 2);
+
 				zoomBoxContainer.setVisible(true);
 			}
 		});
