@@ -271,11 +271,19 @@ class ImageTile extends Composite {
 				zoomBoxContainer.forceFocus(); // for win
 
 				if (zoomBoxOffset != null) {
-					zoomBoxContainer.setLocation(
-							zoomBoxContainer.getLocation().x + event.x
-									- zoomBoxOffset.x,
-							zoomBoxContainer.getLocation().y + event.y
-									- zoomBoxOffset.y);
+					int newX = zoomBoxContainer.getLocation().x + event.x
+							- zoomBoxOffset.x;
+					int newY = zoomBoxContainer.getLocation().y + event.y
+							- zoomBoxOffset.y;
+
+					if (-zoomBoxContainerSize / 2 < newX
+							&& -zoomBoxContainerSize / 2 < newY
+							&& imageContainer.getSize().x
+									- zoomBoxContainerSize / 2 > newX
+							&& imageContainer.getSize().y
+									- zoomBoxContainerSize / 2 > newY) {
+						zoomBoxContainer.setLocation(newX, newY);
+					}
 				}
 			}
 		});
