@@ -1,5 +1,8 @@
 package at.photoselector.ui.table;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -16,6 +19,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -166,11 +170,10 @@ class ImageTile extends Composite {
 				int x = controlsComposite.getLocation().x
 						+ controlsComposite.getSize().x / 2;
 
-				zoomBoxContainer.setLocation(x - zoomBoxContainer.getSize().x
-						/ 2, y - zoomBoxContainer.getSize().y / 2);
+				for (ImageTile current : getCurrentImageTiles())
+					current.displayZoomBox(x, y);
 
 				controlsComposite.setVisible(false);
-				zoomBoxContainer.setVisible(true);
 			}
 		});
 
@@ -307,22 +310,8 @@ class ImageTile extends Composite {
 			public void mouseMove(MouseEvent event) {
 				zoomBoxContainer.forceFocus(); // for win
 
-				if (zoomBoxOffset != null) {
-					int newX = zoomBoxContainer.getLocation().x + event.x
-							- zoomBoxOffset.x;
-					int newY = zoomBoxContainer.getLocation().y + event.y
-							- zoomBoxOffset.y;
-
-					if (-zoomBoxContainer.getSize().x / 2 < newX
-							&& -zoomBoxContainer.getSize().y / 2 < newY
-							&& imageContainer.getSize().x
-									- zoomBoxContainer.getSize().x / 2 > newX
-							&& imageContainer.getSize().y
-									- zoomBoxContainer.getSize().y / 2 > newY) {
-						zoomBoxContainer.setLocation(newX, newY);
-						zoomBoxContainer.redraw();
-					}
-				}
+				for (ImageTile current : getCurrentImageTiles())
+					current.doZoomBoxDrag(event.x, event.y);
 			}
 		});
 
@@ -330,19 +319,76 @@ class ImageTile extends Composite {
 
 			@Override
 			public void mouseUp(MouseEvent e) {
-				zoomBoxOffset = null;
+				for (ImageTile current : getCurrentImageTiles())
+					current.resetZoomBoxDrag();
 			}
 
 			@Override
 			public void mouseDown(MouseEvent event) {
-				zoomBoxOffset = new Point(event.x, event.y);
+				for (ImageTile current : getCurrentImageTiles())
+					if (3 == event.button)
+						current.hideZoomBox();
+					else
+						current.startZoomBoxDrag(event.x, event.y);
 			}
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				zoomBoxContainer.setVisible(false);
+				for (ImageTile current : getCurrentImageTiles())
+					current.hideZoomBox();
 			}
 		});
+	}
+
+	private List<ImageTile> getCurrentImageTiles() {
+		List<ImageTile> result = new ArrayList<ImageTile>();
+
+		for (Control currentControl : imageContainer.getParent().getChildren()) {
+			if (currentControl instanceof ImageTile)
+				result.add((ImageTile) currentControl);
+		}
+
+		return result;
+	}
+
+	private void displayZoomBox(int x, int y) {
+		zoomBoxContainer.setLocation(x - zoomBoxContainer.getSize().x / 2, y
+				- zoomBoxContainer.getSize().y / 2);
+
+		controlsComposite.setVisible(false);
+		zoomBoxContainer.setVisible(true);
+	}
+
+	private void startZoomBoxDrag(int x, int y) {
+		zoomBoxOffset = new Point(x, y);
+	}
+
+	private void doZoomBoxDrag(int dx, int dy) {
+
+		if (zoomBoxOffset != null) {
+			int newX = zoomBoxContainer.getLocation().x + dx
+					- zoomBoxOffset.x;
+			int newY = zoomBoxContainer.getLocation().y + dy
+					- zoomBoxOffset.y;
+
+			if (-zoomBoxContainer.getSize().x / 2 < newX
+					&& -zoomBoxContainer.getSize().y / 2 < newY
+					&& imageContainer.getSize().x
+							- zoomBoxContainer.getSize().x / 2 > newX
+					&& imageContainer.getSize().y
+							- zoomBoxContainer.getSize().y / 2 > newY) {
+				zoomBoxContainer.setLocation(newX, newY);
+				zoomBoxContainer.redraw();
+			}
+		}
+	}
+
+	private void resetZoomBoxDrag() {
+		zoomBoxOffset = null;
+	}
+
+	private void hideZoomBox() {
+		zoomBoxContainer.setVisible(false);
 	}
 
 	private void zoomImageContainer(double factor, int x, int y) {
