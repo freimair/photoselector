@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import at.photoselector.Settings;
@@ -55,7 +54,6 @@ class ImageTile extends Composite {
 	private Photo photo;
 	private ControlsDialog controlsDialog;
 	private Composite controlsComposite;
-	private Label probelabel;
 	private Composite zoomBoxContainer;
 	private Point zoomBoxOffset;
 
@@ -73,7 +71,6 @@ class ImageTile extends Composite {
 		image = photo.getImage(boundingBox);
 
 		imageContainer.setLayout(new RowLayout());
-		probelabel = new Label(this, SWT.NONE);
 
 		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
 		imageContainer.setSize(dimensions.width, dimensions.height);
