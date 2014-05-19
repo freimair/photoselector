@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
+import at.photoselector.Settings;
 import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
@@ -52,7 +53,6 @@ class ImageTile extends Composite {
 	private Composite controlsComposite;
 	private Label probelabel;
 	private Composite zoomBoxContainer;
-	private Integer zoomBoxContainerSize = 64;
 	private Point zoomBoxOffset;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
@@ -81,7 +81,6 @@ class ImageTile extends Composite {
 
 		// add zoombox container
 		zoomBoxContainer = new Composite(imageContainer, SWT.BORDER);
-		zoomBoxContainer.setSize(zoomBoxContainerSize, zoomBoxContainerSize);
 		zoomBoxContainer.moveAbove(null);
 		zoomBoxContainer.setVisible(false);
 
@@ -255,6 +254,14 @@ class ImageTile extends Composite {
 
 			@Override
 			public void handleEvent(Event e) {
+				zoomBoxContainer.setSize(
+						(int) Math.round(Settings.getZoomBoxContainerSize()
+								* (imageContainer.getSize().x + imageContainer
+										.getSize().y) / 2),
+						(int) Math.round(Settings.getZoomBoxContainerSize()
+								* (imageContainer.getSize().x + imageContainer
+										.getSize().y) / 2));
+
 				if (zoomBoxContainer.isVisible()) {
 					// get center of zoomBoxContainer in imageContainer
 					// coordinates
@@ -306,12 +313,12 @@ class ImageTile extends Composite {
 					int newY = zoomBoxContainer.getLocation().y + event.y
 							- zoomBoxOffset.y;
 
-					if (-zoomBoxContainerSize / 2 < newX
-							&& -zoomBoxContainerSize / 2 < newY
+					if (-zoomBoxContainer.getSize().x / 2 < newX
+							&& -zoomBoxContainer.getSize().y / 2 < newY
 							&& imageContainer.getSize().x
-									- zoomBoxContainerSize / 2 > newX
+									- zoomBoxContainer.getSize().x / 2 > newX
 							&& imageContainer.getSize().y
-									- zoomBoxContainerSize / 2 > newY) {
+									- zoomBoxContainer.getSize().y / 2 > newY) {
 						zoomBoxContainer.setLocation(newX, newY);
 						zoomBoxContainer.redraw();
 					}

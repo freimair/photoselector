@@ -26,6 +26,7 @@ public class Settings {
 	private static final String maximumDrawerItems = "maximumDrawerItems";
 
 	private static String tryFindingJpgBesideRaw = "tryFindingJpgBesideRaw";
+	private static String zoomBoxContainerSize = "zoomBoxContainerSize";
 
 	public static void setRecent(String path) {
 		if (getRecent().contains(path)) {
@@ -100,6 +101,15 @@ public class Settings {
 
 	public static void setTryFindingJpgBesideRaw(boolean value) {
 		preferences.put(tryFindingJpgBesideRaw, Boolean.toString(value));
+	}
+
+	public static double getZoomBoxContainerSize() {
+		return Double
+				.valueOf(preferences.getDouble(zoomBoxContainerSize, 0.33));
+	}
+
+	public static void setZoomBoxContainerSize(double size) {
+		preferences.putDouble(zoomBoxContainerSize, size);
 	}
 
 	static private byte[] object2Bytes(Object o) {

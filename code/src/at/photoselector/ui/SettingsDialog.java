@@ -23,6 +23,7 @@ public class SettingsDialog extends Dialog {
 	private Text initialThumbnailSizeText;
 	private Text maxDrawerItemsText;
 	private Button tryFindingJpgBesideRawCheckbox;
+	private Text zoomBoxContainerSizeText;
 
 	protected SettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -41,6 +42,8 @@ public class SettingsDialog extends Dialog {
 		dcrawText.setText(Settings.getDCRawLocation());
 		Button dcrawButton = new Button(container, SWT.PUSH);
 		dcrawButton.setText("Browse...");
+		dcrawButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false, 1, 1));
 		dcrawButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -57,6 +60,8 @@ public class SettingsDialog extends Dialog {
 		imagemagickText.setText(Settings.getImageMagicBinaryLocation());
 		Button imagemagickButton = new Button(container, SWT.PUSH);
 		imagemagickButton.setText("Browse...");
+		imagemagickButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false, 1, 1));
 		imagemagickButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -90,6 +95,16 @@ public class SettingsDialog extends Dialog {
 		tryFindingJpgBesideRawCheckbox.setSelection(Settings
 				.isTryFindingJpgBesideRaw());
 
+		Label zoomBoxContainerSizeLabel = new Label(container, SWT.NONE);
+		zoomBoxContainerSizeLabel.setText("size of zoombox container");
+		zoomBoxContainerSizeText = new Text(container, SWT.BORDER);
+		zoomBoxContainerSizeText.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				false, false, 1, 1));
+		zoomBoxContainerSizeText.setText(Double.toString(Settings
+				.getZoomBoxContainerSize()));
+		Label zoomBoxContainerSizeLabel2 = new Label(container, SWT.NONE);
+		zoomBoxContainerSizeLabel2.setText("* image tile size");
+
 		return parent;
 	}
 
@@ -107,6 +122,8 @@ public class SettingsDialog extends Dialog {
 		Settings.setMaximumDrawerItems(maxDrawerItemsText.getText());
 		Settings.setTryFindingJpgBesideRaw(tryFindingJpgBesideRawCheckbox
 				.getSelection());
+		Settings.setZoomBoxContainerSize(Double
+				.valueOf(zoomBoxContainerSizeText.getText()));
 		super.okPressed();
 	}
 }
