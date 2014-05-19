@@ -1,5 +1,8 @@
 package at.photoselector.ui.table;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -16,11 +19,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
+import at.photoselector.Settings;
 import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
@@ -51,6 +56,8 @@ class ImageTile extends Composite {
 	private ControlsDialog controlsDialog;
 	private Composite controlsComposite;
 	private Label probelabel;
+	private Composite zoomBoxContainer;
+	private Point zoomBoxOffset;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto, int x, int y) {
@@ -75,6 +82,11 @@ class ImageTile extends Composite {
 		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
 				pt.y - imageContainer.getBounds().height / 2);
 		imageContainer.moveAbove(null);
+
+		// add zoombox container
+		zoomBoxContainer = new Composite(imageContainer, SWT.BORDER);
+		zoomBoxContainer.moveAbove(null);
+		zoomBoxContainer.setVisible(false);
 
 		// add controls
 		controlsComposite = new Composite(imageContainer, SWT.NONE);
@@ -142,6 +154,25 @@ class ImageTile extends Composite {
 						/ imageContainer.getSize().x;
 
 				zoomImageContainer(factor, x, y);
+				controlsComposite.setVisible(false);
+			}
+		});
+
+		Button sharpnessComparisonButton = new Button(controlsComposite,
+				SWT.PUSH);
+		sharpnessComparisonButton.setText("compare sharpness");
+		sharpnessComparisonButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int y = controlsComposite.getLocation().y
+						+ controlsComposite.getSize().y / 2;
+				int x = controlsComposite.getLocation().x
+						+ controlsComposite.getSize().x / 2;
+
+				for (ImageTile current : getCurrentImageTiles())
+					current.displayZoomBox(x, y);
+
 				controlsComposite.setVisible(false);
 			}
 		});
@@ -221,6 +252,143 @@ class ImageTile extends Composite {
 		});
 
 		imageContainer.layout();
+
+		zoomBoxContainer.addListener(SWT.Paint, new Listener() {
+
+			@Override
+			public void handleEvent(Event e) {
+				zoomBoxContainer.setSize(
+						(int) Math.round(Settings.getZoomBoxContainerSize()
+								* (imageContainer.getSize().x + imageContainer
+										.getSize().y) / 2),
+						(int) Math.round(Settings.getZoomBoxContainerSize()
+								* (imageContainer.getSize().x + imageContainer
+										.getSize().y) / 2));
+
+				if (zoomBoxContainer.isVisible()) {
+					// get center of zoomBoxContainer in imageContainer
+					// coordinates
+					int centerX = zoomBoxContainer.getLocation().x
+							+ zoomBoxContainer.getSize().x / 2;
+					int centerY = zoomBoxContainer.getLocation().y
+							+ zoomBoxContainer.getSize().y / 2;
+
+					// normalize to image size
+					double normalizedX = (double) centerX
+							/ imageContainer.getSize().x;
+					double normalizedY = (double) centerY
+							/ imageContainer.getSize().y;
+
+					// calculate "center" for full scale image
+					int x = (int) Math.round(normalizedX
+							* photo.getDimensions().x);
+					int y = (int) Math.round(normalizedY
+							* photo.getDimensions().y);
+
+					// calculate bounding box
+					int left = x - zoomBoxContainer.getSize().x / 2;
+					int top = y - zoomBoxContainer.getSize().y / 2;
+
+					// render
+					GC gc = e.gc;
+					// use full image as source...
+					gc.drawImage(photo.getImage(Math.max(
+							photo.getDimensions().x, photo.getDimensions().y)),
+							left, top,
+							zoomBoxContainer.getSize().x,
+							zoomBoxContainer.getSize().y, 0, 0,
+							zoomBoxContainer.getBounds().width,
+							zoomBoxContainer.getBounds().height);
+					gc.dispose();
+				}
+			}
+		});
+
+		zoomBoxContainer.addMouseMoveListener(new MouseMoveListener() {
+
+			@Override
+			public void mouseMove(MouseEvent event) {
+				zoomBoxContainer.forceFocus(); // for win
+
+				for (ImageTile current : getCurrentImageTiles())
+					current.doZoomBoxDrag(event.x, event.y);
+			}
+		});
+
+		zoomBoxContainer.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseUp(MouseEvent e) {
+				for (ImageTile current : getCurrentImageTiles())
+					current.resetZoomBoxDrag();
+			}
+
+			@Override
+			public void mouseDown(MouseEvent event) {
+				for (ImageTile current : getCurrentImageTiles())
+					if (3 == event.button)
+						current.hideZoomBox();
+					else
+						current.startZoomBoxDrag(event.x, event.y);
+			}
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				for (ImageTile current : getCurrentImageTiles())
+					current.hideZoomBox();
+			}
+		});
+	}
+
+	private List<ImageTile> getCurrentImageTiles() {
+		List<ImageTile> result = new ArrayList<ImageTile>();
+
+		for (Control currentControl : imageContainer.getParent().getChildren()) {
+			if (currentControl instanceof ImageTile)
+				result.add((ImageTile) currentControl);
+		}
+
+		return result;
+	}
+
+	private void displayZoomBox(int x, int y) {
+		zoomBoxContainer.setLocation(x - zoomBoxContainer.getSize().x / 2, y
+				- zoomBoxContainer.getSize().y / 2);
+
+		controlsComposite.setVisible(false);
+		zoomBoxContainer.setVisible(true);
+	}
+
+	private void startZoomBoxDrag(int x, int y) {
+		zoomBoxOffset = new Point(x, y);
+	}
+
+	private void doZoomBoxDrag(int dx, int dy) {
+
+		if (zoomBoxOffset != null) {
+			int newX = zoomBoxContainer.getLocation().x + dx
+					- zoomBoxOffset.x;
+			int newY = zoomBoxContainer.getLocation().y + dy
+					- zoomBoxOffset.y;
+
+			if (-zoomBoxContainer.getSize().x / 2 < newX
+					&& -zoomBoxContainer.getSize().y / 2 < newY
+					&& imageContainer.getSize().x
+							- zoomBoxContainer.getSize().x / 2 > newX
+					&& imageContainer.getSize().y
+							- zoomBoxContainer.getSize().y / 2 > newY) {
+				zoomBoxContainer.setLocation(newX, newY);
+				zoomBoxContainer.redraw();
+			}
+		}
+	}
+
+	private void resetZoomBoxDrag() {
+		zoomBoxOffset = null;
+	}
+
+	private void hideZoomBox() {
+		zoomBoxContainer.setVisible(false);
 	}
 
 	private void zoomImageContainer(double factor, int x, int y) {
