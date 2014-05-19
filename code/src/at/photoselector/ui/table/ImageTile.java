@@ -16,6 +16,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -87,11 +89,13 @@ class ImageTile extends Composite {
 
 		// add controls
 		controlsComposite = new Composite(imageContainer, SWT.NONE);
-		controlsComposite.setLayout(new RowLayout());
+		controlsComposite.setLayout(new GridLayout(3, true));
 		controlsComposite.setVisible(false);
 
 		Button buttonAccept = new Button(controlsComposite, SWT.PUSH);
 		buttonAccept.setText("Accept");
+		buttonAccept.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false, 1, 1));
 		buttonAccept.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -103,8 +107,22 @@ class ImageTile extends Composite {
 			}
 		});
 
+		Button buttonCancel = new Button(controlsComposite, SWT.PUSH);
+		buttonCancel.setText("Cancel");
+		buttonCancel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false, 1, 1));
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				imageContainer.dispose();
+			}
+		});
+
 		Button buttonDecline = new Button(controlsComposite, SWT.PUSH);
 		buttonDecline.setText("Decline");
+		buttonDecline.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				false, 1, 1));
 		buttonDecline.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -118,6 +136,8 @@ class ImageTile extends Composite {
 
 		Button exitButton = new Button(controlsComposite, SWT.PUSH);
 		exitButton.setText("Exit Controls");
+		exitButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
+				3, 1));
 		exitButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -126,18 +146,10 @@ class ImageTile extends Composite {
 			}
 		});
 
-		Button buttonCancel = new Button(controlsComposite, SWT.PUSH);
-		buttonCancel.setText("Cancel");
-		buttonCancel.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				imageContainer.dispose();
-			}
-		});
-
 		Button hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
 		hundredPercentButton.setText("100%");
+		hundredPercentButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				false, false, 1, 1));
 		hundredPercentButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -157,7 +169,9 @@ class ImageTile extends Composite {
 
 		Button sharpnessComparisonButton = new Button(controlsComposite,
 				SWT.PUSH);
-		sharpnessComparisonButton.setText("compare sharpness");
+		sharpnessComparisonButton.setText("compare");
+		sharpnessComparisonButton.setLayoutData(new GridData(SWT.FILL,
+				SWT.FILL, false, false, 2, 1));
 		sharpnessComparisonButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
