@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import at.photoselector.Workspace;
@@ -43,6 +44,7 @@ class ListItem {
 	private Button buttonReset;
 	private Composite imageContainer;
 	private boolean loaded = false;
+	private Label labelFiletype;
 
 	public ListItem(final Composite parent, final DrawerDialog dialog,
 			ControlsDialog cDialog,
@@ -171,6 +173,10 @@ class ListItem {
 			}
 		});
 
+		labelFiletype = new Label(imageContainer, SWT.NONE);
+		labelFiletype.setText(photo.getPath().getName()
+				.substring(photo.getPath().getName().lastIndexOf(".")));
+
 		paintListener = new PaintListener() {
 
 			@Override
@@ -178,6 +184,7 @@ class ListItem {
 				buttonAccept.setVisible(drawerDialog.isShowControls());
 				buttonDecline.setVisible(drawerDialog.isShowControls());
 				buttonReset.setVisible(drawerDialog.isShowControls());
+				labelFiletype.setVisible(drawerDialog.isShowControls());
 			}
 		};
 
