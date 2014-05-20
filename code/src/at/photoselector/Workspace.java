@@ -1,7 +1,10 @@
 package at.photoselector;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import at.photoselector.model.Database;
 import at.photoselector.model.Photo;
@@ -26,10 +29,34 @@ public class Workspace {
 	public static void addPhoto(String path) {
 		File location = new File(path);
 		if (location.isDirectory()) {
+			// find the list of raw files available in the directory
+			File[] rawRaws = location.listFiles(new FilenameFilter() {
+
+					@Override
+					public boolean accept(File dir, String name) {
+						return !name.toLowerCase().matches(".*\\.jpe?g$");
+					}
+				});
+			List<String> raws = new ArrayList<String>();
+			for (File current : rawRaws)
+				raws.add(current.getAbsolutePath().substring(0,
+						current.getAbsolutePath().lastIndexOf(".")));
+
+			// find all files
 			File[] files = location.listFiles();
 			Arrays.sort(files);
 			for (File current : files)
-				addPhoto(current.getAbsolutePath());
+				// if we do not use jpgs that reside besides their raw for the
+				// fast image cache later ||
+				// if the current file is no jpg anyways ||
+				// if there is no raw for this very jpg
+				// we add the file to the database
+				if (!Settings.isTryFindingJpgBesideRaw()
+						|| !current.getName().toLowerCase() 
+								.matches(".*\\.jpe?g$")
+						|| !raws.contains(current.getAbsolutePath().substring(
+								0, current.getAbsolutePath().lastIndexOf("."))))
+					addPhoto(current.getAbsolutePath());
 		}
 		if (location.getName().toLowerCase().matches(".*(\\.jpe?g|\\.cr2)$"))
 			Photo.create(location);

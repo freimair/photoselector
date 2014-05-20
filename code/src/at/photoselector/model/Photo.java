@@ -170,14 +170,18 @@ public class Photo {
 		if (!isRaw())
 			return getPath();
 
-		File cachedFullImage = null;
-		if (Settings.isTryFindingJpgBesideRaw())
-			cachedFullImage = new File(path.getAbsolutePath().substring(0,
-				path.getAbsolutePath().lastIndexOf("."))
-				+ ".JPG");
-		if (null == cachedFullImage || !cachedFullImage.exists())
-			cachedFullImage = new File(cacheDir.getPath() + delimiter
+		File cachedFullImage = new File(cacheDir.getPath() + delimiter
 				+ path.getName() + ".full.jpg");
+
+		if (!cachedFullImage.exists() && Settings.isTryFindingJpgBesideRaw()) {
+			File possibleJpgBesideRaw = new File(path.getAbsolutePath()
+					.substring(0, path.getAbsolutePath().lastIndexOf("."))
+					+ ".JPG");
+
+			if (possibleJpgBesideRaw.exists())
+				possibleJpgBesideRaw.renameTo(cachedFullImage);
+		}
+
 		if (!cachedFullImage.exists()) {
 			try {
 				Process p = Runtime.getRuntime().exec(
