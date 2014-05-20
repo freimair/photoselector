@@ -107,6 +107,17 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		});
 
+		ToolItem resetLastPhotoButton = new ToolItem(drawerToolbar, SWT.PUSH);
+		resetLastPhotoButton.setText("reset last treated photo");
+		resetLastPhotoButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Workspace.reset(Workspace.getLastTreated());
+				updateAll();
+			}
+		});
+
 		ScrolledComposite photoListComposite = new ScrolledComposite(parent,
 				SWT.V_SCROLL);
 		photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
