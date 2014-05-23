@@ -102,6 +102,8 @@ public class Workspace {
 		for (Photo current : Photo.getFiltered(true, Photo.ACCEPTED))
 			current.setStatus(Photo.UNPROCESSED);
 
+		lastTreated = null;
+
 		Stage.create("Stage " + Stage.getAll().size());
 	}
 
