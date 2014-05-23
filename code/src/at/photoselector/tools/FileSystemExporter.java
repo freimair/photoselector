@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 public class FileSystemExporter extends Exporter {
 
@@ -18,8 +19,7 @@ public class FileSystemExporter extends Exporter {
 						+ current.getStage().getName();
 			else
 				folderName = "final";
-			File target = new File(current.getPath().getParentFile()
-					.getAbsolutePath()
+			File target = new File(Workspace.getLocation().getParent()
 					+ File.separatorChar
 					+ "export"
 					+ File.separatorChar
