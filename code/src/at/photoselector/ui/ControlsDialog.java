@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import at.photoselector.Workspace;
 import at.photoselector.tools.Exporter;
@@ -74,8 +75,6 @@ public class ControlsDialog extends MyApplicationWindow {
 
 		Button addPhotosButton = new Button(controlComposite, SWT.PUSH);
 		addPhotosButton.setText("Add photos");
-		addPhotosButton
-				.setToolTipText("exiftool \"-FileName<DateTimeOriginal\" -d \"%Y%m%d_%H%M%S%%-c.%%e\" .");
 		addPhotosButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -137,6 +136,10 @@ public class ControlsDialog extends MyApplicationWindow {
 
 			}
 		});
+
+		Text exiftoolhelper = new Text(controlComposite, SWT.BORDER);
+		exiftoolhelper
+				.setText("exiftool \"-FileName<DateTimeOriginal\" -d \"%Y%m%d_%H%M%S%%f.%%e\" .");
 
 		// update();
 
