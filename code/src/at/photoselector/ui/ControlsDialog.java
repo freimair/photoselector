@@ -24,6 +24,7 @@ import at.photoselector.Workspace;
 import at.photoselector.tools.Exporter;
 import at.photoselector.ui.drawer.DrawerDialog;
 import at.photoselector.ui.stages.StagesDialog;
+import at.photoselector.ui.tablet.FilmstripDialog;
 
 public class ControlsDialog extends MyApplicationWindow {
 
@@ -56,7 +57,9 @@ public class ControlsDialog extends MyApplicationWindow {
 		stagesDialog = new StagesDialog(new Shell(display), this);
 		display.asyncExec(stagesDialog);
 
-
+		FilmstripDialog filmStripDialog = new FilmstripDialog(
+				new Shell(display), this);
+		display.asyncExec(filmStripDialog);
 
 		// create controls
 		Composite controlComposite = new Composite(parent, SWT.NONE);

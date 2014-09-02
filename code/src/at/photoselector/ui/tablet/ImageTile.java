@@ -3,7 +3,6 @@ package at.photoselector.ui.tablet;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -16,29 +15,9 @@ import at.photoselector.ui.ControlsDialog;
 
 
 class ImageTile extends Composite {
-
-	private class ImageDrawer implements Runnable {
-		private int myBoundingBox;
-
-		public ImageDrawer(int boundingBox) {
-			myBoundingBox = boundingBox;
-		}
-
-		@Override
-		public void run() {
-			// image.dispose();
-			image = photo.getImage(myBoundingBox);
-
-			imageContainer.redraw();
-		}
-	}
-
-	private Point offset;
 	private Composite imageContainer;
 	private Image image;
 	private Photo photo;
-	private ControlsDialog controlsDialog;
-	private Composite controlsComposite;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			Photo currentPhoto) {
@@ -46,11 +25,9 @@ class ImageTile extends Composite {
 		imageContainer = this;
 
 		this.photo = currentPhoto;
-		controlsDialog = dialog;
 
-		// TODO find some smart way to calculate the initial size of the image
-		 int boundingBox = (int) Math.min(parent.getBounds().width,
-		 parent.getBounds().height);
+		int boundingBox = (int) Math.min(parent.getBounds().width,
+				parent.getBounds().height);
 		image = photo.getImage(boundingBox);
 
 		// imageContainer.setLayout(new RowLayout());
@@ -72,6 +49,7 @@ class ImageTile extends Composite {
 			@Override
 			public void handleEvent(Event e) {
 				GC gc = e.gc;
+				if (!image.isDisposed())
 				gc.drawImage(image, 0, 0, image.getBounds().width,
 						image.getBounds().height, 0, 0,
 						imageContainer.getBounds().width,

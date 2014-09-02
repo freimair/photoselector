@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 import at.photoselector.model.Stage;
 import at.photoselector.ui.ControlsDialog;
 import at.photoselector.ui.MyApplicationWindow;
-import at.photoselector.ui.table.TableDialog;
 
 public class FilmstripDialog extends MyApplicationWindow {
 	
@@ -39,9 +39,12 @@ public class FilmstripDialog extends MyApplicationWindow {
 		shell.setText("Filmstrip Selector");
 	}
 
-	private TableDialog tableDialog;
+	private Composite parent;
+	private ImageTile currentTile;
 
 	protected Control createContents(final Composite parent) {
+		this.parent = parent;
+
 		parent.setBackground(new Color(parent.getDisplay(), 75, 75, 75));
 		parent.setLayout(new FormLayout());
 
@@ -71,10 +74,8 @@ public class FilmstripDialog extends MyApplicationWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// Workspace.accept(photo);
-				controlsDialog.update();
-				// imageContainer.dispose();
-				// photo.clearCachedImages();
+				Workspace.accept(currentTile.getPhoto());
+				update();
 			}
 		});
 
@@ -94,44 +95,10 @@ public class FilmstripDialog extends MyApplicationWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// Workspace.decline(photo);
-				controlsDialog.update();
-				// imageContainer.dispose();
-				// photo.clearCachedImages();
+				Workspace.decline(currentTile.getPhoto());
+				update();
 			}
 		});
-
-		Button hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
-		hundredPercentButton.setText("100%");
-		hundredPercentButton.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// int y = controlsComposite.getLocation().y
-				// + controlsComposite.getSize().y / 2;
-				// int x = controlsComposite.getLocation().x
-				// + controlsComposite.getSize().x / 2;
-				//
-				// double factor = (double) photo.getDimensions().x
-				// / imageContainer.getSize().x;
-				//
-				// zoomImageContainer(factor, x, y);
-				// controlsComposite.setVisible(false);
-			}
-		});
-		
-
-//		controlsComposite.setVisible(true);
-//		Point location = imageContainer.toControl(e.x, e.y);
-//		controlsComposite.setLocation(
-//				location.x - controlsComposite.getBounds().width / 2,
-//				location.y - controlsComposite.getBounds().height / 2);
-
-
-				new ImageTile(parent, controlsDialog, Photo.get(Photo
-						.getFiltered(Stage.getCurrent(), Photo.UNPROCESSED)
-						.get(0).getId()));
-
 
 		parent.layout();
 
@@ -143,8 +110,15 @@ public class FilmstripDialog extends MyApplicationWindow {
 	
 	@Override
 	public void update() {
-
-
+		if (null != currentTile) {
+			currentTile.getPhoto().clearCachedImages();
+			currentTile.dispose();
+			controlsDialog.update();
+		}
+		currentTile = new ImageTile(parent, controlsDialog, Photo.get(Photo
+				.getFiltered(Stage.getCurrent(), Photo.UNPROCESSED).get(0)
+				.getId()));
+		parent.layout();
 	}
 
 	public void updateAll() {
