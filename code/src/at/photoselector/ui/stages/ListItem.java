@@ -49,11 +49,11 @@ class ListItem {
 		ProgressBar bar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
 
 		// - maximum
-		bar.setMaximum(Photo.getFiltered(true,
+		bar.setMaximum(Photo.getFiltered(stage,
 				Photo.UNPROCESSED | Photo.ACCEPTED | Photo.DECLINED).size());
 
 		// - current value
-		bar.setSelection(Photo.getFiltered(true,
+		bar.setSelection(Photo.getFiltered(stage,
 				Photo.ACCEPTED | Photo.DECLINED).size());
 
 		Label label = new Label(itemInProgressComposite, SWT.NONE);

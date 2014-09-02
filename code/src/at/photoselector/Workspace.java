@@ -84,7 +84,8 @@ public class Workspace {
 	}
 
 	public static boolean isStageCompleted() {
-		if (0 == Photo.getFiltered(true, Photo.UNPROCESSED).size()) {
+		if (0 == Photo.getFiltered(Stage.getCurrent(), Photo.UNPROCESSED)
+				.size()) {
 			stageCompleted();
 			return true;
 		}
@@ -92,19 +93,24 @@ public class Workspace {
 	}
 
 	public static void stageCompleted() {
-		for (Photo current : Photo.getFiltered(true, Photo.DECLINED)) {
-			current.setStage(Stage.getCurrent());
-
+		for (Photo current : Photo.getFiltered(Stage.getCurrent(),
+				Photo.DECLINED)) {
 			// clear cached photos
 			current.clearCachedImages();
 		}
 
-		for (Photo current : Photo.getFiltered(true, Photo.ACCEPTED))
+		Stage newStage = Stage.create("Stage " + Stage.getAll().size());
+
+		for (Photo current : Photo.getFiltered(Stage.getCurrent(),
+				Photo.ACCEPTED)) {
 			current.setStatus(Photo.UNPROCESSED);
+			current.setStage(newStage);
+		}
+
+		Stage.setCurrent(newStage);
 
 		lastTreated = null;
 
-		Stage.create("Stage " + Stage.getAll().size());
 	}
 
 	// ################################ NON-STATICS ################################

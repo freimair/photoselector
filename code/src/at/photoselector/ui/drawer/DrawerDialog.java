@@ -192,7 +192,7 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			if (showDeclinedButton.getSelection())
 				filter |= Photo.DECLINED;
 			cache = new HashMap<String, ListItem>();
-			for (Photo current : Photo.getFiltered(true, filter)) {
+			for (Photo current : Photo.getFiltered(Stage.getCurrent(), filter)) {
 				cache.put(current.getPath().getAbsolutePath(), new ListItem(
 						photoListContentComposite,
 						this, controlsDialog, current));

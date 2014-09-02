@@ -52,15 +52,15 @@ public class Photo {
 		}
 	}
 
-	public static List<Photo> getFiltered(boolean stageless, int filter) {
+	public static List<Photo> getFiltered(Stage stage, int filter) {
 		updateCache();
 
 		try {
 			String sql = "SELECT pid FROM photos";
 
-			String stage = "";
-			if (stageless)
-				stage += "stage IS NULL";
+			String stageFilter = "";
+			if(stage != null)
+				stageFilter = "stage is " + stage.getId();
 
 			String status = "";
 			if ((UNPROCESSED & filter) > 0)
@@ -70,13 +70,13 @@ public class Photo {
 			if ((DECLINED & filter) > 0)
 				status += "status = " + DECLINED + " OR ";
 
-			if (0 < stage.length() || 0 < status.length())
+			if (0 < stageFilter.length() || 0 < status.length())
 				sql += " WHERE ";
 
 			if (0 < status.length())
-				sql += stage;
+				sql += stageFilter;
 
-			if (0 < stage.length() && 0 < status.length())
+			if (0 < stageFilter.length() && 0 < status.length())
 				sql += " AND ";
 
 			if (0 < status.length())
