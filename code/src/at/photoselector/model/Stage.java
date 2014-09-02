@@ -15,12 +15,15 @@ public class Stage {
 
 	private static Database database;
 	private static Map<Integer, Stage> cache;
+	private static int currentStage;
 
 	public static void init(Database db) {
 		cache = new HashMap<Integer, Stage>();
 		database = db;
 		if (0 == getAll().size())
-			create("Stage 0");
+			setCurrent(create("Stage 0"));
+		else
+			setCurrent(getAll().get(getAll().size() - 1));
 	}
 
 	public static void create(String name) {
@@ -48,16 +51,13 @@ public class Stage {
 		return result;
 	}
 
+	public static void setCurrent(Stage stage) {
+		currentStage = stage.id;
+	}
+
 	public static Stage getCurrent() {
 		updateCache();
-		try {
-			return cache.get(database
-					.getInteger("SELECT MAX(fid) FROM filters"));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+		return cache.get(currentStage);
 	}
 
 	public static Stage get(int id) {
