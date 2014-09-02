@@ -33,7 +33,8 @@ public class StagesDialog extends UncloseableApplicationWindow {
 	}
 
 	@Override
-	protected Control createContents(Composite parent) {
+	public Control createContents(Composite parent) {
+		parent.setLayout(new FillLayout());
 		ScrolledComposite scrollableStageListComposite = new ScrolledComposite(
 				parent, SWT.V_SCROLL | SWT.BORDER);
 		scrollableStageListComposite.setLayout(new FillLayout());
@@ -42,7 +43,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 
 		stageListComposite = new Composite(scrollableStageListComposite,
 				SWT.NONE);
-		stageListComposite.setBackground(getShell().getDisplay()
+		stageListComposite.setBackground(parent.getShell().getDisplay()
 				.getSystemColor(SWT.COLOR_WHITE));
 		stageListComposite.setLayout(new GridLayout());
 

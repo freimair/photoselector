@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -45,19 +44,9 @@ public class ControlsDialog extends MyApplicationWindow {
 
 	@Override
 	protected Control createContents(final Composite parent) {
-		// create other windows
-		final Display display = getShell().getDisplay();
-		stagesDialog = new StagesDialog(new Shell(display), this);
-		display.asyncExec(stagesDialog);
-
-		drawerDialog = new DrawerDialog(new Shell(display), this);
-		display.asyncExec(drawerDialog);
-
-		tableDialog = new TableDialog(new Shell(display), this);
-		display.asyncExec(tableDialog);
 
 		// create controls
-		Composite controlComposite = new Composite(parent, SWT.NONE);
+		Composite controlComposite = parent;
 		controlComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		Button switchWorkspaceButton = new Button(controlComposite, SWT.PUSH);
@@ -66,8 +55,8 @@ public class ControlsDialog extends MyApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
 				SelectWorkspaceDialog selectWorkspaceDialog = new SelectWorkspaceDialog(
-						getShell());
-				display.syncExec(selectWorkspaceDialog);
+						parent.getShell());
+				parent.getDisplay().syncExec(selectWorkspaceDialog);
 				if (Dialog.CANCEL != selectWorkspaceDialog.getReturnCode())
 					update();
 			}
@@ -87,7 +76,7 @@ public class ControlsDialog extends MyApplicationWindow {
 			}
 		});
 
-		final Menu exportMenu = new Menu(getShell(), SWT.POP_UP);
+		final Menu exportMenu = new Menu(parent.getShell(), SWT.POP_UP);
 		for (Exporter current : Exporter.getAvailable()) {
 			MenuItem menuItem = new MenuItem(exportMenu, SWT.NONE);
 			menuItem.setText(current.getName());

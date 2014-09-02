@@ -13,7 +13,6 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -50,8 +49,12 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		shell.setText("Drawer");
 	}
 
-	protected Control createContents(Composite parent) {
-		ToolBar drawerToolbar = (ToolBar) getToolBarControl();
+	public Control createContents(Composite parent) {
+		Composite myComposite = parent;
+		 RowLayout layout1 = new RowLayout(SWT.VERTICAL);
+		 layout1.fill = true;
+		myComposite.setLayout(layout1);
+		ToolBar drawerToolbar = new ToolBar(myComposite, SWT.FLAT);
 
 		showAcceptedButton = new ToolItem(drawerToolbar, SWT.CHECK);
 		showAcceptedButton.setText("accepted");
@@ -118,12 +121,12 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		});
 
-		ScrolledComposite photoListComposite = new ScrolledComposite(parent,
+		ScrolledComposite photoListComposite = new ScrolledComposite(
+				myComposite,
 				SWT.V_SCROLL);
-		photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// photoListComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		photoListContentComposite = new Composite(
-				photoListComposite, SWT.NONE);
+		photoListContentComposite = new Composite(photoListComposite, SWT.NONE);
 		photoListContentComposite.setBackground(parent.getDisplay()
 				.getSystemColor(SWT.COLOR_DARK_GRAY));
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
@@ -146,17 +149,18 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 
 			@Override
 			public void paintControl(PaintEvent e) {
-				Rectangle r = photoListContentComposite.getParent().getClientArea();
+				Rectangle r = photoListContentComposite.getParent()
+						.getClientArea();
 				((ScrolledComposite) photoListContentComposite.getParent())
-						.setMinSize(photoListContentComposite.computeSize(r.width,
-								SWT.DEFAULT));
+						.setMinSize(photoListContentComposite.computeSize(
+								r.width, SWT.DEFAULT));
 				photoListContentComposite.getParent().redraw();
 			}
 		});
 
 		update();
 
-		return parent;
+		return myComposite;
 	}
 
 	@Override

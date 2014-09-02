@@ -5,7 +5,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import at.photoselector.model.Database;
-import at.photoselector.ui.ControlsDialog;
+import at.photoselector.ui.MainWindow;
 import at.photoselector.ui.SelectWorkspaceDialog;
 
 public class PhotoSelector {
@@ -20,9 +20,11 @@ public class PhotoSelector {
 		display.syncExec(selectWorkspaceDialog);
 		if (Dialog.CANCEL != selectWorkspaceDialog.getReturnCode()) {
 			// start application
-			ControlsDialog controlsDialog = new ControlsDialog(new Shell(
+			MainWindow controlsDialog = new MainWindow(new Shell(
 					display));
-			display.syncExec(controlsDialog);
+			controlsDialog.setBlockOnOpen(true);
+			controlsDialog.open();
+			// display.syncExec(controlsDialog);
 		}
 
 		display.dispose();
