@@ -55,6 +55,10 @@ public class Photo {
 		}
 	}
 
+	public static List<Photo> getAll() {
+		return getFiltered(null, 0);
+	}
+
 	public static List<Photo> getFiltered(Stage stage, int filter) {
 		updateCache();
 

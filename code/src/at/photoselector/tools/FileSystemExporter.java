@@ -12,7 +12,7 @@ public class FileSystemExporter extends Exporter {
 
 	@Override
 	public void run() {
-		for(Photo current : Photo.getFiltered(false, 0)) {
+		for (Photo current : Photo.getAll()) {
 			String folderName;
 			if (null != current.getStage())
 				folderName = current.getStage().getId() + "_"

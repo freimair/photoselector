@@ -20,7 +20,7 @@ public class RawTherapeeExporter extends Exporter {
 			offset = 5 - stages.size();
 
 		// get files
-		List<Photo> photos = Photo.getFiltered(false, 0);
+		List<Photo> photos = Photo.getAll();
 		// for each
 		for (Photo current : photos) {
 			// - create descriptor filename
