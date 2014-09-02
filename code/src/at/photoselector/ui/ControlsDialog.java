@@ -58,7 +58,7 @@ public class ControlsDialog extends MyApplicationWindow {
 
 		// create controls
 		Composite controlComposite = new Composite(parent, SWT.NONE);
-		controlComposite.setLayout(new RowLayout(SWT.VERTICAL));
+		controlComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		Button switchWorkspaceButton = new Button(controlComposite, SWT.PUSH);
 		switchWorkspaceButton.setText("Switch Workspace");
