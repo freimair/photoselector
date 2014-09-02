@@ -38,10 +38,13 @@ public class Photo {
 	}
 
 	public static void create(File path) {
-
 		try {
-			database.execute("INSERT INTO photos (path, status) VALUES ('"
-				+ path.getAbsolutePath() + "', " + UNPROCESSED + ")");
+			database.execute("INSERT INTO photos (path, status, stage) VALUES ('"
+					+ path.getAbsolutePath()
+					+ "', "
+					+ UNPROCESSED
+					+ ", "
+					+ Stage.getAll().get(0).getId() + ")");
 
 			// add to cache
 			int newId = database.getInteger("SELECT MAX(pid) FROM photos");
