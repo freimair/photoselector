@@ -25,10 +25,12 @@ import org.eclipse.swt.widgets.ToolItem;
 import at.photoselector.Settings;
 import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
+import at.photoselector.model.Stage;
 import at.photoselector.ui.ControlsDialog;
-import at.photoselector.ui.UncloseableApplicationWindow;
+import at.photoselector.ui.MyApplicationWindow;
+import at.photoselector.ui.table.TableDialog;
 
-public class DrawerDialog extends UncloseableApplicationWindow {
+public class DrawerDialog extends MyApplicationWindow {
 
 	
 	private ToolItem showAcceptedButton;
@@ -36,9 +38,12 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 	private Composite photoListContentComposite;
 	private int boundingBox = 0;
 	private ToolItem showControlsButton;
+	private ControlsDialog controlsDialog;
 
 	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
-		super(parentShell, dialog);
+		super(parentShell);
+
+		this.controlsDialog = dialog;
 
 		addToolBar(SWT.FLAT);
 	}
@@ -50,7 +55,14 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		shell.setText("Drawer");
 	}
 
+	private TableDialog tableDialog;
+
 	protected Control createContents(Composite parent) {
+
+		tableDialog = new TableDialog(new Shell(parent.getDisplay()),
+				controlsDialog, this);
+		parent.getDisplay().asyncExec(tableDialog);
+
 		ToolBar drawerToolbar = (ToolBar) getToolBarControl();
 
 		showAcceptedButton = new ToolItem(drawerToolbar, SWT.CHECK);
@@ -186,7 +198,14 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		} else {
 			for (Control current : photoListContentComposite.getChildren())
 				current.dispose();
+
 			int filter = Photo.UNPROCESSED;
+
+			if (Photo.getFiltered(Stage.getCurrent(), filter).isEmpty()) {
+				showAcceptedButton.setSelection(true);
+				showDeclinedButton.setSelection(true);
+			}
+
 			if (showAcceptedButton.getSelection())
 				filter |= Photo.ACCEPTED;
 			if (showDeclinedButton.getSelection())
@@ -214,6 +233,8 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 			}
 		}
 
+		tableDialog.update();
+
 		photoListContentComposite.layout();
 		photoListContentComposite.getParent().getParent().redraw();
 	}
@@ -226,4 +247,11 @@ public class DrawerDialog extends UncloseableApplicationWindow {
 		return showControlsButton.getSelection();
 	}
 
+	@Override
+	public boolean close() {
+		super.close();
+		if (null != tableDialog.getShell())
+			tableDialog.close();
+		return true;
+	}
 }

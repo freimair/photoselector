@@ -24,13 +24,11 @@ import at.photoselector.Workspace;
 import at.photoselector.tools.Exporter;
 import at.photoselector.ui.drawer.DrawerDialog;
 import at.photoselector.ui.stages.StagesDialog;
-import at.photoselector.ui.table.TableDialog;
 
 public class ControlsDialog extends MyApplicationWindow {
 
 	private StagesDialog stagesDialog;
 	private DrawerDialog drawerDialog;
-	private TableDialog tableDialog;
 
 	public ControlsDialog(Shell parentShell) {
 		super(parentShell);
@@ -43,6 +41,14 @@ public class ControlsDialog extends MyApplicationWindow {
 		shell.setText("PhotoSelector");
 	}
 
+	public void launchDrawer() {
+		Display display = getShell().getDisplay();
+		drawerDialog = new DrawerDialog(new Shell(display), this);
+		display.asyncExec(drawerDialog);
+
+		drawerDialog.update(true);
+	}
+
 	@Override
 	protected Control createContents(final Composite parent) {
 		// create other windows
@@ -50,11 +56,7 @@ public class ControlsDialog extends MyApplicationWindow {
 		stagesDialog = new StagesDialog(new Shell(display), this);
 		display.asyncExec(stagesDialog);
 
-		drawerDialog = new DrawerDialog(new Shell(display), this);
-		display.asyncExec(drawerDialog);
 
-		tableDialog = new TableDialog(new Shell(display), this);
-		display.asyncExec(tableDialog);
 
 		// create controls
 		Composite controlComposite = new Composite(parent, SWT.NONE);
@@ -149,16 +151,14 @@ public class ControlsDialog extends MyApplicationWindow {
 	@Override
 	public boolean close() {
 		stagesDialog.closeApplication();
-		drawerDialog.closeApplication();
-		tableDialog.closeApplication();
 		return super.close();
 	}
 
 	@Override
 	public void update() {
 		stagesDialog.update();
+		if (null != drawerDialog)
 		drawerDialog.update();
-		tableDialog.update();
 	}
 
 	public void updateAllBut(UncloseableApplicationWindow dialog) {
@@ -166,8 +166,6 @@ public class ControlsDialog extends MyApplicationWindow {
 			stagesDialog.update();
 		if (!drawerDialog.equals(dialog))
 			drawerDialog.update();
-		if (!tableDialog.equals(dialog))
-			tableDialog.update();
 	}
 
 	private class ExportSelectionListener implements Listener {

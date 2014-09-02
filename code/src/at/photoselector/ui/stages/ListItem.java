@@ -3,8 +3,11 @@ package at.photoselector.ui.stages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -13,17 +16,18 @@ import org.eclipse.swt.widgets.Text;
 
 import at.photoselector.model.Photo;
 import at.photoselector.model.Stage;
+import at.photoselector.ui.ControlsDialog;
 
 class ListItem {
 	private Stage stage;
+	private ControlsDialog controlsdialog;
 
-	public ListItem(Composite parent, Stage stage, boolean isLast) {
+	public ListItem(Composite parent, Stage stage, boolean isLast,
+			ControlsDialog controlsDialog) {
 		this.stage = stage;
+		this.controlsdialog = controlsDialog;
 
-		if (isLast)
 			createAdvancedListItem(parent);
-		else
-			createSimpleListItem(parent);
 	}
 
 	private void createAdvancedListItem(Composite parent) {
@@ -31,7 +35,7 @@ class ListItem {
 		itemInProgressComposite.setLayout(new FillLayout(SWT.VERTICAL));
 		itemInProgressComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		itemInProgressComposite.setText("new Stage");
+		itemInProgressComposite.setText(stage.getName());
 		itemInProgressComposite.setBackground(parent.getShell().getDisplay()
 				.getSystemColor(SWT.COLOR_WHITE));
 		final Text itemInProgressText = new Text(itemInProgressComposite,
@@ -58,13 +62,16 @@ class ListItem {
 
 		Label label = new Label(itemInProgressComposite, SWT.NONE);
 		label.setText(bar.getSelection() + "/" + bar.getMaximum());
-	}
 
-	private void createSimpleListItem(Composite parent) {
-		Label item = new Label(parent, SWT.NONE);
-		item.setText(stage.getName());
-		item.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		item.setBackground(parent.getShell().getDisplay()
-				.getSystemColor(SWT.COLOR_WHITE));
+		Button editButton = new Button(itemInProgressComposite, SWT.PUSH);
+		editButton.setText("edit");
+		editButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Stage.setCurrent(stage);
+				controlsdialog.launchDrawer();
+			}
+		});
 	}
 }

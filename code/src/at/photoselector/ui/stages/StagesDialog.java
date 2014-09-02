@@ -75,7 +75,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 		List<Stage> stages = Stage.getAll();
 		for (int i = 0; i < stages.size(); i++) {
 			new ListItem(stageListComposite, stages.get(i),
-					i == stages.size() - 1);
+					i == stages.size() - 1, controlsDialog);
 		}
 
 		stageListComposite.layout();

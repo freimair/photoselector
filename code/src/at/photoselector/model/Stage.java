@@ -26,16 +26,18 @@ public class Stage {
 			setCurrent(getAll().get(getAll().size() - 1));
 	}
 
-	public static void create(String name) {
+	public static Stage create(String name) {
 		try {
 			database.execute("INSERT INTO filters (name) VALUES ('" + name
 					+ "')");
 
 			int newId = database.getInteger("SELECT MAX(fid) FROM filters");
 			cache.put(newId, new Stage(newId, name));
+			return cache.get(newId);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 	}
 

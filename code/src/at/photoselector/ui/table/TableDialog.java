@@ -15,12 +15,20 @@ import org.eclipse.swt.widgets.Shell;
 
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
-import at.photoselector.ui.UncloseableApplicationWindow;
+import at.photoselector.ui.MyApplicationWindow;
+import at.photoselector.ui.drawer.DrawerDialog;
 
-public class TableDialog extends UncloseableApplicationWindow {
+public class TableDialog extends MyApplicationWindow {
 
-	public TableDialog(Shell parentShell, ControlsDialog dialog) {
-		super(parentShell, dialog);
+	private ControlsDialog controlsDialog;
+	private DrawerDialog drawerDialog;
+
+	public TableDialog(Shell parentShell, ControlsDialog dialog,
+			DrawerDialog drawerDialog) {
+		super(parentShell);
+
+		this.controlsDialog = dialog;
+		this.drawerDialog = drawerDialog;
 	}
 
 	@Override
@@ -76,6 +84,15 @@ public class TableDialog extends UncloseableApplicationWindow {
 
 		return parent;
 	}
+
+	@Override
+	public boolean close() {
+		super.close();
+		if (null != drawerDialog.getShell())
+			drawerDialog.close();
+		return true;
+	}
+
 
 	@Override
 	public void update() {
