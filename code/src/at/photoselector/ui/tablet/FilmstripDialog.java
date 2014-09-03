@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -39,26 +40,20 @@ public class FilmstripDialog extends MyApplicationWindow {
 		shell.setText("Filmstrip Selector");
 	}
 
-	private Composite parent;
 	private ImageTile currentTile;
+	private Composite imageComposite;
 
 	protected Control createContents(final Composite parent) {
-		this.parent = parent;
-
-		parent.setBackground(new Color(parent.getDisplay(), 75, 75, 75));
 		parent.setLayout(new FormLayout());
 
 		for (Control current : parent.getChildren())
 			current.dispose();
-
-		parent.addMouseListener(new MouseAdapter() {
-
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				getShell().setFullScreen(!getShell().getFullScreen());
-			}
-		});
 		
+		imageComposite = new Composite(parent, SWT.NONE);
+		imageComposite
+				.setBackground(new Color(parent.getDisplay(), 75, 75, 75));
+		imageComposite.setLayout(new FormLayout());
+
 		// add controls
 		Composite controlsComposite = new Composite(parent, SWT.NONE);
 		FormData data = new FormData();
@@ -66,10 +61,18 @@ public class FilmstripDialog extends MyApplicationWindow {
 		data.top = new FormAttachment(25);
 		controlsComposite.setLayoutData(data);
 
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		data.right = new FormAttachment(controlsComposite);
+		data.bottom = new FormAttachment(100);
+		imageComposite.setLayoutData(data);
+
 		controlsComposite.setLayout(new RowLayout(SWT.VERTICAL));
 
 		Button buttonAccept = new Button(controlsComposite, SWT.PUSH);
 		buttonAccept.setText("Accept");
+		buttonAccept.setLayoutData(new RowData(100, 100));
 		buttonAccept.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -80,23 +83,33 @@ public class FilmstripDialog extends MyApplicationWindow {
 		});
 
 		Button exitButton = new Button(controlsComposite, SWT.PUSH);
-		exitButton.setText("later");
+		exitButton.setText("exit");
+		exitButton.setLayoutData(new RowData(100, 100));
 		exitButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// controlsComposite.setVisible(false);
+				close();
 			}
 		});
 
 		Button buttonDecline = new Button(controlsComposite, SWT.PUSH);
 		buttonDecline.setText("Decline");
+		buttonDecline.setLayoutData(new RowData(100, 100));
 		buttonDecline.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.decline(currentTile.getPhoto());
 				update();
+			}
+		});
+
+		imageComposite.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				getShell().setFullScreen(!getShell().getFullScreen());
 			}
 		});
 
@@ -115,10 +128,11 @@ public class FilmstripDialog extends MyApplicationWindow {
 			currentTile.dispose();
 			controlsDialog.update();
 		}
-		currentTile = new ImageTile(parent, controlsDialog, Photo.get(Photo
+		currentTile = new ImageTile(imageComposite, controlsDialog,
+				Photo.get(Photo
 				.getFiltered(Stage.getCurrent(), Photo.UNPROCESSED).get(0)
 				.getId()));
-		parent.layout();
+		imageComposite.layout();
 	}
 
 	public void updateAll() {
