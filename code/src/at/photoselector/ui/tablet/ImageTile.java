@@ -3,7 +3,6 @@ package at.photoselector.ui.tablet;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
@@ -26,20 +25,36 @@ class ImageTile extends Composite {
 
 		this.photo = currentPhoto;
 
-		int boundingBox = (int) Math.min(parent.getBounds().width,
+		// get image data. scale to fill the biggest possible option
+		int boundingBox = (int) Math.max(parent.getBounds().width,
 				parent.getBounds().height);
 		image = photo.getImage(boundingBox);
 
-		// imageContainer.setLayout(new RowLayout());
-
-		 Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
-
-		imageContainer.setBounds(dimensions);
 		FormData data = new FormData();
-		data.left = new FormAttachment(0, dimensions.x);
-		data.top = new FormAttachment(0, dimensions.y);
-		data.width = dimensions.width;
-		data.height = dimensions.height;
+
+		double frameRatio = (double) parent.getBounds().width
+				/ parent.getBounds().height;
+		double imageRatio = (double) image.getBounds().width
+				/ image.getBounds().height;
+
+		if (frameRatio < imageRatio) {
+			// fit width
+			data.width = parent.getBounds().width;
+			data.height = (int) (data.width / imageRatio);
+
+			data.left = new FormAttachment(0, 0);
+			data.top = new FormAttachment(0,
+					(parent.getBounds().height - data.height) / 2);
+		} else { // if (alb < bla) {
+			// fit height
+			data.height = parent.getBounds().height;
+			data.width = (int) (data.height * imageRatio);
+
+			data.top = new FormAttachment(0, 0);
+			data.left = new FormAttachment(0,
+					(parent.getBounds().width - data.width) / 2);
+		}
+
 		imageContainer.setLayoutData(data);
 
 
