@@ -49,19 +49,42 @@ class ListItem {
 			}
 		});
 
-		// update progress bar
-		ProgressBar bar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
+		// update progress bars
+
+		int max = Photo.getFiltered(stage,
+				Photo.UNPROCESSED | Photo.ACCEPTED | Photo.DECLINED).size();
+
+		Label label = new Label(itemInProgressComposite, SWT.NONE);
+		label.setText("to do: ");
+		if (0 == max) {
+			label = new Label(itemInProgressComposite, SWT.NONE);
+			label.setText("stage completed");
+		} else {
+			ProgressBar todoBar = new ProgressBar(itemInProgressComposite,
+					SWT.SMOOTH);
+
+			// - maximum
+			todoBar.setMaximum(max);
+
+			// - current value
+			todoBar.setSelection(Photo.getFiltered(stage,
+					Photo.ACCEPTED | Photo.DECLINED).size());
+
+			label = new Label(itemInProgressComposite, SWT.NONE);
+			label.setText(todoBar.getSelection() + "/" + todoBar.getMaximum());
+		}
+
+		label = new Label(itemInProgressComposite, SWT.NONE);
+		label.setText("accepted: ");
+		ProgressBar madeItBar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
 
 		// - maximum
-		bar.setMaximum(Photo.getFiltered(stage,
+		madeItBar.setMaximum(Photo.getFiltered(stage, true,
 				Photo.UNPROCESSED | Photo.ACCEPTED | Photo.DECLINED).size());
 
 		// - current value
-		bar.setSelection(Photo.getFiltered(stage,
-				Photo.ACCEPTED | Photo.DECLINED).size());
-
-		Label label = new Label(itemInProgressComposite, SWT.NONE);
-		label.setText(bar.getSelection() + "/" + bar.getMaximum());
+		madeItBar.setSelection(madeItBar.getMaximum()
+				- Photo.getFiltered(stage, Photo.DECLINED).size());
 
 		Button editButton = new Button(itemInProgressComposite, SWT.PUSH);
 		editButton.setText("edit");

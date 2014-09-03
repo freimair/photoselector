@@ -60,6 +60,12 @@ public class Photo {
 	}
 
 	public static List<Photo> getFiltered(Stage stage, int filter) {
+		return getFiltered(stage, false, filter);
+	}
+
+	public static List<Photo> getFiltered(Stage stage,
+			boolean includeHigherStages,
+			int filter) {
 		updateCache();
 
 		try {
@@ -67,7 +73,8 @@ public class Photo {
 
 			String stageFilter = "";
 			if(stage != null)
-				stageFilter = "stage is " + stage.getId();
+				stageFilter = "stage " + (includeHigherStages ? ">= " : "is ")
+						+ stage.getId();
 
 			String status = "";
 			if ((UNPROCESSED & filter) > 0)
@@ -92,8 +99,15 @@ public class Photo {
 
 			// TODO find better way
 			List<Photo> result = new ArrayList<Photo>();
-			for (int current : database.getIntegerList(sql))
-				result.add(cache.get(current));
+			for (int current : database.getIntegerList(sql)) {
+				Photo tmp = cache.get(current);
+				if (!tmp.getStage().equals(stage)) {
+					Photo fritz = new Photo(tmp.getId(), tmp.getPath(),
+							ACCEPTED);
+					tmp = fritz;
+				}
+				result.add(tmp);
+			}
 
 			return result;
 		} catch (SQLException e) {
