@@ -5,12 +5,19 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
@@ -86,14 +93,39 @@ class ListItem {
 		madeItBar.setSelection(madeItBar.getMaximum()
 				- Photo.getFiltered(stage, Photo.DECLINED).size());
 
+		final Menu exportMenu = new Menu(parent.getShell(), SWT.POP_UP);
+		MenuItem menuItem = new MenuItem(exportMenu, SWT.NONE);
+		menuItem.setText("Drawer/Table");
+		menuItem.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				Stage.setCurrent(stage);
+				controlsdialog.launchDrawer();
+			}
+		});
+		menuItem = new MenuItem(exportMenu, SWT.NONE);
+		menuItem.setText("Filmstrip");
+		menuItem.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				Stage.setCurrent(stage);
+				controlsdialog.launchFilmtrip();
+			}
+		});
+
 		Button editButton = new Button(itemInProgressComposite, SWT.PUSH);
 		editButton.setText("edit");
 		editButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Stage.setCurrent(stage);
-				controlsdialog.launchDrawer();
+				Rectangle rect = ((Control) e.widget).getBounds();
+				Point pt = new Point(rect.x, rect.y + rect.height);
+				pt = ((Control) e.widget).getParent().toDisplay(pt);
+				exportMenu.setLocation(pt.x, pt.y);
+				exportMenu.setVisible(true);
 			}
 		});
 	}

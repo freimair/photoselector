@@ -29,7 +29,7 @@ import at.photoselector.ui.tablet.FilmstripDialog;
 public class ControlsDialog extends MyApplicationWindow {
 
 	private StagesDialog stagesDialog;
-	private DrawerDialog drawerDialog;
+	private MyApplicationWindow dialog;
 
 	public ControlsDialog(Shell parentShell) {
 		super(parentShell);
@@ -44,10 +44,18 @@ public class ControlsDialog extends MyApplicationWindow {
 
 	public void launchDrawer() {
 		Display display = getShell().getDisplay();
-		drawerDialog = new DrawerDialog(new Shell(display), this);
-		display.asyncExec(drawerDialog);
+		dialog = new DrawerDialog(new Shell(display), this);
+		display.asyncExec(dialog);
 
-		drawerDialog.update(true);
+		((DrawerDialog) dialog).update(true);
+	}
+
+	public void launchFilmtrip() {
+		Display display = getShell().getDisplay();
+		dialog = new FilmstripDialog(new Shell(display), this);
+		display.asyncExec(dialog);
+
+		dialog.update();
 	}
 
 	@Override
@@ -56,10 +64,6 @@ public class ControlsDialog extends MyApplicationWindow {
 		final Display display = getShell().getDisplay();
 		stagesDialog = new StagesDialog(new Shell(display), this);
 		display.asyncExec(stagesDialog);
-
-		FilmstripDialog filmStripDialog = new FilmstripDialog(
-				new Shell(display), this);
-		display.asyncExec(filmStripDialog);
 
 		// create controls
 		Composite controlComposite = new Composite(parent, SWT.NONE);
@@ -154,21 +158,23 @@ public class ControlsDialog extends MyApplicationWindow {
 	@Override
 	public boolean close() {
 		stagesDialog.closeApplication();
+		if (null != dialog)
+			dialog.close();
 		return super.close();
 	}
 
 	@Override
 	public void update() {
 		stagesDialog.update();
-		if (null != drawerDialog)
-		drawerDialog.update();
+		if (null != dialog)
+		dialog.update();
 	}
 
 	public void updateAllBut(UncloseableApplicationWindow dialog) {
 		if (!stagesDialog.equals(dialog))
 			stagesDialog.update();
-		if (!drawerDialog.equals(dialog))
-			drawerDialog.update();
+		if (!dialog.equals(dialog))
+			dialog.update();
 	}
 
 	private class ExportSelectionListener implements Listener {
