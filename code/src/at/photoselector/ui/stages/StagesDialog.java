@@ -54,15 +54,22 @@ public class StagesDialog extends UncloseableApplicationWindow {
 
 			@Override
 			public void paintControl(PaintEvent arg0) {
-				Rectangle r = stageListComposite.getParent().getClientArea();
-				((ScrolledComposite) stageListComposite.getParent())
-						.setMinSize(stageListComposite.computeSize(r.width,
-								SWT.DEFAULT));
-				stageListComposite.getParent().redraw();
+				recalculateScrolledCompositeArea();
 			}
 		});
 
 		return stageListComposite;
+	}
+
+	private void recalculateScrolledCompositeArea() {
+		Rectangle r = stageListComposite.getParent().getClientArea();
+		((ScrolledComposite) stageListComposite.getParent())
+				.setMinSize(stageListComposite
+						.computeSize(r.width, SWT.DEFAULT));
+		((ScrolledComposite) stageListComposite.getParent())
+				.showControl(stageListComposite.getChildren()[stageListComposite
+						.getChildren().length - 1]);
+
 	}
 
 	public void update() {
@@ -79,5 +86,7 @@ public class StagesDialog extends UncloseableApplicationWindow {
 		}
 
 		stageListComposite.layout();
+		stageListComposite.getParent().layout();
+		recalculateScrolledCompositeArea();
 	}
 }
