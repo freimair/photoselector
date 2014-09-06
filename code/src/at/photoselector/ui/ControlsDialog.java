@@ -166,15 +166,11 @@ public class ControlsDialog extends MyApplicationWindow {
 	@Override
 	public void update() {
 		stagesDialog.update();
-		if (null != dialog)
-		dialog.update();
 	}
 
 	public void updateAllBut(UncloseableApplicationWindow dialog) {
 		if (!stagesDialog.equals(dialog))
 			stagesDialog.update();
-		if (!dialog.equals(dialog))
-			dialog.update();
 	}
 
 	private class ExportSelectionListener implements Listener {
