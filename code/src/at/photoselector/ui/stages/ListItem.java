@@ -58,7 +58,7 @@ class ListItem {
 
 		// update progress bars
 
-		int max = Photo.getFiltered(stage,
+		int max = Photo.getFiltered(stage, true,
 				Photo.UNPROCESSED | Photo.ACCEPTED | Photo.DECLINED).size();
 
 		Label label = new Label(itemInProgressComposite, SWT.NONE);
