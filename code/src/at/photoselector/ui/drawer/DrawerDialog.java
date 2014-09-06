@@ -188,6 +188,7 @@ public class DrawerDialog extends MyApplicationWindow {
 	}
 
 	public void update(boolean force) {
+		try {
 		Photo lastTreated = Workspace.getLastTreated();
 		if (lastTreated != null && !force) {
 			ListItem tmp = cache
@@ -238,6 +239,9 @@ public class DrawerDialog extends MyApplicationWindow {
 
 		photoListContentComposite.layout();
 		photoListContentComposite.getParent().getParent().redraw();
+		} catch (Exception e) {
+			update(true);
+		}
 	}
 
 	public int getBoundingBox() {
