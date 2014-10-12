@@ -145,6 +145,7 @@ class ListItem {
 				// imageContainer.dispose();
 				// parent.layout();
 				controlsDialog.update();
+				drawerDialog.update();
 			}
 		});
 
@@ -159,6 +160,7 @@ class ListItem {
 				imageContainer.dispose();
 				// parent.layout();
 				controlsDialog.update();
+				drawerDialog.update();
 			}
 		});
 

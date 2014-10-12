@@ -30,6 +30,7 @@ import at.photoselector.Settings;
 import at.photoselector.Workspace;
 import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
+import at.photoselector.ui.drawer.DrawerDialog;
 
 
 class ImageTile extends Composite {
@@ -60,7 +61,7 @@ class ImageTile extends Composite {
 	private Point zoomBoxOffset;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
-			Photo currentPhoto, int x, int y) {
+			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y) {
 		super(parent, SWT.NONE);
 		imageContainer = this;
 
@@ -102,6 +103,7 @@ class ImageTile extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.accept(photo);
 				controlsDialog.update();
+				drawerDialog.update();
 				imageContainer.dispose();
 				photo.clearCachedImages();
 			}
@@ -129,6 +131,7 @@ class ImageTile extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.decline(photo);
 				controlsDialog.update();
+				drawerDialog.update();
 				imageContainer.dispose();
 				photo.clearCachedImages();
 			}

@@ -68,7 +68,8 @@ public class TableDialog extends MyApplicationWindow {
 							return;
 				}
 				
-				new ImageTile(parent, controlsDialog, Photo.get(Integer
+				new ImageTile(parent, controlsDialog, drawerDialog, Photo
+						.get(Integer
 						.valueOf((String) event.data)),
 						event.x, event.y);
 			}
