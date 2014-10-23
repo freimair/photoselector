@@ -103,7 +103,7 @@ public class Photo {
 				Photo tmp = cache.get(current);
 				if (!tmp.getStage().equals(stage)) {
 					Photo fritz = new Photo(tmp.getId(), tmp.getPath(),
-							ACCEPTED);
+							ACCEPTED, tmp.getStage());
 					tmp = fritz;
 				}
 				result.add(tmp);
