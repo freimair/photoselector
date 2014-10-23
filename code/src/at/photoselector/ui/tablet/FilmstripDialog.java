@@ -105,6 +105,18 @@ public class FilmstripDialog extends MyApplicationWindow {
 			}
 		});
 
+		Button buttonUndo = new Button(controlsComposite, SWT.PUSH);
+		buttonUndo.setText("Undo");
+		buttonUndo.setLayoutData(new RowData(100, 100));
+		buttonUndo.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Workspace.reset(Workspace.getLastTreated());
+				update();
+			}
+		});
+
 		imageComposite.addMouseListener(new MouseAdapter() {
 
 			@Override
