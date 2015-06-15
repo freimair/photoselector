@@ -236,6 +236,7 @@ public class DrawerDialog extends MyApplicationWindow {
 		}
 
 		tableDialog.update();
+		controlsDialog.update();
 
 		photoListContentComposite.layout();
 		photoListContentComposite.getParent().getParent().redraw();
