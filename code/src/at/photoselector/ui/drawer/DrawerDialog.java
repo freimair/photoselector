@@ -212,8 +212,10 @@ public class DrawerDialog extends MyApplicationWindow {
 			if (showDeclinedButton.getSelection())
 				filter |= Photo.DECLINED;
 			cache = new HashMap<String, ListItem>();
-			for (Photo current : Photo.getFiltered(Stage.getCurrent(), true,
+				for (Photo current : Photo.getFiltered(Stage.getCurrent(),
+						0 < (filter & Photo.ACCEPTED),
 					filter)) {
+
 				cache.put(current.getPath().getAbsolutePath(), new ListItem(
 						photoListContentComposite,
 						this, controlsDialog, current));

@@ -67,7 +67,20 @@ public class Workspace {
 
 		lastTreated = photo;
 
+		photo.setStage(getNextStage());
+		photo.setStatus(Photo.UNPROCESSED);
+
 		return isStageCompleted();
+	}
+
+	private static Stage getNextStage() {
+		if (Stage.getAll().indexOf(Stage.getCurrent()) == Stage.getAll().size() - 1)
+			// the current stage was the highest stage -> create a new stage
+			return Stage.create("Stage " + Stage.getAll().size());
+		else
+			// our target stage already exists.
+			return Stage.getAll().get(
+					Stage.getAll().indexOf(Stage.getCurrent()) + 1);
 	}
 
 	public static boolean decline(Photo photo) {
@@ -80,6 +93,9 @@ public class Workspace {
 	}
 
 	public static void reset(Photo photo) {
+		photo.setStatus(Photo.UNPROCESSED);
+		if (!photo.getStage().equals(Stage.getCurrent()))
+			photo.setStage(Stage.getCurrent());
 		photo.setStatus(Photo.UNPROCESSED);
 	}
 
@@ -99,15 +115,7 @@ public class Workspace {
 			current.clearCachedImages();
 		}
 
-		Stage newStage = Stage.create("Stage " + Stage.getAll().size());
-
-		for (Photo current : Photo.getFiltered(Stage.getCurrent(),
-				Photo.ACCEPTED)) {
-			current.setStatus(Photo.UNPROCESSED);
-			current.setStage(newStage);
-		}
-
-		Stage.setCurrent(newStage);
+		Stage.setCurrent(getNextStage());
 
 		lastTreated = null;
 

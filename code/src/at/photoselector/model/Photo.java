@@ -41,7 +41,7 @@ public class Photo {
 		database = db;
 	}
 
-	public static void create(File path) {
+	public static synchronized void create(File path) {
 		try {
 			database.execute("INSERT INTO photos (path, status, stage) VALUES ('"
 					+ path.getAbsolutePath()
