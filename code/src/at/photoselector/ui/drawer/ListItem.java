@@ -1,5 +1,7 @@
 package at.photoselector.ui.drawer;
 
+import java.util.concurrent.Executors;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.dnd.DND;
@@ -33,6 +35,40 @@ import at.photoselector.model.Photo;
 import at.photoselector.ui.ControlsDialog;
 
 class ListItem {
+	class CreateCacheImage implements Runnable {
+
+		private Display display;
+
+		public CreateCacheImage(Display display) {
+			this.display = display;
+		}
+
+		public void run() {
+			scaled = photo.getImage(drawerDialog.getBoundingBox());
+			display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+
+					// draw the image
+					imageContainer.addListener(SWT.Paint, new Listener() {
+
+						@Override
+						public void handleEvent(Event e) {
+							GC gc = e.gc;
+							Rectangle dimensions = photo
+									.scaleAndCenterImage(drawerDialog
+											.getBoundingBox());
+							gc.drawImage(scaled, dimensions.x + border,
+									dimensions.y + border);
+							gc.dispose();
+						}
+					});
+					imageContainer.redraw();
+				}
+			});
+		}
+	}
+
 	private Photo photo;
 	private Image scaled;
 	private int border = 3;
@@ -72,9 +108,6 @@ class ListItem {
 			@Override
 			public void paintControl(PaintEvent e) {
 				try {
-					Display.getCurrent().asyncExec(new Runnable() {
-						@Override
-						public void run() {
 							if (!loaded) {
 								// extract client area of scrolledcomposite
 								Rectangle visibleArea = imageContainer
@@ -100,35 +133,17 @@ class ListItem {
 									getThumbnail();
 								}
 							}
-						}
-					});
 				} catch (Exception ex) {
 				}
 			}
 
 			private void getThumbnail() {
 				// fetch thumbnail
-
 				try {
-					scaled = photo.getImage(drawerDialog.getBoundingBox());
+					Executors.newSingleThreadExecutor().submit(
+							new CreateCacheImage(Display.getCurrent()));
 
-					// draw the image
-					imageContainer.addListener(SWT.Paint, new Listener() {
-
-						@Override
-						public void handleEvent(Event e) {
-							GC gc = e.gc;
-							Rectangle dimensions = photo
-									.scaleAndCenterImage(drawerDialog
-											.getBoundingBox());
-							gc.drawImage(scaled, dimensions.x + border,
-									dimensions.y + border);
-							gc.dispose();
-						}
-					});
-
-					imageContainer.redraw();
-				} catch (SWTException ex) {
+					} catch (SWTException ex) {
 
 				}
 			}

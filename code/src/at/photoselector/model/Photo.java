@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.Semaphore;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -22,6 +23,9 @@ import at.photoselector.Workspace;
 import at.photoselector.util.ImageUtils;
 
 public class Photo {
+	static final java.util.concurrent.Semaphore semaphore = new Semaphore(
+			Runtime.getRuntime().availableProcessors() > 1 ? Runtime
+					.getRuntime().availableProcessors() - 1 : 1);
 
 	// ################################ STATICS ################################
 
@@ -187,7 +191,7 @@ public class Photo {
 		return !getPath().getName().toLowerCase().matches(".*jpe?g$");
 	}
 
-	private File preprocessRawImage() {
+	public synchronized File preprocessRawImage() {
 		if (!isRaw())
 			return getPath();
 
@@ -205,37 +209,45 @@ public class Photo {
 
 		if (!cachedFullImage.exists()) {
 			try {
-				Process p = Runtime.getRuntime().exec(
-						new String[] { Settings.getDCRawLocation(), "-w", "-T",
-								getPath().getAbsolutePath() });
-				p.waitFor();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			File tiffImagePath = new File(getPath().getAbsolutePath()
-					.replaceFirst(
-					"[a-zA-Z0-9]+$", "tiff"));
+				semaphore.acquire();
+				try {
+					Process p = Runtime.getRuntime().exec(
+							new String[] { Settings.getDCRawLocation(), "-w",
+									"-T", getPath().getAbsolutePath() });
+					p.waitFor();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				File tiffImagePath = new File(getPath().getAbsolutePath()
+						.replaceFirst("[a-zA-Z0-9]+$", "tiff"));
 
-			// use imagemagic to convert to jpg
-			try {
-				Process p = Runtime.getRuntime().exec(
-						new String[] { Settings.getImageMagicBinaryLocation(),
-								tiffImagePath.getAbsolutePath(),
-								cachedFullImage.getAbsolutePath() });
-				p.waitFor();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				// use imagemagic to convert to jpg
+				try {
+					Process p = Runtime.getRuntime().exec(
+							new String[] {
+									Settings.getImageMagicBinaryLocation(),
+									tiffImagePath.getAbsolutePath(),
+									cachedFullImage.getAbsolutePath() });
+					p.waitFor();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-			tiffImagePath.delete();
+				tiffImagePath.delete();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} finally {
+				semaphore.release();
+			}
 		}
 
 		return cachedFullImage;
