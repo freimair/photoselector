@@ -258,7 +258,7 @@ public class DrawerDialog extends MyApplicationWindow {
 	@Override
 	public boolean close() {
 		super.close();
-		if (null != tableDialog.getShell())
+		if (null != tableDialog && null != tableDialog.getShell())
 			tableDialog.close();
 		return true;
 	}

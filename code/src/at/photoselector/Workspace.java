@@ -133,6 +133,12 @@ public class Workspace {
 	 *            the absolut path to the database file
 	 */
 	private Workspace(String path) {
+		try {
+			for (Photo current : Photo.getAll())
+				current.clearCachedImages();
+		} catch (Exception e) {
+			// in case there was no workspace loaded before
+		}
 		Database.closeConnection();
 		db = new Database(path);
 		Stage.init(db);
