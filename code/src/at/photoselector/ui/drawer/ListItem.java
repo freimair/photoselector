@@ -172,7 +172,7 @@ class ListItem {
 			public void widgetSelected(SelectionEvent e) {
 				Workspace.decline(photo);
 				// Composite parent = imageContainer.getParent();
-				imageContainer.dispose();
+				// imageContainer.dispose();
 				// parent.layout();
 				controlsDialog.update();
 				drawerDialog.update();

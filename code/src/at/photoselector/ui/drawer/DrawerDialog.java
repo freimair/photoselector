@@ -39,11 +39,14 @@ public class DrawerDialog extends MyApplicationWindow {
 	private int boundingBox = 0;
 	private ToolItem showControlsButton;
 	private ControlsDialog controlsDialog;
+	private boolean launchTable;
 
-	public DrawerDialog(Shell parentShell, ControlsDialog dialog) {
+	public DrawerDialog(Shell parentShell, ControlsDialog dialog,
+			boolean launchTable) {
 		super(parentShell);
 
 		this.controlsDialog = dialog;
+		this.launchTable = launchTable;
 
 		addToolBar(SWT.FLAT);
 	}
@@ -59,9 +62,11 @@ public class DrawerDialog extends MyApplicationWindow {
 
 	protected Control createContents(Composite parent) {
 
-		tableDialog = new TableDialog(new Shell(parent.getDisplay()),
-				controlsDialog, this);
-		parent.getDisplay().asyncExec(tableDialog);
+		if (launchTable) {
+			tableDialog = new TableDialog(new Shell(parent.getDisplay()),
+					controlsDialog, this);
+			parent.getDisplay().asyncExec(tableDialog);
+		}
 
 		ToolBar drawerToolbar = (ToolBar) getToolBarControl();
 
@@ -243,7 +248,8 @@ public class DrawerDialog extends MyApplicationWindow {
 		photoListContentComposite.layout();
 		photoListContentComposite.getParent().getParent().redraw();
 		} catch (Exception e) {
-			update(true);
+			if (false == force)
+				update(true);
 		}
 	}
 

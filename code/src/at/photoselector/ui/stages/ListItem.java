@@ -94,13 +94,13 @@ class ListItem {
 
 		final Menu exportMenu = new Menu(parent.getShell(), SWT.POP_UP);
 		MenuItem menuItem = new MenuItem(exportMenu, SWT.NONE);
-		menuItem.setText("Drawer/Table");
+		menuItem.setText("Drawer");
 		menuItem.addListener(SWT.Selection, new Listener() {
 
 			@Override
 			public void handleEvent(Event event) {
 				Stage.setCurrent(stage);
-				controlsdialog.launchDrawer();
+				controlsdialog.launchDrawer(false);
 			}
 		});
 		menuItem = new MenuItem(exportMenu, SWT.NONE);
@@ -111,6 +111,16 @@ class ListItem {
 			public void handleEvent(Event event) {
 				Stage.setCurrent(stage);
 				controlsdialog.launchFilmtrip();
+			}
+		});
+		menuItem = new MenuItem(exportMenu, SWT.NONE);
+		menuItem.setText("Drawer/Table");
+		menuItem.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				Stage.setCurrent(stage);
+				controlsdialog.launchDrawer(true);
 			}
 		});
 

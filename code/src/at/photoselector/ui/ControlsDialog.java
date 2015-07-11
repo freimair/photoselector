@@ -42,9 +42,9 @@ public class ControlsDialog extends MyApplicationWindow {
 		shell.setText("PhotoSelector");
 	}
 
-	public void launchDrawer() {
+	public void launchDrawer(boolean launchTable) {
 		Display display = getShell().getDisplay();
-		dialog = new DrawerDialog(new Shell(display), this);
+		dialog = new DrawerDialog(new Shell(display), this, launchTable);
 		display.asyncExec(dialog);
 
 		((DrawerDialog) dialog).update(true);
