@@ -12,7 +12,7 @@ import org.h2.jdbc.JdbcSQLException;
 
 public class Database {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static Connection conn;
 
 	public Database(String path) {
