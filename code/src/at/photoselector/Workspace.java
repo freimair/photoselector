@@ -58,7 +58,8 @@ public class Workspace {
 								0, current.getAbsolutePath().lastIndexOf("."))))
 					addPhoto(current.getAbsolutePath());
 		}
-		if (location.getName().toLowerCase().matches(".*(\\.jpe?g|\\.cr2)$"))
+		if (location.getName().toLowerCase()
+				.matches(".*(\\.jpe?g|\\.cr2|\\.orf|\\.nef)$"))
 			Photo.create(location);
 	}
 
