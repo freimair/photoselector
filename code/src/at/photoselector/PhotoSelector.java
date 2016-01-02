@@ -16,7 +16,7 @@ public class PhotoSelector {
 
 		// select workspace
 		SelectWorkspaceDialog selectWorkspaceDialog = new SelectWorkspaceDialog(
-				new Shell(display));
+				null);
 		display.syncExec(selectWorkspaceDialog);
 		if (Dialog.CANCEL != selectWorkspaceDialog.getReturnCode()) {
 			// start application
