@@ -193,6 +193,8 @@ class ListItem {
 		labelFiletype = new Label(imageContainer, SWT.NONE);
 		labelFiletype.setText(photo.getPath().getName()
 				.substring(photo.getPath().getName().lastIndexOf(".")));
+		labelFiletype.setBackground(Display.getCurrent().getSystemColor(
+				SWT.COLOR_WHITE));
 
 		paintListener = new PaintListener() {
 
