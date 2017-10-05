@@ -1,5 +1,6 @@
 package at.photoselector.ui.drawer;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.swt.SWT;
@@ -140,8 +141,10 @@ class ListItem {
 			private void getThumbnail() {
 				// fetch thumbnail
 				try {
-					Executors.newSingleThreadExecutor().submit(
+					ExecutorService sepp = Executors.newSingleThreadExecutor();
+					sepp.submit(
 							new CreateCacheImage(Display.getCurrent()));
+					sepp.shutdown();
 
 					} catch (SWTException ex) {
 
