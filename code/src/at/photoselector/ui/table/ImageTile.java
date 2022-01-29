@@ -59,6 +59,12 @@ class ImageTile extends Composite {
 	private Composite controlsComposite;
 	private Composite zoomBoxContainer;
 	private Point zoomBoxOffset;
+	private Button buttonAccept;
+	private Button buttonCancel;
+	private Button buttonDecline;
+	private Button exitButton;
+	private Button hundredPercentButton;
+	private Button sharpnessComparisonButton;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y) {
@@ -93,7 +99,7 @@ class ImageTile extends Composite {
 		controlsComposite.setLayout(new GridLayout(3, true));
 		controlsComposite.setVisible(false);
 
-		Button buttonAccept = new Button(controlsComposite, SWT.PUSH);
+		buttonAccept = new Button(controlsComposite, SWT.PUSH);
 		buttonAccept.setText("Accept");
 		buttonAccept.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false, 1, 1));
@@ -104,12 +110,12 @@ class ImageTile extends Composite {
 				Workspace.accept(photo);
 				controlsDialog.update();
 				drawerDialog.update();
-				imageContainer.dispose();
+				dispose();
 				photo.clearCachedImages();
 			}
 		});
 
-		Button buttonCancel = new Button(controlsComposite, SWT.PUSH);
+		buttonCancel = new Button(controlsComposite, SWT.PUSH);
 		buttonCancel.setText("Cancel");
 		buttonCancel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false, 1, 1));
@@ -117,11 +123,11 @@ class ImageTile extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				imageContainer.dispose();
+				dispose();
 			}
 		});
 
-		Button buttonDecline = new Button(controlsComposite, SWT.PUSH);
+		buttonDecline = new Button(controlsComposite, SWT.PUSH);
 		buttonDecline.setText("Decline");
 		buttonDecline.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false, 1, 1));
@@ -132,12 +138,12 @@ class ImageTile extends Composite {
 				Workspace.decline(photo);
 				controlsDialog.update();
 				drawerDialog.update();
-				imageContainer.dispose();
+				dispose();
 				photo.clearCachedImages();
 			}
 		});
 
-		Button exitButton = new Button(controlsComposite, SWT.PUSH);
+		exitButton = new Button(controlsComposite, SWT.PUSH);
 		exitButton.setText("Exit Controls");
 		exitButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
 				3, 1));
@@ -149,7 +155,7 @@ class ImageTile extends Composite {
 			}
 		});
 
-		Button hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
+		hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
 		hundredPercentButton.setText("100%");
 		hundredPercentButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
 				false, false, 1, 1));
@@ -170,7 +176,7 @@ class ImageTile extends Composite {
 			}
 		});
 
-		Button sharpnessComparisonButton = new Button(controlsComposite,
+		sharpnessComparisonButton = new Button(controlsComposite,
 				SWT.PUSH);
 		sharpnessComparisonButton.setText("compare");
 		sharpnessComparisonButton.setLayoutData(new GridData(SWT.FILL,
@@ -433,8 +439,17 @@ class ImageTile extends Composite {
 
 	@Override
 	protected void finalize() throws Throwable {
+		image.dispose();
+		imageContainer.dispose();
+		zoomBoxContainer.dispose();
+		controlsComposite.dispose();
+		buttonAccept.dispose();
+		buttonDecline.dispose();
+		buttonCancel.dispose();
+		exitButton.dispose();
+		hundredPercentButton.dispose();
+		sharpnessComparisonButton.dispose();
 		super.finalize();
-		// image.dispose();
 	}
 
 	public Photo getPhoto() {
