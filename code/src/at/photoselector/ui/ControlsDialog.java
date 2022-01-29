@@ -150,6 +150,9 @@ public class ControlsDialog extends MyApplicationWindow {
 		exiftoolhelper
 				.setText("exiftool \"-FileName<DateTimeOriginal\" -d \"%Y%m%d_%H%M%S%%f.%%e\" .");
 
+		Text renametoolhelper = new Text(controlComposite, SWT.BORDER);
+		renametoolhelper.setText("perl-rename -n 's/^(\\d{8}) /${1} - /' *");
+
 		// update();
 
 		return controlComposite;
