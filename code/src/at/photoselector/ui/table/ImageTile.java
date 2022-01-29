@@ -72,6 +72,7 @@ class ImageTile extends Composite {
 		imageContainer = this;
 
 		this.photo = currentPhoto;
+		highlight(drawerDialog, photo, true);
 		controlsDialog = dialog;
 
 		// TODO find some smart way to calculate the initial size of the image
@@ -110,6 +111,7 @@ class ImageTile extends Composite {
 				Workspace.accept(photo);
 				controlsDialog.update();
 				drawerDialog.update();
+				highlight(drawerDialog, photo, false);
 				dispose();
 				photo.clearCachedImages();
 			}
@@ -123,6 +125,7 @@ class ImageTile extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				highlight(drawerDialog, photo, false);
 				dispose();
 			}
 		});
@@ -138,6 +141,7 @@ class ImageTile extends Composite {
 				Workspace.decline(photo);
 				controlsDialog.update();
 				drawerDialog.update();
+				highlight(drawerDialog, photo, false);
 				dispose();
 				photo.clearCachedImages();
 			}
@@ -356,6 +360,16 @@ class ImageTile extends Composite {
 			public void mouseDoubleClick(MouseEvent e) {
 				for (ImageTile current : getCurrentImageTiles())
 					current.hideZoomBox();
+			}
+		});
+	}
+
+	private void highlight(final DrawerDialog drawerDialog, Photo photo, boolean highlight) {
+		getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				drawerDialog.highlight(photo, highlight);
 			}
 		});
 	}
