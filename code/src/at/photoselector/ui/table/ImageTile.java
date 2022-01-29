@@ -76,7 +76,7 @@ class ImageTile extends Composite {
 
 		// TODO find some smart way to calculate the initial size of the image
 		int boundingBox = (int) Math.min(parent.getBounds().width / 1.5,
-				parent.getBounds().height / 1.5);
+				parent.getBounds().height / 1.65);
 		image = photo.getImage(boundingBox);
 
 		imageContainer.setLayout(new RowLayout());
