@@ -30,6 +30,9 @@ public class FileSystemExporter extends Exporter {
 				target.mkdirs();
 				Files.copy(current.getPath().toPath(), target.toPath(),
 						REPLACE_EXISTING);
+				if (new File(current.getPath() + ".pp3").exists())
+					Files.copy(new File(current.getPath() + ".pp3").toPath(), new File(target + ".pp3").toPath(),
+							REPLACE_EXISTING);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
