@@ -34,7 +34,7 @@ public class Workspace {
 
 					@Override
 					public boolean accept(File dir, String name) {
-						return !name.toLowerCase().matches(".*\\.jpe?g$");
+						return name.toLowerCase().matches(".*(.cr2|.orf)");
 					}
 				});
 			List<String> raws = new ArrayList<String>();
