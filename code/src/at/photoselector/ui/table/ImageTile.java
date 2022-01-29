@@ -455,4 +455,30 @@ class ImageTile extends Composite {
 	public Photo getPhoto() {
 		return photo;
 	}
+
+	public void blink() {
+		Point orig = imageContainer.getLocation();
+
+		imageContainer.setLocation((int) (orig.x * 1.02f), orig.y);
+		getDisplay().timerExec(35, new MoveImageContainer(orig.x / 1.02f, orig.y));
+		getDisplay().timerExec(70, new MoveImageContainer(orig.x * 1.02f, orig.y));
+		getDisplay().timerExec(105, new MoveImageContainer(orig.x / 1.02f, orig.y));
+		getDisplay().timerExec(125, new MoveImageContainer(orig.x, orig.y));
+	}
+
+	private class MoveImageContainer implements Runnable {
+
+		private int x, y;
+
+		public MoveImageContainer(float x, int y) {
+			this.x = (int) x;
+			this.y = y;
+		}
+
+		@Override
+		public void run() {
+			imageContainer.setLocation(x, y);
+
+		}
+	}
 }
