@@ -198,6 +198,7 @@ class ListItem {
 				.substring(photo.getPath().getName().lastIndexOf(".")));
 		labelFiletype.setBackground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_WHITE));
+		labelFiletype.setForeground(new Color(display, 0, 0, 0));
 
 		paintListener = new PaintListener() {
 
