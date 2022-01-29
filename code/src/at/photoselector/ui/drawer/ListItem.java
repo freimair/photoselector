@@ -55,13 +55,12 @@ class ListItem {
 
 						@Override
 						public void handleEvent(Event e) {
-							GC gc = e.gc;
-							Rectangle dimensions = photo
-									.scaleAndCenterImage(drawerDialog
-											.getBoundingBox());
-							gc.drawImage(scaled, dimensions.x + border,
-									dimensions.y + border);
-							gc.dispose();
+							if (null != scaled) {
+								GC gc = e.gc;
+								Rectangle dimensions = photo.scaleAndCenterImage(drawerDialog.getBoundingBox());
+								gc.drawImage(scaled, dimensions.x + border, dimensions.y + border);
+								gc.dispose();
+							}
 						}
 					});
 					imageContainer.redraw();
@@ -260,11 +259,13 @@ class ListItem {
 
 	@Override
 	protected void finalize() throws Throwable {
+		dispose();
 		super.finalize();
-		scaled.dispose();
 	}
 
 	public void dispose() {
-		imageContainer.dispose();
+		imageContainer.dispose(); // in order to remove the thingy from the list on redraw
+		photo.clearCachedImages();
+		scaled.dispose();
 	}
 }

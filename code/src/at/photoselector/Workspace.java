@@ -65,6 +65,7 @@ public class Workspace {
 
 	public static boolean accept(Photo photo) {
 		photo.setStatus(Photo.ACCEPTED);
+		photo.clearCachedImages();
 
 		lastTreated = photo;
 

@@ -293,9 +293,7 @@ public class Photo {
 						break;
 					}
 				if (dispose) {
-					fullImage.dispose();
-					fullImage = null;
-					// System.out.print("disposed");
+					clearFullImageFromCache();
 				}
 			}
 			// System.out.println("");
@@ -317,6 +315,17 @@ public class Photo {
 			else
 				imagePath = path;
 			fullImage = ImageUtils.load(imagePath);
+
+			// get dimensions, as we already have the image in memory
+			width = fullImage.getBounds().width;
+			height = fullImage.getBounds().height;
+		}
+	}
+
+	private void clearFullImageFromCache() {
+		if (null != fullImage && !fullImage.isDisposed()) {
+			fullImage.dispose();
+			fullImage = null;
 		}
 	}
 
@@ -336,10 +345,7 @@ public class Photo {
 		for (Image current : imageCache.values())
 			current.dispose();
 		imageCache.clear();
-		if (null != fullImage && !fullImage.isDisposed()) {
-			fullImage.dispose();
-			fullImage = null;
-		}
+		clearFullImageFromCache();
 
 		// TODO preserve thumbnail to gain performance
 	}
@@ -367,6 +373,10 @@ public class Photo {
 
 			width = fullImage.getBounds().width;
 			height = fullImage.getBounds().height;
+
+			clearFullImageFromCache();
+
+			System.out.println("ouch...");
 		}
 
 		if (isPortrait() && width > height) {
@@ -460,9 +470,10 @@ public class Photo {
 		return true;
 	}
 
+
 	@Override
 	protected void finalize() throws Throwable {
-		fullImage.dispose();
+		clearCachedImages();
 		super.finalize();
 	}
 
