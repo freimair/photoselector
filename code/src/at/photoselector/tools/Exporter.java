@@ -10,6 +10,7 @@ public abstract class Exporter {
 		result.add(new RawTherapeeLinuxExporter());
 		result.add(new FileSystemExporter());
 		result.add(new RawTherapeeExporter());
+		result.add(new KeepBestExporter());
 
 		return result;
 	}
