@@ -193,8 +193,7 @@ class ListItem {
 		});
 
 		labelFiletype = new Label(imageContainer, SWT.NONE);
-		labelFiletype.setText(photo.getPath().getName()
-				.substring(photo.getPath().getName().lastIndexOf(".")));
+		labelFiletype.setText(photo.getPath().getName());
 		labelFiletype.setBackground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_WHITE));
 		labelFiletype.setForeground(new Color(display, 0, 0, 0));
@@ -206,7 +205,7 @@ class ListItem {
 				buttonAccept.setVisible(drawerDialog.isShowControls());
 				buttonDecline.setVisible(drawerDialog.isShowControls());
 				buttonReset.setVisible(drawerDialog.isShowControls());
-				labelFiletype.setVisible(drawerDialog.isShowControls());
+				labelFiletype.setVisible(drawerDialog.isShowInfos());
 			}
 		};
 

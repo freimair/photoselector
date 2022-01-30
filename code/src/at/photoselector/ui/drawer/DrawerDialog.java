@@ -59,6 +59,7 @@ public class DrawerDialog extends MyApplicationWindow {
 	}
 
 	private TableDialog tableDialog;
+	private ToolItem showInfoButton;
 
 	protected Control createContents(Composite parent) {
 
@@ -116,6 +117,17 @@ public class DrawerDialog extends MyApplicationWindow {
 		showControlsButton = new ToolItem(drawerToolbar, SWT.CHECK);
 		showControlsButton.setText("show controls");
 		showControlsButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// photoListContentComposite.layout();
+				photoListContentComposite.redraw();
+			}
+		});
+
+		showInfoButton = new ToolItem(drawerToolbar, SWT.CHECK);
+		showInfoButton.setText("show infos");
+		showInfoButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -260,6 +272,10 @@ public class DrawerDialog extends MyApplicationWindow {
 
 	public boolean isShowControls() {
 		return showControlsButton.getSelection();
+	}
+
+	public boolean isShowInfos() {
+		return showInfoButton.getSelection();
 	}
 
 	@Override
