@@ -36,7 +36,7 @@ public class DrawerDialog extends MyApplicationWindow {
 	private ToolItem showAcceptedButton;
 	private ToolItem showDeclinedButton;
 	private Composite photoListContentComposite;
-	private int boundingBox = 0;
+	private int boundingBox = -50;
 	private ToolItem showControlsButton;
 	private ControlsDialog controlsDialog;
 	private boolean launchTable;
@@ -108,8 +108,8 @@ public class DrawerDialog extends MyApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boundingBox -= 50;
-				if (boundingBox < 50)
-					boundingBox = 50;
+				if (boundingBox < -50)
+					boundingBox = -50;
 				updateAll();
 			}
 		});
