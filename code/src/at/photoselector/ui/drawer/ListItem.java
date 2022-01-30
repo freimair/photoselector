@@ -82,6 +82,7 @@ class ListItem {
 	private boolean loaded = false;
 	private Label labelFiletype;
 	private Display display;
+	private Color originalBackgroundColor;
 
 	public ListItem(final Composite parent, final DrawerDialog dialog,
 			ControlsDialog cDialog,
@@ -258,10 +259,12 @@ class ListItem {
 	}
 
 	public void highlight(boolean highlight) {
-		if (highlight)
+		if (highlight) {
+			originalBackgroundColor = imageContainer.getBackground();
 			imageContainer.setBackground(new Color(display, 100, 100, 0));
+		}
 		else
-			imageContainer.setBackground(new Color(display, 75, 75, 75));
+			imageContainer.setBackground(originalBackgroundColor);
 	}
 
 	@Override
