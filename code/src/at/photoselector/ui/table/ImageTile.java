@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -65,6 +66,8 @@ class ImageTile extends Composite {
 	private Button exitButton;
 	private Button hundredPercentButton;
 	private Button sharpnessComparisonButton;
+	private Button rotateLeftButton;
+	private Button rotateRightButton;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y, double initialScale) {
@@ -145,10 +148,51 @@ class ImageTile extends Composite {
 			}
 		});
 
+		rotateLeftButton = new Button(controlsComposite, SWT.PUSH);
+		rotateLeftButton.setText("R left");
+		rotateLeftButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		rotateLeftButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				/**
+				 * well that works only for this one zoom level :(
+				 * 
+				 * what we could do is move that piece of code to the photo itself, namely
+				 * getCachedImage and rotate the picture there
+				 * 
+				 * additionally, add a rotateCCW() or something to the Photo which also clears
+				 * the cache.
+				 * 
+				 * call the rotateCCW() here and redraw?
+				 */
+				GC gc = new GC(image);
+
+				Image result = new Image(gc.getDevice(), image.getBounds().height, image.getBounds().width);
+				GC gcTmp = new GC(result);
+
+				Transform affineTransform = new Transform(gc.getDevice());
+				affineTransform.rotate(-90);
+				affineTransform.translate(-image.getBounds().width, 0);
+				gcTmp.setTransform(affineTransform);
+				gcTmp.drawImage(image, 0, 0);
+				Rectangle orig = imageContainer.getBounds();
+				imageContainer.setSize(orig.height, orig.width);
+				gc.drawImage(result, 0, 0, result.getBounds().width, result.getBounds().height, 0, 0,
+						imageContainer.getBounds().height, imageContainer.getBounds().width);
+
+				gcTmp.dispose();
+				gc.dispose();
+				result.dispose();
+				imageContainer.redraw();
+			}
+		});
+
 		exitButton = new Button(controlsComposite, SWT.PUSH);
 		exitButton.setText("Exit Controls");
 		exitButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
-				3, 1));
+				1, 1));
 		exitButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -156,6 +200,10 @@ class ImageTile extends Composite {
 				controlsComposite.setVisible(false);
 			}
 		});
+
+		rotateRightButton = new Button(controlsComposite, SWT.PUSH);
+		rotateRightButton.setText("R left");
+		rotateRightButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 
 		hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
 		hundredPercentButton.setText("100%");
