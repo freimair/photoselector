@@ -242,7 +242,8 @@ public class DrawerDialog extends MyApplicationWindow {
 			}
 		}
 
-		tableDialog.update();
+		if(null != tableDialog)
+			tableDialog.update();
 		controlsDialog.update();
 
 		photoListContentComposite.layout();
