@@ -75,9 +75,11 @@ class ImageTile extends Composite {
 		highlight(drawerDialog, photo, true);
 		controlsDialog = dialog;
 
-		// TODO find some smart way to calculate the initial size of the image
-		int boundingBox = (int) Math.min(parent.getBounds().width / 1.5,
-				parent.getBounds().height / 1.65);
+		int boundingBox = photo.isPortrait()
+				? (int) (parent.getBounds().width / 3.2 * photo.getDimensions().y / photo.getDimensions().x)
+				: (int) Math.min(
+					parent.getBounds().height / 2.2 * photo.getDimensions().x / photo.getDimensions().y,
+					parent.getBounds().width / 2.1);
 		image = photo.getImage(boundingBox);
 
 		imageContainer.setLayout(new RowLayout());
