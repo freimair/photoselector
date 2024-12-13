@@ -91,25 +91,19 @@ public class TableDialog extends MyApplicationWindow {
 			 * @return Point
 			 */
 			public Point adjustDropCoordinates(Photo photo, int x, int y) {
-				// TODO merge duplicated code pieces
-				// - should size and location be managed by the table?
-				int boundingBox = photo.isPortrait()
-						? (int) (parent.getBounds().width / 3.2 * photo.getDimensions().y / photo.getDimensions().x)
-						: (int) Math.min(
-								parent.getBounds().height / 2.2 * photo.getDimensions().x / photo.getDimensions().y,
-								parent.getBounds().width / 2.1);
+				// scale as in smart scaling
+				double scale = this.smartScale(photo);
 
-				// TODO landscape only for now
-				int ourWidth = boundingBox;
-				int ourHeight = (int) (ourWidth / ((double) photo.getDimensions().x) * photo.getDimensions().y);
+				int ourWidth = (int) (photo.getDimensions().x * scale);
+				int ourHeight = (int) (photo.getDimensions().y * scale);
 
 				// get through all existing ImageTiles
 				for (Control current : getShell().getChildren()) {
 					if (current instanceof ImageTile) {
 						Rectangle bounds = ((ImageTile) current).getBounds();
 
-						// check if drop is next to an existing image
 						// - TODO check if window-bounds are compromised
+						// check if drop is next to an existing image
 						if (y > bounds.y && y < bounds.y + bounds.height) {
 							if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + ourWidth / 2)
 								x = bounds.x + bounds.width + 10 + ourWidth / 2;
@@ -127,6 +121,18 @@ public class TableDialog extends MyApplicationWindow {
 				}
 
 				return new Point(x, y);
+			}
+
+			/**
+			 * move outside of droplistener
+			 * 
+			 * @param photo
+			 * @return
+			 */
+			private double smartScale(Photo photo) {
+				// TODO merge duplicated code pieces
+				return photo.isPortrait() ? parent.getBounds().width / 3.2 / photo.getDimensions().x
+						: Math.min(parent.getBounds().height / 2.2 / photo.getDimensions().y, 2.1);
 			}
 
 		});
