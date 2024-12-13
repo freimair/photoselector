@@ -99,7 +99,9 @@ public class TableDialog extends MyApplicationWindow {
 								parent.getBounds().height / 2.2 * photo.getDimensions().x / photo.getDimensions().y,
 								parent.getBounds().width / 2.1);
 
-				// only do horizontal correction for now
+				// TODO landscape only for now
+				int ourWidth = boundingBox;
+				int ourHeight = (int) (ourWidth / ((double) photo.getDimensions().x) * photo.getDimensions().y);
 
 				// get through all existing ImageTiles
 				for (Control current : getShell().getChildren()) {
@@ -109,12 +111,18 @@ public class TableDialog extends MyApplicationWindow {
 						// check if drop is next to an existing image
 						// - TODO check if window-bounds are compromised
 						if (y > bounds.y && y < bounds.y + bounds.height) {
-							if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + boundingBox / 2)
-								x = bounds.x + bounds.width + 10 + boundingBox / 2;
-							else if (x < bounds.x && x > bounds.x - 10 - boundingBox / 2)
-								x = bounds.x - 10 - boundingBox / 2;
+							if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + ourWidth / 2)
+								x = bounds.x + bounds.width + 10 + ourWidth / 2;
+							else if (x < bounds.x && x > bounds.x - 10 - ourWidth / 2)
+								x = bounds.x - 10 - ourWidth / 2;
 						}
 
+						if (x > bounds.x && x < bounds.x + bounds.width) {
+							if (y > bounds.y + bounds.height && y < bounds.y + bounds.height + 10 + ourHeight / 2)
+								y = bounds.y + bounds.height + 10 + ourHeight / 2;
+							else if (y < bounds.y && y > bounds.y - 10 - ourHeight / 2)
+								y = bounds.y - 10 - ourHeight / 2;
+						}
 					}
 				}
 
