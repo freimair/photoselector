@@ -9,6 +9,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -70,11 +71,27 @@ public class TableDialog extends MyApplicationWindow {
 						}
 				}
 				
+				// here to modify the coordinates
+				Point modifiedCoordinates = this.adjustDropCoordinates(event.x, event.y);
+
 				new ImageTile(parent, controlsDialog, drawerDialog, Photo
 						.get(Integer
 						.valueOf((String) event.data)),
-						event.x, event.y);
+						modifiedCoordinates.x, modifiedCoordinates.y);
 			}
+
+			/**
+			 * TODO move outside of droplistener
+			 * 
+			 * @param x
+			 * @param y
+			 * @return Point
+			 */
+			public Point adjustDropCoordinates(int x, int y) {
+				getShell().getChildren();
+				return new Point(x, y);
+			}
+
 		});
 
 		parent.addMouseListener(new MouseAdapter() {
