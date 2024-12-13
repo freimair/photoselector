@@ -63,6 +63,7 @@ class ListItem {
 
 		Label label = new Label(itemInProgressComposite, SWT.NONE);
 		label.setText("done: ");
+		int unprocessed = Photo.getFiltered(stage, Photo.UNPROCESSED).size();
 		if (0 == max) {
 			label = new Label(itemInProgressComposite, SWT.NONE);
 			label.setText("stage completed");
@@ -75,7 +76,7 @@ class ListItem {
 
 			// - current value
 			todoBar.setSelection(max
-					- Photo.getFiltered(stage, Photo.UNPROCESSED).size());
+					- unprocessed);
 
 			label = new Label(itemInProgressComposite, SWT.NONE);
 			label.setText(todoBar.getSelection() + "/" + todoBar.getMaximum());
@@ -86,7 +87,7 @@ class ListItem {
 		ProgressBar madeItBar = new ProgressBar(itemInProgressComposite, SWT.SMOOTH);
 
 		// - maximum
-		madeItBar.setMaximum(max);
+		madeItBar.setMaximum(max - unprocessed);
 
 		// - current value
 		madeItBar.setSelection(madeItBar.getMaximum()
