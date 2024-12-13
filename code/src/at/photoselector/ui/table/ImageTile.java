@@ -87,9 +87,7 @@ class ImageTile extends Composite {
 		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
 		imageContainer.setSize(dimensions.width, dimensions.height);
 
-		Point pt = parent.toControl(x, y);
-		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
-				pt.y - imageContainer.getBounds().height / 2);
+		imageContainer.setLocation(x - imageContainer.getBounds().width / 2, y - imageContainer.getBounds().height / 2);
 		imageContainer.moveAbove(null);
 
 		// add zoombox container

@@ -10,6 +10,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -72,7 +73,9 @@ public class TableDialog extends MyApplicationWindow {
 				}
 				
 				// here to modify the coordinates
-				Point modifiedCoordinates = this.adjustDropCoordinates(event.x, event.y);
+				Point pt = parent.toControl(event.x, event.y);
+				Point modifiedCoordinates = this.adjustDropCoordinates(Photo.get(Integer.valueOf((String) event.data)),
+						pt.x, pt.y);
 
 				new ImageTile(parent, controlsDialog, drawerDialog, Photo
 						.get(Integer
@@ -87,8 +90,34 @@ public class TableDialog extends MyApplicationWindow {
 			 * @param y
 			 * @return Point
 			 */
-			public Point adjustDropCoordinates(int x, int y) {
-				getShell().getChildren();
+			public Point adjustDropCoordinates(Photo photo, int x, int y) {
+				// TODO merge duplicated code pieces
+				// - should size and location be managed by the table?
+				int boundingBox = photo.isPortrait()
+						? (int) (parent.getBounds().width / 3.2 * photo.getDimensions().y / photo.getDimensions().x)
+						: (int) Math.min(
+								parent.getBounds().height / 2.2 * photo.getDimensions().x / photo.getDimensions().y,
+								parent.getBounds().width / 2.1);
+
+				// only do horizontal correction for now
+
+				// get through all existing ImageTiles
+				for (Control current : getShell().getChildren()) {
+					if (current instanceof ImageTile) {
+						Rectangle bounds = ((ImageTile) current).getBounds();
+
+						// check if drop is next to an existing image
+						// - TODO check if window-bounds are compromised
+						if (y > bounds.y && y < bounds.y + bounds.height) {
+							if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + boundingBox / 2)
+								x = bounds.x + bounds.width + 10 + boundingBox / 2;
+							else if (x < bounds.x && x > bounds.x - 10 - boundingBox / 2)
+								x = bounds.x - 10 - boundingBox / 2;
+						}
+
+					}
+				}
+
 				return new Point(x, y);
 			}
 
