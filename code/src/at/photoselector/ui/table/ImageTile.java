@@ -100,7 +100,7 @@ class ImageTile extends Composite {
 		controlsComposite.setVisible(false);
 
 		buttonAccept = new Button(controlsComposite, SWT.PUSH);
-		buttonAccept.setText("Accept");
+		buttonAccept.setText("&Accept");
 		buttonAccept.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false, 1, 1));
 		buttonAccept.addSelectionListener(new SelectionAdapter() {
@@ -116,7 +116,7 @@ class ImageTile extends Composite {
 		});
 
 		buttonCancel = new Button(controlsComposite, SWT.PUSH);
-		buttonCancel.setText("Cancel");
+		buttonCancel.setText("&Cancel");
 		buttonCancel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false, 1, 1));
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
@@ -128,7 +128,7 @@ class ImageTile extends Composite {
 		});
 
 		buttonDecline = new Button(controlsComposite, SWT.PUSH);
-		buttonDecline.setText("Decline");
+		buttonDecline.setText("&Decline");
 		buttonDecline.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
 				false, 1, 1));
 		buttonDecline.addSelectionListener(new SelectionAdapter() {
