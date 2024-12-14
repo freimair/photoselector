@@ -57,6 +57,8 @@ public class TableDialog extends MyApplicationWindow {
 					return;
 				}
 
+				Photo photo = Photo.get(Integer.valueOf((String) event.data));
+
 				for (Control current : getShell().getChildren()) {
 					if (current instanceof ImageTile)
 						if (((ImageTile) current)
@@ -64,9 +66,7 @@ public class TableDialog extends MyApplicationWindow {
 								.getPath()
 								.getAbsolutePath()
 								.equalsIgnoreCase(
-										Photo.get(
-												Integer.valueOf((String) event.data))
-												.getPath().getAbsolutePath())) {
+										photo.getPath().getAbsolutePath())) {
 							((ImageTile) current).blink();
 							return;
 						}
@@ -76,11 +76,10 @@ public class TableDialog extends MyApplicationWindow {
 				Point pt = parent.toControl(event.x, event.y);
 				Point modifiedCoordinates = this.adjustDropCoordinates(Photo.get(Integer.valueOf((String) event.data)),
 						pt.x, pt.y);
+				double initialScale = this.smartScale(photo);
 
-				new ImageTile(parent, controlsDialog, drawerDialog, Photo
-						.get(Integer
-						.valueOf((String) event.data)),
-						modifiedCoordinates.x, modifiedCoordinates.y);
+				new ImageTile(parent, controlsDialog, drawerDialog, photo, modifiedCoordinates.x, modifiedCoordinates.y,
+						initialScale);
 			}
 
 			/**
@@ -90,7 +89,7 @@ public class TableDialog extends MyApplicationWindow {
 			 * @param y
 			 * @return Point
 			 */
-			public Point adjustDropCoordinates(Photo photo, int x, int y) {
+			private Point adjustDropCoordinates(Photo photo, int x, int y) {
 				// scale as in smart scaling
 				double scale = this.smartScale(photo);
 

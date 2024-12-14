@@ -67,7 +67,7 @@ class ImageTile extends Composite {
 	private Button sharpnessComparisonButton;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
-			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y) {
+			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y, double initialScale) {
 		super(parent, SWT.NONE);
 		imageContainer = this;
 
@@ -76,10 +76,8 @@ class ImageTile extends Composite {
 		controlsDialog = dialog;
 
 		int boundingBox = photo.isPortrait()
-				? (int) (parent.getBounds().width / 3.2 * photo.getDimensions().y / photo.getDimensions().x)
-				: (int) Math.min(
-					parent.getBounds().height / 2.2 * photo.getDimensions().x / photo.getDimensions().y,
-					parent.getBounds().width / 2.1);
+				? (int) (initialScale * photo.getDimensions().y)
+				: (int) (initialScale * photo.getDimensions().x);
 		image = photo.getImage(boundingBox);
 
 		imageContainer.setLayout(new RowLayout());
