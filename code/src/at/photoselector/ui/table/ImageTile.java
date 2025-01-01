@@ -16,7 +16,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -78,18 +77,9 @@ class ImageTile extends Composite {
 		highlight(drawerDialog, photo, true);
 		controlsDialog = dialog;
 
-		int boundingBox = photo.isPortrait()
-				? (int) (initialScale * photo.getDimensions().y)
-				: (int) (initialScale * photo.getDimensions().x);
-		image = photo.getImage(boundingBox);
-
 		imageContainer.setLayout(new RowLayout());
 
-		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
-		imageContainer.setSize(dimensions.width, dimensions.height);
-
-		imageContainer.setLocation(x - imageContainer.getBounds().width / 2, y - imageContainer.getBounds().height / 2);
-		imageContainer.moveAbove(null);
+		fillImage(x, y, initialScale);
 
 		// add zoombox container
 		zoomBoxContainer = new Composite(imageContainer, SWT.BORDER);
@@ -155,36 +145,8 @@ class ImageTile extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-
-				/**
-				 * well that works only for this one zoom level :(
-				 * 
-				 * what we could do is move that piece of code to the photo itself, namely
-				 * getCachedImage and rotate the picture there
-				 * 
-				 * additionally, add a rotateCCW() or something to the Photo which also clears
-				 * the cache.
-				 * 
-				 * call the rotateCCW() here and redraw?
-				 */
-				GC gc = new GC(image);
-
-				Image result = new Image(gc.getDevice(), image.getBounds().height, image.getBounds().width);
-				GC gcTmp = new GC(result);
-
-				Transform affineTransform = new Transform(gc.getDevice());
-				affineTransform.rotate(-90);
-				affineTransform.translate(-image.getBounds().width, 0);
-				gcTmp.setTransform(affineTransform);
-				gcTmp.drawImage(image, 0, 0);
-				Rectangle orig = imageContainer.getBounds();
-				imageContainer.setSize(orig.height, orig.width);
-				gc.drawImage(result, 0, 0, result.getBounds().width, result.getBounds().height, 0, 0,
-						imageContainer.getBounds().height, imageContainer.getBounds().width);
-
-				gcTmp.dispose();
-				gc.dispose();
-				result.dispose();
+				photo.rotate(-90);
+				fillImage(x, y, initialScale);
 				imageContainer.redraw();
 			}
 		});
@@ -202,8 +164,17 @@ class ImageTile extends Composite {
 		});
 
 		rotateRightButton = new Button(controlsComposite, SWT.PUSH);
-		rotateRightButton.setText("R left");
+		rotateRightButton.setText("R right");
 		rotateRightButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		rotateRightButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				photo.rotate(90);
+				fillImage(x, y, initialScale);
+				imageContainer.redraw();
+			}
+		});
 
 		hundredPercentButton = new Button(controlsComposite, SWT.PUSH);
 		hundredPercentButton.setText("100%");
@@ -408,6 +379,18 @@ class ImageTile extends Composite {
 					current.hideZoomBox();
 			}
 		});
+	}
+
+	private void fillImage(int x, int y, double initialScale) {
+		int boundingBox = photo.isPortrait() ? (int) (initialScale * photo.getDimensions().y)
+				: (int) (initialScale * photo.getDimensions().x);
+		image = photo.getImage(boundingBox);
+
+		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
+		imageContainer.setSize(dimensions.width, dimensions.height);
+
+		imageContainer.setLocation(x - imageContainer.getBounds().width / 2, y - imageContainer.getBounds().height / 2);
+		imageContainer.moveAbove(null);
 	}
 
 	private void highlight(final DrawerDialog drawerDialog, Photo photo, boolean highlight) {
