@@ -309,8 +309,7 @@ public class Photo {
 			// System.out.println("");
 		}
 
-		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
-			setPortrait(true);
+		setPortrait(cachedImage.getBounds().height > cachedImage.getBounds().width);
 
 
 		return cachedImage;
