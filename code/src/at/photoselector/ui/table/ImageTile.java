@@ -139,7 +139,7 @@ class ImageTile extends Composite {
 		});
 
 		rotateLeftButton = new Button(controlsComposite, SWT.PUSH);
-		rotateLeftButton.setText("R left");
+		rotateLeftButton.setText("rotate CCW");
 		rotateLeftButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		rotateLeftButton.addSelectionListener(new SelectionAdapter() {
 
@@ -164,7 +164,7 @@ class ImageTile extends Composite {
 		});
 
 		rotateRightButton = new Button(controlsComposite, SWT.PUSH);
-		rotateRightButton.setText("R right");
+		rotateRightButton.setText("rotate CW");
 		rotateRightButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		rotateRightButton.addSelectionListener(new SelectionAdapter() {
 
