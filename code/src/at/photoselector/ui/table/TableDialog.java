@@ -103,23 +103,45 @@ public class TableDialog extends MyApplicationWindow {
 
 						// - TODO check if window-bounds are compromised
 						// check if drop is next to an existing image
-						if (y > bounds.y && y < bounds.y + bounds.height) {
-							if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + ourWidth / 2)
-								x = bounds.x + bounds.width + 10 + ourWidth / 2;
-							else if (x < bounds.x && x > bounds.x - 10 - ourWidth / 2)
-								x = bounds.x - 10 - ourWidth / 2;
-						}
-
-						if (x > bounds.x && x < bounds.x + bounds.width) {
-							if (y > bounds.y + bounds.height && y < bounds.y + bounds.height + 10 + ourHeight / 2)
-								y = bounds.y + bounds.height + 10 + ourHeight / 2;
-							else if (y < bounds.y && y > bounds.y - 10 - ourHeight / 2)
-								y = bounds.y - 10 - ourHeight / 2;
-						}
+						x = adjustAgainstOtherImage(x, y, ourWidth, bounds, getShell().getBounds().width);
+						y = adjustAgainstOtherImage(y, x, ourHeight, flip(bounds), getShell().getBounds().height);
 					}
 				}
 
+				// when there is not hit yet, i.e. no image present or no image above/below AND
+				// left/right
+				x = adjustAgainstWindowBoundaries(x, ourWidth, getShell().getBounds().width);
+				y = adjustAgainstWindowBoundaries(y, ourHeight, getShell().getBounds().height);
+
 				return new Point(x, y);
+			}
+
+			private int adjustAgainstWindowBoundaries(int x, int ourWidth, int windowWidth) {
+				if (x < 0 + ourWidth / 2)
+					x = 0 + 10 + ourWidth / 2;
+				else if (x > windowWidth - ourWidth / 2)
+					x = windowWidth - 10 - ourWidth / 2;
+				return x;
+			}
+
+			private Rectangle flip(Rectangle rectangle) {
+				return new Rectangle(rectangle.y, rectangle.x, rectangle.height, rectangle.width);
+			}
+
+			private int adjustAgainstOtherImage(int x, int y, int ourWidth, Rectangle bounds, int windowWidth) {
+				if (y > bounds.y && y < bounds.y + bounds.height) {
+					if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + ourWidth / 2)
+						x = bounds.x + bounds.width + 10 + ourWidth / 2;
+					else if (x < bounds.x && x > bounds.x - 10 - ourWidth / 2)
+						x = bounds.x - 10 - ourWidth / 2;
+					// TODO some wrong behavior when for example 2 images are left of the current
+					// one - this else if acts already on the left-most image - and then, the new
+					// image overlaps the second one
+					else if (x > windowWidth - ourWidth / 2
+							&& windowWidth - bounds.x + bounds.width > ourWidth)
+						x = windowWidth - 10 - ourWidth / 2;
+				}
+				return x;
 			}
 
 			/**
