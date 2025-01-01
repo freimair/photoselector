@@ -42,8 +42,6 @@ public class StagesDialog extends UncloseableApplicationWindow {
 
 		stageListComposite = new Composite(scrollableStageListComposite,
 				SWT.NONE);
-		stageListComposite.setBackground(getShell().getDisplay()
-				.getSystemColor(SWT.COLOR_WHITE));
 		stageListComposite.setLayout(new GridLayout());
 
 		scrollableStageListComposite.setContent(stageListComposite);

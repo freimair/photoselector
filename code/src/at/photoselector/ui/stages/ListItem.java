@@ -43,8 +43,6 @@ class ListItem {
 		itemInProgressComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 		itemInProgressComposite.setText(stage.getName());
-		itemInProgressComposite.setBackground(parent.getShell().getDisplay()
-				.getSystemColor(SWT.COLOR_WHITE));
 		final Text itemInProgressText = new Text(itemInProgressComposite,
 				SWT.BORDER);
 		itemInProgressText.setText(stage.getName());
