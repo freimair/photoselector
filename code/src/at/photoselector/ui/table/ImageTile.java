@@ -72,6 +72,7 @@ class ImageTile extends Composite {
 		imageContainer = this;
 
 		this.photo = currentPhoto;
+		highlight(drawerDialog, photo, true);
 		controlsDialog = dialog;
 
 		// TODO find some smart way to calculate the initial size of the image
@@ -110,6 +111,7 @@ class ImageTile extends Composite {
 				Workspace.accept(photo);
 				controlsDialog.update();
 				drawerDialog.update();
+				highlight(drawerDialog, photo, false);
 				dispose();
 				photo.clearCachedImages();
 			}
@@ -123,6 +125,7 @@ class ImageTile extends Composite {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				highlight(drawerDialog, photo, false);
 				dispose();
 			}
 		});
@@ -138,6 +141,7 @@ class ImageTile extends Composite {
 				Workspace.decline(photo);
 				controlsDialog.update();
 				drawerDialog.update();
+				highlight(drawerDialog, photo, false);
 				dispose();
 				photo.clearCachedImages();
 			}
@@ -360,6 +364,16 @@ class ImageTile extends Composite {
 		});
 	}
 
+	private void highlight(final DrawerDialog drawerDialog, Photo photo, boolean highlight) {
+		getDisplay().asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				drawerDialog.highlight(photo, highlight);
+			}
+		});
+	}
+
 	private List<ImageTile> getCurrentImageTiles() {
 		List<ImageTile> result = new ArrayList<ImageTile>();
 
@@ -454,5 +468,31 @@ class ImageTile extends Composite {
 
 	public Photo getPhoto() {
 		return photo;
+	}
+
+	public void blink() {
+		Point orig = imageContainer.getLocation();
+
+		imageContainer.setLocation((int) (orig.x * 1.02f), orig.y);
+		getDisplay().timerExec(35, new MoveImageContainer(orig.x / 1.02f, orig.y));
+		getDisplay().timerExec(70, new MoveImageContainer(orig.x * 1.02f, orig.y));
+		getDisplay().timerExec(105, new MoveImageContainer(orig.x / 1.02f, orig.y));
+		getDisplay().timerExec(125, new MoveImageContainer(orig.x, orig.y));
+	}
+
+	private class MoveImageContainer implements Runnable {
+
+		private int x, y;
+
+		public MoveImageContainer(float x, int y) {
+			this.x = (int) x;
+			this.y = y;
+		}
+
+		@Override
+		public void run() {
+			imageContainer.setLocation(x, y);
+
+		}
 	}
 }

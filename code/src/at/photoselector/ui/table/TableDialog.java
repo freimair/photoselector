@@ -64,8 +64,10 @@ public class TableDialog extends MyApplicationWindow {
 								.equalsIgnoreCase(
 										Photo.get(
 												Integer.valueOf((String) event.data))
-												.getPath().getAbsolutePath()))
+												.getPath().getAbsolutePath())) {
+							((ImageTile) current).blink();
 							return;
+						}
 				}
 				
 				new ImageTile(parent, controlsDialog, drawerDialog, Photo

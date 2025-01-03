@@ -81,6 +81,8 @@ class ListItem {
 	private Composite imageContainer;
 	private boolean loaded = false;
 	private Label labelFiletype;
+	private Display display;
+	private Color originalBackgroundColor;
 
 	public ListItem(final Composite parent, final DrawerDialog dialog,
 			ControlsDialog cDialog,
@@ -89,7 +91,7 @@ class ListItem {
 		drawerDialog = dialog;
 		this.controlsDialog = cDialog;
 
-		final Display display = parent.getDisplay();
+		display = parent.getDisplay();
 		int boundingBox = drawerDialog.getBoundingBox();
 		imageContainer = new Composite(parent, SWT.NONE);
 		imageContainer.setLayoutData(new RowData(boundingBox + 2 * border,
@@ -254,6 +256,15 @@ class ListItem {
 				event.data = String.valueOf(photo.getId());
 			}
 		});
+	}
+
+	public void highlight(boolean highlight) {
+		if (highlight) {
+			originalBackgroundColor = imageContainer.getBackground();
+			imageContainer.setBackground(new Color(display, 100, 100, 0));
+		}
+		else
+			imageContainer.setBackground(originalBackgroundColor);
 	}
 
 	@Override

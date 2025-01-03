@@ -285,4 +285,8 @@ public class DrawerDialog extends MyApplicationWindow {
 			tableDialog.close();
 		return true;
 	}
+
+	public void highlight(Photo photo, boolean highlight) {
+		cache.get(photo.getPath().getAbsolutePath()).highlight(highlight);
+	}
 }
