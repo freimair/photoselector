@@ -9,6 +9,8 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -55,6 +57,8 @@ public class TableDialog extends MyApplicationWindow {
 					return;
 				}
 
+				Photo photo = Photo.get(Integer.valueOf((String) event.data));
+
 				for (Control current : getShell().getChildren()) {
 					if (current instanceof ImageTile)
 						if (((ImageTile) current)
@@ -62,19 +66,96 @@ public class TableDialog extends MyApplicationWindow {
 								.getPath()
 								.getAbsolutePath()
 								.equalsIgnoreCase(
-										Photo.get(
-												Integer.valueOf((String) event.data))
-												.getPath().getAbsolutePath())) {
+										photo.getPath().getAbsolutePath())) {
 							((ImageTile) current).blink();
 							return;
 						}
 				}
 				
-				new ImageTile(parent, controlsDialog, drawerDialog, Photo
-						.get(Integer
-						.valueOf((String) event.data)),
-						event.x, event.y);
+				// here to modify the coordinates
+				Point pt = parent.toControl(event.x, event.y);
+				Point modifiedCoordinates = this.adjustDropCoordinates(Photo.get(Integer.valueOf((String) event.data)),
+						pt.x, pt.y);
+				double initialScale = this.smartScale(photo);
+
+				new ImageTile(parent, controlsDialog, drawerDialog, photo, modifiedCoordinates.x, modifiedCoordinates.y,
+						initialScale);
 			}
+
+			/**
+			 * TODO move outside of droplistener
+			 * 
+			 * @param x
+			 * @param y
+			 * @return Point
+			 */
+			private Point adjustDropCoordinates(Photo photo, int x, int y) {
+				// scale as in smart scaling
+				double scale = this.smartScale(photo);
+
+				int ourWidth = (int) (photo.getDimensions().x * scale);
+				int ourHeight = (int) (photo.getDimensions().y * scale);
+
+				// get through all existing ImageTiles
+				for (Control current : getShell().getChildren()) {
+					if (current instanceof ImageTile) {
+						Rectangle bounds = ((ImageTile) current).getBounds();
+
+						// - TODO check if window-bounds are compromised
+						// check if drop is next to an existing image
+						x = adjustAgainstOtherImage(x, y, ourWidth, bounds, getShell().getBounds().width);
+						y = adjustAgainstOtherImage(y, x, ourHeight, flip(bounds), getShell().getBounds().height);
+					}
+				}
+
+				// when there is not hit yet, i.e. no image present or no image above/below AND
+				// left/right
+				x = adjustAgainstWindowBoundaries(x, ourWidth, getShell().getBounds().width);
+				y = adjustAgainstWindowBoundaries(y, ourHeight, getShell().getBounds().height);
+
+				return new Point(x, y);
+			}
+
+			private int adjustAgainstWindowBoundaries(int x, int ourWidth, int windowWidth) {
+				if (x < 0 + ourWidth / 2)
+					x = 0 + 10 + ourWidth / 2;
+				else if (x > windowWidth - ourWidth / 2)
+					x = windowWidth - 10 - ourWidth / 2;
+				return x;
+			}
+
+			private Rectangle flip(Rectangle rectangle) {
+				return new Rectangle(rectangle.y, rectangle.x, rectangle.height, rectangle.width);
+			}
+
+			private int adjustAgainstOtherImage(int x, int y, int ourWidth, Rectangle bounds, int windowWidth) {
+				if (y > bounds.y && y < bounds.y + bounds.height) {
+					if (x > bounds.x + bounds.width && x < bounds.x + bounds.width + 10 + ourWidth / 2)
+						x = bounds.x + bounds.width + 10 + ourWidth / 2;
+					else if (x < bounds.x && x > bounds.x - 10 - ourWidth / 2)
+						x = bounds.x - 10 - ourWidth / 2;
+					// TODO some wrong behavior when for example 2 images are left of the current
+					// one - this else if acts already on the left-most image - and then, the new
+					// image overlaps the second one
+					else if (x > windowWidth - ourWidth / 2
+							&& windowWidth - bounds.x + bounds.width > ourWidth)
+						x = windowWidth - 10 - ourWidth / 2;
+				}
+				return x;
+			}
+
+			/**
+			 * move outside of droplistener
+			 * 
+			 * @param photo
+			 * @return
+			 */
+			private double smartScale(Photo photo) {
+				// TODO merge duplicated code pieces
+				return photo.isPortrait() ? parent.getBounds().width / 3.2 / photo.getDimensions().x
+						: Math.min(parent.getBounds().height / 2.2 / photo.getDimensions().y, 2.1);
+			}
+
 		});
 
 		parent.addMouseListener(new MouseAdapter() {

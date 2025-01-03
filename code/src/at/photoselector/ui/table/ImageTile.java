@@ -67,7 +67,7 @@ class ImageTile extends Composite {
 	private Button sharpnessComparisonButton;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
-			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y) {
+			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y, double initialScale) {
 		super(parent, SWT.NONE);
 		imageContainer = this;
 
@@ -75,9 +75,9 @@ class ImageTile extends Composite {
 		highlight(drawerDialog, photo, true);
 		controlsDialog = dialog;
 
-		// TODO find some smart way to calculate the initial size of the image
-		int boundingBox = (int) Math.min(parent.getBounds().width / 1.5,
-				parent.getBounds().height / 1.65);
+		int boundingBox = photo.isPortrait()
+				? (int) (initialScale * photo.getDimensions().y)
+				: (int) (initialScale * photo.getDimensions().x);
 		image = photo.getImage(boundingBox);
 
 		imageContainer.setLayout(new RowLayout());
@@ -85,9 +85,7 @@ class ImageTile extends Composite {
 		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
 		imageContainer.setSize(dimensions.width, dimensions.height);
 
-		Point pt = parent.toControl(x, y);
-		imageContainer.setLocation(pt.x - imageContainer.getBounds().width / 2,
-				pt.y - imageContainer.getBounds().height / 2);
+		imageContainer.setLocation(x - imageContainer.getBounds().width / 2, y - imageContainer.getBounds().height / 2);
 		imageContainer.moveAbove(null);
 
 		// add zoombox container
