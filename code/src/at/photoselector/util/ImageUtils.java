@@ -25,14 +25,15 @@ public class ImageUtils {
 		try {
 			Metadata metaData = ImageMetadataReader.readMetadata(imageFile);
 			if (metaData.containsDirectory(ExifIFD0Directory.class)) {
-				switch (metaData.getDirectory(ExifIFD0Directory.class).getInt(
-						ExifIFD0Directory.TAG_ORIENTATION)) {
-				case 6:
-					angle += 90;
-					break;
-				case 8:
-					angle -= 90;
-					break;
+				if (metaData.getDirectory(ExifIFD0Directory.class).containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+					switch (metaData.getDirectory(ExifIFD0Directory.class).getInt(ExifIFD0Directory.TAG_ORIENTATION)) {
+					case 6:
+						angle += 90;
+						break;
+					case 8:
+						angle -= 90;
+						break;
+					}
 				}
 			}
 
