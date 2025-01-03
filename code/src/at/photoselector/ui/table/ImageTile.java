@@ -65,6 +65,8 @@ class ImageTile extends Composite {
 	private Button exitButton;
 	private Button hundredPercentButton;
 	private Button sharpnessComparisonButton;
+	private Button rotateLeftButton;
+	private Button rotateRightButton;
 
 	public ImageTile(final Composite parent, ControlsDialog dialog,
 			final DrawerDialog drawerDialog, Photo currentPhoto, int x, int y, double initialScale) {
@@ -75,18 +77,9 @@ class ImageTile extends Composite {
 		highlight(drawerDialog, photo, true);
 		controlsDialog = dialog;
 
-		int boundingBox = photo.isPortrait()
-				? (int) (initialScale * photo.getDimensions().y)
-				: (int) (initialScale * photo.getDimensions().x);
-		image = photo.getImage(boundingBox);
-
 		imageContainer.setLayout(new RowLayout());
 
-		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
-		imageContainer.setSize(dimensions.width, dimensions.height);
-
-		imageContainer.setLocation(x - imageContainer.getBounds().width / 2, y - imageContainer.getBounds().height / 2);
-		imageContainer.moveAbove(null);
+		fillImage(x, y, initialScale);
 
 		// add zoombox container
 		zoomBoxContainer = new Composite(imageContainer, SWT.BORDER);
@@ -145,15 +138,41 @@ class ImageTile extends Composite {
 			}
 		});
 
+		rotateLeftButton = new Button(controlsComposite, SWT.PUSH);
+		rotateLeftButton.setText("rotate CCW");
+		rotateLeftButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		rotateLeftButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				photo.rotate(-90);
+				fillImage(x, y, initialScale);
+				imageContainer.redraw();
+			}
+		});
+
 		exitButton = new Button(controlsComposite, SWT.PUSH);
 		exitButton.setText("Exit Controls");
 		exitButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
-				3, 1));
+				1, 1));
 		exitButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				controlsComposite.setVisible(false);
+			}
+		});
+
+		rotateRightButton = new Button(controlsComposite, SWT.PUSH);
+		rotateRightButton.setText("rotate CW");
+		rotateRightButton.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		rotateRightButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				photo.rotate(90);
+				fillImage(x, y, initialScale);
+				imageContainer.redraw();
 			}
 		});
 
@@ -360,6 +379,18 @@ class ImageTile extends Composite {
 					current.hideZoomBox();
 			}
 		});
+	}
+
+	private void fillImage(int x, int y, double initialScale) {
+		int boundingBox = photo.isPortrait() ? (int) (initialScale * photo.getDimensions().y)
+				: (int) (initialScale * photo.getDimensions().x);
+		image = photo.getImage(boundingBox);
+
+		Rectangle dimensions = photo.scaleAndCenterImage(boundingBox);
+		imageContainer.setSize(dimensions.width, dimensions.height);
+
+		imageContainer.setLocation(x - imageContainer.getBounds().width / 2, y - imageContainer.getBounds().height / 2);
+		imageContainer.moveAbove(null);
 	}
 
 	private void highlight(final DrawerDialog drawerDialog, Photo photo, boolean highlight) {

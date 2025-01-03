@@ -170,6 +170,8 @@ public class Photo {
 	private boolean portrait = false;
 	private Image fullImage;
 
+	private int rotate;
+
 	private Photo(int newId, File path, int status) {
 		id = newId;
 		this.path = path;
@@ -253,6 +255,14 @@ public class Photo {
 		return cachedFullImage;
 	}
 
+	public void rotate(int angle) {
+		this.rotate += angle;
+		clearCachedImages();
+		setPortrait(!isPortrait());
+		width = 0;
+		height = 0;
+	}
+
 	private Image getCachedImage(int boundingBox) {
 		Image cachedImage;
 		try {
@@ -299,8 +309,7 @@ public class Photo {
 			// System.out.println("");
 		}
 
-		if (cachedImage.getBounds().height > cachedImage.getBounds().width)
-			setPortrait(true);
+		setPortrait(cachedImage.getBounds().height > cachedImage.getBounds().width);
 
 
 		return cachedImage;
@@ -314,7 +323,7 @@ public class Photo {
 				imagePath = preprocessRawImage();
 			else
 				imagePath = path;
-			fullImage = ImageUtils.load(imagePath);
+			fullImage = ImageUtils.load(imagePath, this.rotate);
 
 			// get dimensions, as we already have the image in memory
 			width = fullImage.getBounds().width;

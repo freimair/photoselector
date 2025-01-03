@@ -16,7 +16,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 
 public class ImageUtils {
-	public static Image load(File imageFile) {
+	public static Image load(File imageFile, int angle) {
 		Image input = new Image(Display.getCurrent(),
 				imageFile.getAbsolutePath());
 
@@ -25,36 +25,41 @@ public class ImageUtils {
 		try {
 			Metadata metaData = ImageMetadataReader.readMetadata(imageFile);
 			if (metaData.containsDirectory(ExifIFD0Directory.class)) {
-				int angle = 0;
 				switch (metaData.getDirectory(ExifIFD0Directory.class).getInt(
 						ExifIFD0Directory.TAG_ORIENTATION)) {
 				case 6:
-					angle = 90;
+					angle += 90;
 					break;
 				case 8:
-					angle = -90;
+					angle -= 90;
 					break;
 				}
+			}
 
-				if (0 != angle) {
-					result = new Image(Display.getCurrent(),
-							input.getBounds().height, input.getBounds().width);
-					GC gc = new GC(result);
-					gc.setAdvanced(true);
+			if (0 != angle % 360) {
+				angle = angle % 360;
+				if (0 == angle % 180)
+					result = new Image(Display.getCurrent(), input.getBounds().width, input.getBounds().height);
+				else
+					result = new Image(Display.getCurrent(), input.getBounds().height, input.getBounds().width);
+				GC gc = new GC(result);
+				gc.setAdvanced(true);
 
-					Rectangle b = input.getBounds();
+				Rectangle b = input.getBounds();
 
-					Transform transform = new Transform(Display.getCurrent());
-					// The rotation point is the center of the image
-					transform.translate(b.height / 2, b.width / 2);
-					// Rotate
-					transform.rotate(angle);
-					// Back to the orginal coordinate system
+				Transform transform = new Transform(Display.getCurrent());
+				// The rotation point is the center of the image
+				transform.translate(b.height / 2, b.width / 2);
+				// Rotate
+				transform.rotate(angle);
+				// Back to the original coordinate system
+				if (0 == angle % 180)
+					transform.translate(b.height / 2 - b.width, b.width / 2 - b.height); // b.width / 2 - b.height
+				else
 					transform.translate(-b.width / 2, -b.height / 2);
-					gc.setTransform(transform);
-					gc.drawImage(input, 0, 0);
-					gc.dispose();
-				}
+				gc.setTransform(transform);
+				gc.drawImage(input, 0, 0);
+				gc.dispose();
 			}
 		} catch (ImageProcessingException e) {
 			// TODO Auto-generated catch block

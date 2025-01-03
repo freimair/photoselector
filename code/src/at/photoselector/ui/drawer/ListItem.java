@@ -58,6 +58,8 @@ class ListItem {
 							if (null != scaled) {
 								GC gc = e.gc;
 								Rectangle dimensions = photo.scaleAndCenterImage(drawerDialog.getBoundingBox());
+								if (scaled.isDisposed())
+									scaled = photo.getImage(drawerDialog.getBoundingBox());
 								gc.drawImage(scaled, dimensions.x + border, dimensions.y + border);
 								gc.dispose();
 							}
